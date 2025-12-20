@@ -72,6 +72,7 @@
         .track-dot { position: absolute; width: 6px; height: 6px; border-radius: 50%; cursor: pointer; transition: all 0.15s ease; transform: translate(-50%, -50%); z-index: 5; opacity: 0.25; }
         .track-dot:hover { transform: translate(-50%, -50%) scale(1.8); opacity: 1; z-index: 60; }
         .track-dot.highlighted { opacity: 0.7; }
+        .track-dot.hovered { transform: translate(-50%, -50%) scale(2.2); opacity: 1; z-index: 70; box-shadow: 0 0 12px currentColor; }
         .track-dot.dimmed { opacity: 0.05; }
         .track-dot .track-tooltip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 4px; padding: 4px 8px; white-space: nowrap; font-family: 'JetBrains Mono', monospace; font-size: 9px; opacity: 0; pointer-events: none; transition: opacity 0.2s; margin-bottom: 4px; }
         .track-dot:hover .track-tooltip { opacity: 1; }
@@ -109,7 +110,7 @@
 <body>
     <div class="container">
         <h1 class="title">МУЗЫКАЛЬНАЯ ДНК</h1>
-        <p class="subtitle" id="subtitle">X: год | Y: популярность (Spotify monthly listeners)</p>
+        <p class="subtitle" id="subtitle">X: год | Y: популярность (Last.fm scrobbles)</p>
 
         <div class="genres-row" id="genresRow"></div>
         <div id="chart"></div>
@@ -298,6 +299,109 @@
             { source: 'a28', target: 't5' },{ source: 'a28', target: 't7' },
         ];
 
+        // Track scrobbles lookup (key: "Artist|Title")
+        const trackScrobbles = {
+            "КИНО|Перемен": 193000,
+            "КИНО|Группа крови": 969800,
+            "КИНО|Город": 88800,
+            "КИНО|Муравейник": 225000,
+            "Высоцкий|Мой Гамлет": 5694,
+            "Высоцкий|Як-истребитель": 5447,
+            "Высоцкий|Песня космических негодяев": 0,
+            "Noize MC|Иордан": 210500,
+            "Noize MC|Всё как у людей": 247800,
+            "Noize MC|Столетняя война": 109800,
+            "Noize MC|Вояджер-1": 227300,
+            "Noize MC|Почитай старших": 79200,
+            "БГ|Om Namah Shivaya": 5424,
+            "БГ|Поезд в огне": 146900,
+            "БГ|Вон Вавилон": 0,
+            "БГ|Назад в Архангельск": 0,
+            "БГ|Молитва и пост": 19400,
+            "БГ|Новый Шёлковый Путь": 3200,
+            "БГ|Если Я Уйду": 20000,
+            "БГ|Не судьба": 14600,
+            "БГ|Не Было Такой": 47400,
+            "Василий К.|Не моя": 53700,
+            "Василий К.|Держава": 53700,
+            "Василий К.|Ганеша": 0,
+            "Василий К.|Интеллигенты": 2645,
+            "Василий К.|Самое худшее": 2645,
+            "Василий К.|Монотеизм": 2645,
+            "Василий К.|Манхэттен и Берлин": 2645,
+            "Василий К.|Так бывает": 2645,
+            "Василий К.|Безобразны и злы": 2645,
+            "Василий К.|Исусы Христосы": 0,
+            "Василий К.|Игра в ящик": 2156,
+            "Heilung|Fylgija Ear": 121700,
+            "Heilung|Hakkerskaldyr": 424600,
+            "Hans Zimmer|Interstellar Suite": 922600,
+            "Hans Zimmer|Dust": 922600,
+            "Rodrigo y Gabriela|Electric Soul": 77700,
+            "Rodrigo y Gabriela|Ixtapa": 618300,
+            "Каста|Самый счастливый человек": 71200,
+            "Каста|На порядок выше": 0,
+            "Каста|Радиосигналы": 352500,
+            "Каста|Горячее время": 64700,
+            "Nick Cave|Papa Won't Leave You, Henry": 11100,
+            "Nick Cave|Red Right Hand": 101800,
+            "Nick Cave|Brother, My Cup Is Empty": 9159,
+            "Nine Treasures|The Dream About Ancient City": 0,
+            "Jean-Michel Jarre|Equinoxe, Pt. 4": 38000,
+            "Пушной|Вершина": 20100,
+            "Пушной|Город Омск": 20100,
+            "Пушной|Надо радоваться!": 20100,
+            "Oxxxymiron|Где нас нет": 485200,
+            "Oxxxymiron|Город под подошвой": 647400,
+            "Oxxxymiron|ОРГАНИЗАЦИЯ": 194200,
+            "Oxxxymiron|Лондонград": 85900,
+            "Corvus Corax|In Taberna": 88100,
+            "Corvus Corax|Skál": 42400,
+            "Krishna Das|Hallelujah Chalisa": 28400,
+            "Сплин|За семью печатями": 38900,
+            "Сплин|Нечего делать внутри": 106600,
+            "Сплин|Семь восьмых": 0,
+            "Сплин|Передайте это Гарри Поттеру": 87300,
+            "Дельфин|744": 41800,
+            "Дельфин|Я люблю людей": 157600,
+            "Порнофильмы|Я так соскучился": 360700,
+            "Порнофильмы|Чужое горе": 99100,
+            "Порнофильмы|Россия для грустных": 211500,
+            "Леона|Хозяйка медной горы": 71,
+            "Леона|Плохо, ничего хорошего": 59,
+            "Леона|Пустое святое": 103,
+            "Леона|Зверь, которого не бывает": 92,
+            "Леона|Проводник": 71,
+            "Леона|На металлоломе": 0,
+            "Леона|Всё, что мы скажем": 172,
+            "Anacondaz|Дубак": 244300,
+            "Anacondaz|Смертельное оружие": 155300,
+            "Nautilus Pompilius|Я хочу быть с тобой": 299200,
+            "Nautilus Pompilius|Хлоп-хлоп": 108500,
+            "Гражданская оборона|После нас": 0,
+            "Алиса|Rock-N-Roll": 67800,
+            "Влади|Как это блядь возможно": 0,
+            "Влади|Краски не сгущайте": 0,
+            "Драконь|О всадниках и черепахах": 604,
+            "Драконь|Найти омелу": 89,
+            "Драконь|Песня о вашем друге": 0,
+            "Драконь|Испанская романтическая баллада": 604,
+            "Atlantida Project|Чистое зло": 28700,
+            "Atlantida Project|Сарва Мангалам": 0,
+            "Atlantida Project|Красная королева": 28700,
+            "Ольга Арефьева|Сансара": 0,
+            "Ольга Арефьева|Вертолёт": 0,
+        };
+
+        // Get scrobbles for a track (returns artist's scrobbles or 1000 as default)
+        function getTrackScrobbles(artistName, trackTitle) {
+            const key = `${artistName}|${trackTitle}`;
+            if (trackScrobbles[key] !== undefined) {
+                return Math.max(50, trackScrobbles[key]); // Min 50 for log scale
+            }
+            return 1000; // Default for unknown tracks
+        }
+
         // Calculate median year for each artist
         artists.forEach(a => {
             const years = a.tracks.map(t => t.year).sort((x, y) => x - y);
@@ -457,16 +561,28 @@
         // Create a group for track connection lines
         const linksGroup = svg.append('g').attr('class', 'track-links-group');
 
+        // Scrobbles scale for tracks (log scale)
+        const minScrobbles = 50; // Min for log scale
+        const maxScrobbles = 1000000; // 1M scrobbles as max
+        const logMinScr = Math.log10(minScrobbles);
+        const logMaxScr = Math.log10(maxScrobbles);
+
+        function scrobblesToY(scrobbles) {
+            const logScr = Math.log10(Math.max(minScrobbles, scrobbles));
+            const normalized = (logScr - logMinScr) / (logMaxScr - logMinScr);
+            return topPadding + (1 - normalized) * chartHeight;
+        }
+
         artists.forEach(artist => {
-            const baseY = artist.y + cardSize / 2;
             const artistCenterX = artist.x + cardSize / 2;
             const artistCenterY = artist.y + cardSize / 2;
             trackLinks[artist.id] = [];
 
             artist.tracks.forEach((track, i) => {
                 const trackX = yearToX(track.year);
-                const yOffset = (i % 3 - 1) * 12;
-                const trackY = baseY + yOffset;
+                // Position track by its scrobbles on Y-axis
+                const trackScr = getTrackScrobbles(artist.name, track.title);
+                const trackY = scrobblesToY(trackScr);
 
                 // Create curved path from artist to track
                 const path = linksGroup.append('path')
@@ -485,13 +601,14 @@
                 dot.style.left = `${trackX}px`;
                 dot.style.top = `${trackY}px`;
                 dot.dataset.artistId = artist.id;
+                dot.dataset.trackTitle = track.title; // For highlighting from popup
                 dot.innerHTML = `<div class="track-tooltip">${track.title} (${track.year})</div>`;
                 dot.onclick = (e) => {
                     e.stopPropagation();
                     window.open(`https://open.spotify.com/search/${encodeURIComponent(track.search)}`, '_blank');
                 };
                 chart.appendChild(dot);
-                allTrackDots.push({ dot, artistId: artist.id });
+                allTrackDots.push({ dot, artistId: artist.id, trackTitle: track.title });
             });
         });
 
@@ -507,6 +624,15 @@
             allTrackDots.forEach(({ dot, artistId: dotArtistId }) => {
                 if (dotArtistId === artistId) {
                     dot.classList.toggle('highlighted', show);
+                }
+            });
+        }
+
+        // Highlight a specific track dot from popup hover
+        function highlightTrackDot(artistId, trackTitle, highlight) {
+            allTrackDots.forEach(({ dot, artistId: dotArtistId, trackTitle: dotTitle }) => {
+                if (dotArtistId === artistId && dotTitle === trackTitle) {
+                    dot.classList.toggle('hovered', highlight);
                 }
             });
         }
@@ -576,6 +702,9 @@
                     e.stopPropagation();
                     window.open(`https://open.spotify.com/search/${encodeURIComponent(track.search)}`, '_blank');
                 };
+                // Highlight corresponding dot on hover
+                li.onmouseenter = () => highlightTrackDot(artist.id, track.title, true);
+                li.onmouseleave = () => highlightTrackDot(artist.id, track.title, false);
                 trackList.appendChild(li);
             });
 

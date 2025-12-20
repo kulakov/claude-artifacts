@@ -1,0 +1,1572 @@
+[
+  {
+    "artist": "Phil Collins",
+    "title": "In The Air Tonight",
+    "track_id": 36
+  },
+  {
+    "artist": "David Bowie",
+    "title": "The Man Who Sold The World",
+    "track_id": 45
+  },
+  {
+    "artist": "Fleetwood Mac",
+    "title": "Go Your Own Way",
+    "track_id": 25
+  },
+  {
+    "artist": "Hans Zimmer",
+    "title": "Dust",
+    "track_id": 130
+  },
+  {
+    "artist": "Bob Dylan",
+    "title": "Farewell, Angelina",
+    "track_id": 24
+  },
+  {
+    "artist": "Leonard Cohen",
+    "title": "First We Take Manhattan",
+    "track_id": 243
+  },
+  {
+    "artist": "Moby",
+    "title": "Extreme Ways",
+    "track_id": 149
+  },
+  {
+    "artist": "Nick Cave",
+    "title": "Papa Won't Leave You, Henry",
+    "track_id": 41
+  },
+  {
+    "artist": "Nick Cave",
+    "title": "Red Right Hand",
+    "track_id": 148
+  },
+  {
+    "artist": "Nick Cave",
+    "title": "Brother, My Cup Is Empty",
+    "track_id": 282
+  },
+  {
+    "artist": "Ramin Djawadi",
+    "title": "Main Title (Game of Thrones - Season 3)",
+    "track_id": 305
+  },
+  {
+    "artist": "Tom Waits",
+    "title": "Goin' Out West",
+    "track_id": 145
+  },
+  {
+    "artist": "Sabaton",
+    "title": "Resist And Bite",
+    "track_id": 224
+  },
+  {
+    "artist": "Bo Burnham",
+    "title": "Welcome to the Internet",
+    "track_id": 20
+  },
+  {
+    "artist": "King Crimson",
+    "title": "Epitaph",
+    "track_id": 259
+  },
+  {
+    "artist": "Rainbow",
+    "title": "The Temple Of The King",
+    "track_id": 294
+  },
+  {
+    "artist": "Монеточка",
+    "title": "Переживу",
+    "track_id": 179
+  },
+  {
+    "artist": "Mike Oldfield",
+    "title": "Outcast",
+    "track_id": 214
+  },
+  {
+    "artist": "КИНО",
+    "title": "Перемен",
+    "track_id": 114
+  },
+  {
+    "artist": "КИНО",
+    "title": "Группа крови",
+    "track_id": 118
+  },
+  {
+    "artist": "КИНО",
+    "title": "Город",
+    "track_id": 177
+  },
+  {
+    "artist": "КИНО",
+    "title": "Муравейник",
+    "track_id": 288
+  },
+  {
+    "artist": "Django Django",
+    "title": "WOR",
+    "track_id": 154
+  },
+  {
+    "artist": "Би-2",
+    "title": "Революция",
+    "track_id": 289
+  },
+  {
+    "artist": "Steve 'n' Seagulls",
+    "title": "Thunderstruck",
+    "track_id": 303
+  },
+  {
+    "artist": "Jean-Michel Jarre",
+    "title": "Equinoxe, Pt. 4",
+    "track_id": 134
+  },
+  {
+    "artist": "Celtic Woman",
+    "title": "Teir Abhaile Riu",
+    "track_id": 295
+  },
+  {
+    "artist": "Noize MC",
+    "title": "Иордан",
+    "track_id": 31
+  },
+  {
+    "artist": "Noize MC",
+    "title": "Всё как у людей",
+    "track_id": 60
+  },
+  {
+    "artist": "Noize MC",
+    "title": "Столетняя война",
+    "track_id": 146
+  },
+  {
+    "artist": "Noize MC",
+    "title": "Вояджер-1",
+    "track_id": 193
+  },
+  {
+    "artist": "Noize MC",
+    "title": "Почитай старших",
+    "track_id": 200
+  },
+  {
+    "artist": "Oliver Koletzki",
+    "title": "Copal",
+    "track_id": 71
+  },
+  {
+    "artist": "Krishna Das",
+    "title": "Hallelujah Chalisa",
+    "track_id": 201
+  },
+  {
+    "artist": "Heilung",
+    "title": "Fylgija Ear",
+    "track_id": 139
+  },
+  {
+    "artist": "Heilung",
+    "title": "Hakkerskaldyr",
+    "track_id": 239
+  },
+  {
+    "artist": "Nolwenn Leroy",
+    "title": "La jument de Michao",
+    "track_id": 211
+  },
+  {
+    "artist": "Anoushka Shankar",
+    "title": "Dissolving Boundaries",
+    "track_id": 304
+  },
+  {
+    "artist": "Oxxxymiron",
+    "title": "Где нас нет",
+    "track_id": 50
+  },
+  {
+    "artist": "Oxxxymiron",
+    "title": "ОРГАНИЗАЦИЯ",
+    "track_id": 86
+  },
+  {
+    "artist": "Oxxxymiron",
+    "title": "Лондонград",
+    "track_id": 99
+  },
+  {
+    "artist": "Oxxxymiron",
+    "title": "Город под подошвой",
+    "track_id": 251
+  },
+  {
+    "artist": "Eivør",
+    "title": "Into the Mist",
+    "track_id": 204
+  },
+  {
+    "artist": "Ляпис Трубецкой",
+    "title": "Железный",
+    "track_id": 229
+  },
+  {
+    "artist": "Tommy Emmanuel",
+    "title": "Windy and Warm",
+    "track_id": 257
+  },
+  {
+    "artist": "Rodrigo y Gabriela",
+    "title": "Electric Soul",
+    "track_id": 54
+  },
+  {
+    "artist": "Rodrigo y Gabriela",
+    "title": "Ixtapa",
+    "track_id": 96
+  },
+  {
+    "artist": "Сплин",
+    "title": "За семью печатями",
+    "track_id": 42
+  },
+  {
+    "artist": "Сплин",
+    "title": "Нечего делать внутри",
+    "track_id": 84
+  },
+  {
+    "artist": "Сплин",
+    "title": "Передайте это Гарри Поттеру, если вдруг его встретите",
+    "track_id": 195
+  },
+  {
+    "artist": "Сплин",
+    "title": "Семь восьмых",
+    "track_id": 227
+  },
+  {
+    "artist": "Juno Reactor",
+    "title": "Immaculate Crucifixion",
+    "track_id": 242
+  },
+  {
+    "artist": "Nautilus Pompilius",
+    "title": "Я хочу быть с тобой",
+    "track_id": 132
+  },
+  {
+    "artist": "Nautilus Pompilius",
+    "title": "Хлоп-хлоп",
+    "track_id": 284
+  },
+  {
+    "artist": "Blackmore's Night",
+    "title": "Minstrel Hall",
+    "track_id": 53
+  },
+  {
+    "artist": "ST1M",
+    "title": "Ветер перемен",
+    "track_id": 78
+  },
+  {
+    "artist": "Max Cooper",
+    "title": "Order from Chaos",
+    "track_id": 172
+  },
+  {
+    "artist": "Klaus Schulze",
+    "title": "Peg Leg Dance No. 4",
+    "track_id": 210
+  },
+  {
+    "artist": "Пикник",
+    "title": "Азбука Морзе",
+    "track_id": 252
+  },
+  {
+    "artist": "Пикник",
+    "title": "Азбука Морзе",
+    "track_id": 275
+  },
+  {
+    "artist": "Каста",
+    "title": "Самый счастливый человек",
+    "track_id": 32
+  },
+  {
+    "artist": "Каста",
+    "title": "На порядок выше",
+    "track_id": 33
+  },
+  {
+    "artist": "Каста",
+    "title": "Радиосигналы",
+    "track_id": 34
+  },
+  {
+    "artist": "Каста",
+    "title": "Горячее время",
+    "track_id": 199
+  },
+  {
+    "artist": "Порнофильмы",
+    "title": "Я так соскучился",
+    "track_id": 182
+  },
+  {
+    "artist": "Порнофильмы",
+    "title": "Чужое горе",
+    "track_id": 198
+  },
+  {
+    "artist": "Порнофильмы",
+    "title": "Россия для грустных",
+    "track_id": 268
+  },
+  {
+    "artist": "Corvus Corax",
+    "title": "In Taberna",
+    "track_id": 14
+  },
+  {
+    "artist": "Corvus Corax",
+    "title": "Skál",
+    "track_id": 207
+  },
+  {
+    "artist": "Seatbelts",
+    "title": "Too Good Too Bad",
+    "track_id": 120
+  },
+  {
+    "artist": "Лигалайз",
+    "title": "Я такой же как ты",
+    "track_id": 196
+  },
+  {
+    "artist": "Die Apokalyptischen Reiter",
+    "title": "Ghostriders In The Sky",
+    "track_id": 218
+  },
+  {
+    "artist": "Steeleye Span",
+    "title": "Cam Ye O'er Frae France",
+    "track_id": 258
+  },
+  {
+    "artist": "LOUNA",
+    "title": "Моя оборона",
+    "track_id": 264
+  },
+  {
+    "artist": "Anacondaz",
+    "title": "Дубак",
+    "track_id": 6
+  },
+  {
+    "artist": "Anacondaz",
+    "title": "Смертельное оружие",
+    "track_id": 194
+  },
+  {
+    "artist": "Anacondaz",
+    "title": "Дубак",
+    "track_id": 267
+  },
+  {
+    "artist": "HORUS",
+    "title": "Марс наш",
+    "track_id": 48
+  },
+  {
+    "artist": "The Dreadnoughts",
+    "title": "The Skrigjaargen Polka",
+    "track_id": 73
+  },
+  {
+    "artist": "Найк Борзов",
+    "title": "Лошадка",
+    "track_id": 133
+  },
+  {
+    "artist": "Heidevolk",
+    "title": "Yngwaz´ Zonen",
+    "track_id": 202
+  },
+  {
+    "artist": "Мельница",
+    "title": "Мертвец",
+    "track_id": 216
+  },
+  {
+    "artist": "Дельфин",
+    "title": "744",
+    "track_id": 169
+  },
+  {
+    "artist": "Дельфин",
+    "title": "Я люблю людей",
+    "track_id": 184
+  },
+  {
+    "artist": "Сурганова и Оркестр",
+    "title": "Нас единицы (2015)",
+    "track_id": 74
+  },
+  {
+    "artist": "Yodelice",
+    "title": "Breathe In",
+    "track_id": 128
+  },
+  {
+    "artist": "DEEP-EX-SENSE",
+    "title": "Ветер перемен",
+    "track_id": 269
+  },
+  {
+    "artist": "Atlantida Project",
+    "title": "Чистое зло",
+    "track_id": 82
+  },
+  {
+    "artist": "Atlantida Project",
+    "title": "Иордан",
+    "track_id": 157
+  },
+  {
+    "artist": "Atlantida Project",
+    "title": "Сарва Мангалам",
+    "track_id": 253
+  },
+  {
+    "artist": "Atlantida Project",
+    "title": "Красная королева",
+    "track_id": 265
+  },
+  {
+    "artist": "Алиса",
+    "title": "Rock-N-Roll",
+    "track_id": 226
+  },
+  {
+    "artist": "Владимир Высоцкий",
+    "title": "Мой Гамлет",
+    "track_id": 37
+  },
+  {
+    "artist": "Владимир Высоцкий",
+    "title": "Як-истребитель",
+    "track_id": 95
+  },
+  {
+    "artist": "Владимир Высоцкий",
+    "title": "Песня космических негодяев",
+    "track_id": 271
+  },
+  {
+    "artist": "Влади",
+    "title": "Как это блядь возможно",
+    "track_id": 43
+  },
+  {
+    "artist": "Влади",
+    "title": "Краски не сгущайте",
+    "track_id": 85
+  },
+  {
+    "artist": "Гражданская оборона",
+    "title": "После нас",
+    "track_id": 185
+  },
+  {
+    "artist": "АлоэВера",
+    "title": "Легче",
+    "track_id": 108
+  },
+  {
+    "artist": "АлоэВера",
+    "title": "Ты что такой?",
+    "track_id": 158
+  },
+  {
+    "artist": "АлоэВера",
+    "title": "Несуразная",
+    "track_id": 197
+  },
+  {
+    "artist": "АлоэВера",
+    "title": "Не было",
+    "track_id": 277
+  },
+  {
+    "artist": "Борис Гребенщиков",
+    "title": "Om Namah Shivaya",
+    "track_id": 12
+  },
+  {
+    "artist": "Борис Гребенщиков",
+    "title": "Новый Шелковый Путь",
+    "track_id": 72
+  },
+  {
+    "artist": "Борис Гребенщиков",
+    "title": "Вон Вавилон",
+    "track_id": 75
+  },
+  {
+    "artist": "Борис Гребенщиков",
+    "title": "Если Я Уйду",
+    "track_id": 156
+  },
+  {
+    "artist": "Борис Гребенщиков",
+    "title": "Не судьба",
+    "track_id": 175
+  },
+  {
+    "artist": "Борис Гребенщиков",
+    "title": "Не Было Такой",
+    "track_id": 178
+  },
+  {
+    "artist": "Аквариум",
+    "title": "Поезд в огне",
+    "track_id": 97
+  },
+  {
+    "artist": "Аквариум",
+    "title": "Молитва и пост",
+    "track_id": 126
+  },
+  {
+    "artist": "Аквариум",
+    "title": "Назад в Архангельск",
+    "track_id": 255
+  },
+  {
+    "artist": "Ундервуд",
+    "title": "Разведка с мудаками",
+    "track_id": 263
+  },
+  {
+    "artist": "Аукцыон",
+    "title": "Дорога",
+    "track_id": 117
+  },
+  {
+    "artist": "Аукцыон",
+    "title": "Птица",
+    "track_id": 290
+  },
+  {
+    "artist": "Brazzaville",
+    "title": "Star Called Sun",
+    "track_id": 170
+  },
+  {
+    "artist": "Cruachan",
+    "title": "Is Fuair an Chroí",
+    "track_id": 212
+  },
+  {
+    "artist": "Янка Дягилева",
+    "title": "На чёрный день",
+    "track_id": 285
+  },
+  {
+    "artist": "Владимир Федосеев",
+    "title": "The Snowstorm: VIII. Echoes of waltz",
+    "track_id": 64
+  },
+  {
+    "artist": "Zodiac",
+    "title": "Zodiac",
+    "track_id": 70
+  },
+  {
+    "artist": "Владимир Вавилов",
+    "title": "Сюита для лютни: канцона и танец",
+    "track_id": 203
+  },
+  {
+    "artist": "Ноль",
+    "title": "Буги-вуги каждый день",
+    "track_id": 262
+  },
+  {
+    "artist": "Вера Полозкова",
+    "title": "Текст, который напугал маму",
+    "track_id": 57
+  },
+  {
+    "artist": "Вера Полозкова",
+    "title": "Край у нас широк",
+    "track_id": 152
+  },
+  {
+    "artist": "Александр Пушной",
+    "title": "Вершина",
+    "track_id": 76
+  },
+  {
+    "artist": "Александр Пушной",
+    "title": "Город Омск",
+    "track_id": 89
+  },
+  {
+    "artist": "Александр Пушной",
+    "title": "Надо радоваться!",
+    "track_id": 293
+  },
+  {
+    "artist": "Немного нервно",
+    "title": "Любить мудаков",
+    "track_id": 111
+  },
+  {
+    "artist": "Немного нервно",
+    "title": "Светлей",
+    "track_id": 129
+  },
+  {
+    "artist": "Markscheider Kunst",
+    "title": "Kvasa-Kvasa",
+    "track_id": 183
+  },
+  {
+    "artist": "Nine Treasures",
+    "title": "The Dream About Ancient City (Re-Recorded)",
+    "track_id": 222
+  },
+  {
+    "artist": "Заточка",
+    "title": "Пол – это лава",
+    "track_id": 56
+  },
+  {
+    "artist": "GREEN CROW",
+    "title": "Джонни не узнаю я",
+    "track_id": 247
+  },
+  {
+    "artist": "GREEN CROW",
+    "title": "Элвис за нас",
+    "track_id": 248
+  },
+  {
+    "artist": "GREEN CROW",
+    "title": "Кот пришёл назад",
+    "track_id": 249
+  },
+  {
+    "artist": "GREEN CROW",
+    "title": "Дьявола нет",
+    "track_id": 250
+  },
+  {
+    "artist": "Умка и Броневик",
+    "title": "Сибирь",
+    "track_id": 87
+  },
+  {
+    "artist": "Умка и Броневик",
+    "title": "Нет никакой другой",
+    "track_id": 100
+  },
+  {
+    "artist": "PALC",
+    "title": "Страшно",
+    "track_id": 147
+  },
+  {
+    "artist": "PALC",
+    "title": "Совпадения",
+    "track_id": 173
+  },
+  {
+    "artist": "PALC",
+    "title": "Инфоповод",
+    "track_id": 181
+  },
+  {
+    "artist": "PALC",
+    "title": "День",
+    "track_id": 280
+  },
+  {
+    "artist": "Dobranotch",
+    "title": "Du Host",
+    "track_id": 159
+  },
+  {
+    "artist": "Joker James",
+    "title": "Герои",
+    "track_id": 7
+  },
+  {
+    "artist": "Joker James",
+    "title": "Ничего смешного",
+    "track_id": 256
+  },
+  {
+    "artist": "Joker James",
+    "title": "Страна, которой нет",
+    "track_id": 260
+  },
+  {
+    "artist": "Екатерина Яшникова",
+    "title": "Родная Тишина",
+    "track_id": 110
+  },
+  {
+    "artist": "Екатерина Яшникова",
+    "title": "Пуля",
+    "track_id": 270
+  },
+  {
+    "artist": "Joanna Stingray",
+    "title": "Love is no joke",
+    "track_id": 28
+  },
+  {
+    "artist": "Joanna Stingray",
+    "title": "Rock 'n' Roll's Dead",
+    "track_id": 174
+  },
+  {
+    "artist": "Joanna Stingray",
+    "title": "My generation",
+    "track_id": 299
+  },
+  {
+    "artist": "Эрнесто Заткнитесь",
+    "title": "Стамбул",
+    "track_id": 47
+  },
+  {
+    "artist": "Леона",
+    "title": "Хозяйка медной горы",
+    "track_id": 91
+  },
+  {
+    "artist": "Леона",
+    "title": "Проводник",
+    "track_id": 141
+  },
+  {
+    "artist": "Леона",
+    "title": "Плохо, ничего хорошего",
+    "track_id": 142
+  },
+  {
+    "artist": "Леона",
+    "title": "Пустое святое",
+    "track_id": 143
+  },
+  {
+    "artist": "Леона",
+    "title": "Зверь, которого не бывает",
+    "track_id": 144
+  },
+  {
+    "artist": "Леона",
+    "title": "На металлоломе",
+    "track_id": 153
+  },
+  {
+    "artist": "Леона",
+    "title": "Всё, что мы скажем",
+    "track_id": 160
+  },
+  {
+    "artist": "Михаил Башаков",
+    "title": "Блюз о Блюзе",
+    "track_id": 106
+  },
+  {
+    "artist": "Михаил Башаков",
+    "title": "Еще один кирпич в Стену Плача",
+    "track_id": 107
+  },
+  {
+    "artist": "Ольга Арефьева и Ковчег",
+    "title": "Сансара",
+    "track_id": 116
+  },
+  {
+    "artist": "Ольга Арефьева и Ковчег",
+    "title": "Вертолёт",
+    "track_id": 286
+  },
+  {
+    "artist": "Василий К.",
+    "title": "Не моя",
+    "track_id": 46
+  },
+  {
+    "artist": "Василий К.",
+    "title": "Самое худшее",
+    "track_id": 92
+  },
+  {
+    "artist": "Василий К.",
+    "title": "Держава",
+    "track_id": 168
+  },
+  {
+    "artist": "Василий К.",
+    "title": "Ганеша",
+    "track_id": 217
+  },
+  {
+    "artist": "Василий К.",
+    "title": "Монотеизм",
+    "track_id": 233
+  },
+  {
+    "artist": "Василий К.",
+    "title": "Манхэттен и Берлин",
+    "track_id": 234
+  },
+  {
+    "artist": "Василий К.",
+    "title": "Так бывает",
+    "track_id": 235
+  },
+  {
+    "artist": "Василий К.",
+    "title": "Безобразны и злы",
+    "track_id": 236
+  },
+  {
+    "artist": "Василий К.",
+    "title": "Держава",
+    "track_id": 237
+  },
+  {
+    "artist": "Василий К.",
+    "title": "Если б моя милая...",
+    "track_id": 254
+  },
+  {
+    "artist": "Василий К.",
+    "title": "Игра в ящик",
+    "track_id": 272
+  },
+  {
+    "artist": "Василий К.",
+    "title": "Интеллигенты",
+    "track_id": 283
+  },
+  {
+    "artist": "Василий К.",
+    "title": "Исусы Христосы",
+    "track_id": 300
+  },
+  {
+    "artist": "Тим Скоренко",
+    "title": "Добро пожаловать в Сайлент Хилл",
+    "track_id": 58
+  },
+  {
+    "artist": "Тим Скоренко",
+    "title": "Павшим за Третий Рим",
+    "track_id": 273
+  },
+  {
+    "artist": "Кирилл Комаров",
+    "title": "Мой доктор",
+    "track_id": 246
+  },
+  {
+    "artist": "Brand X Music",
+    "title": "Succession",
+    "track_id": 1
+  },
+  {
+    "artist": "Hugo Strasser",
+    "title": "Letkiss (Letkiss)",
+    "track_id": 2
+  },
+  {
+    "artist": "Hugo Strasser",
+    "title": "Nah Neh Nah",
+    "track_id": 102
+  },
+  {
+    "artist": "grande1899",
+    "title": "Rush E",
+    "track_id": 3
+  },
+  {
+    "artist": "Сергей Фантом",
+    "title": "Бросай филфак",
+    "track_id": 4
+  },
+  {
+    "artist": "Самое Большое Простое Число",
+    "title": "Ты – человек (Cover)",
+    "track_id": 5
+  },
+  {
+    "artist": "Barbatuques",
+    "title": "Andando Pela Africa",
+    "track_id": 8
+  },
+  {
+    "artist": "Drum Ecstasy",
+    "title": "Весна",
+    "track_id": 9
+  },
+  {
+    "artist": "ОН ЮН",
+    "title": "Сообщество друзей, оставленных судьбой",
+    "track_id": 10
+  },
+  {
+    "artist": "FreshmanSound",
+    "title": "Pulse",
+    "track_id": 11
+  },
+  {
+    "artist": "FreshmanSound",
+    "title": "Killer Game",
+    "track_id": 55
+  },
+  {
+    "artist": "Марк Рейзен",
+    "title": "Песня о Щорсе",
+    "track_id": 13
+  },
+  {
+    "artist": "Моя дорогая",
+    "title": "Илья",
+    "track_id": 15
+  },
+  {
+    "artist": "Моя дорогая",
+    "title": "Дура",
+    "track_id": 81
+  },
+  {
+    "artist": "Удмуртская тоска",
+    "title": "Чёрный ворон",
+    "track_id": 16
+  },
+  {
+    "artist": "Удмуртская тоска",
+    "title": "Как будто я",
+    "track_id": 191
+  },
+  {
+    "artist": "José Larralde",
+    "title": "Patagonia",
+    "track_id": 17
+  },
+  {
+    "artist": "Нейро Дюбель",
+    "title": "Погоня",
+    "track_id": 18
+  },
+  {
+    "artist": "Нейро Дюбель",
+    "title": "Вестерн",
+    "track_id": 206
+  },
+  {
+    "artist": "Civil War",
+    "title": "Colours on My Shield",
+    "track_id": 19
+  },
+  {
+    "artist": "Martina Camargo",
+    "title": "Guataquí (Berroche)",
+    "track_id": 21
+  },
+  {
+    "artist": "Larkin Poe",
+    "title": "Sometimes",
+    "track_id": 22
+  },
+  {
+    "artist": "Klayton",
+    "title": "FUBAR",
+    "track_id": 23
+  },
+  {
+    "artist": "Love",
+    "title": "Old Man",
+    "track_id": 26
+  },
+  {
+    "artist": "Ryan Taubert",
+    "title": "The Rebellion",
+    "track_id": 27
+  },
+  {
+    "artist": "Fanfare Vagabontu",
+    "title": "Bubamara",
+    "track_id": 29
+  },
+  {
+    "artist": "Jelonek",
+    "title": "G.Rossini / F.Suppe - Wilhelm Tell - Lekka Kawaleria",
+    "track_id": 30
+  },
+  {
+    "artist": "Yuma",
+    "title": "Hleli",
+    "track_id": 35
+  },
+  {
+    "artist": "Karolina Cicha",
+    "title": "Tipir",
+    "track_id": 38
+  },
+  {
+    "artist": "Ринат Каримов",
+    "title": "Allahumma salli ala Muhammad",
+    "track_id": 39
+  },
+  {
+    "artist": "旅獅乐队",
+    "title": "吉克别嫦",
+    "track_id": 40
+  },
+  {
+    "artist": "Василий Уриевский",
+    "title": "Стих про стих",
+    "track_id": 44
+  },
+  {
+    "artist": "The OM",
+    "title": "Стиль (Skit Ч. Буковски)",
+    "track_id": 49
+  },
+  {
+    "artist": "Danish National Symphony Orchestra",
+    "title": "Interstellar Suite (From \"Interstellar\")",
+    "track_id": 51
+  },
+  {
+    "artist": "MOZART HEROES",
+    "title": "The Unforgiven",
+    "track_id": 52
+  },
+  {
+    "artist": "MOZART HEROES",
+    "title": "I Was Made For Loving You",
+    "track_id": 287
+  },
+  {
+    "artist": "Сергей Никитин",
+    "title": "Раб, который стал царём",
+    "track_id": 59
+  },
+  {
+    "artist": "Vivaldi String Orchestra",
+    "title": "The Four Seasons, Concerto for Violin, Strings and Continuo in F Minor, No. 4, Op. 8, RV 297, \"L'Inverno\" (Winter): I. Allegro Non Molto",
+    "track_id": 61
+  },
+  {
+    "artist": "Be Svendsen",
+    "title": "Nabia",
+    "track_id": 62
+  },
+  {
+    "artist": "Be Svendsen",
+    "title": "Drifter",
+    "track_id": 90
+  },
+  {
+    "artist": "Sly5thAve",
+    "title": "Still D.R.E.",
+    "track_id": 63
+  },
+  {
+    "artist": "Opal Ocean",
+    "title": "Micro Rave",
+    "track_id": 65
+  },
+  {
+    "artist": "Bel Suono",
+    "title": "Симфония № 40 Соль минор, K.550 / Турецкий Марш",
+    "track_id": 66
+  },
+  {
+    "artist": "René Aubry",
+    "title": "Noël aux Balkans",
+    "track_id": 67
+  },
+  {
+    "artist": "René Aubry",
+    "title": "Frénésie",
+    "track_id": 79
+  },
+  {
+    "artist": "René Aubry",
+    "title": "Replay",
+    "track_id": 306
+  },
+  {
+    "artist": "Geek Music",
+    "title": "The Last Of Us- Main Theme",
+    "track_id": 68
+  },
+  {
+    "artist": "Suidakra",
+    "title": "Serenade To A Dream",
+    "track_id": 69
+  },
+  {
+    "artist": "Золотое Перо",
+    "title": "Ладакх",
+    "track_id": 77
+  },
+  {
+    "artist": "Julius Frederick Rinaldi",
+    "title": "The Four Seasons, Concerto for Violin, Strings and Continuo in F Minor, RV 297, \"L'Inverno\": I. Allegro non molto",
+    "track_id": 80
+  },
+  {
+    "artist": "Два Рима",
+    "title": "Пирамида",
+    "track_id": 83
+  },
+  {
+    "artist": "Драконь",
+    "title": "О всадниках и черепахах",
+    "track_id": 88
+  },
+  {
+    "artist": "Драконь",
+    "title": "Найти омелу",
+    "track_id": 112
+  },
+  {
+    "artist": "Драконь",
+    "title": "Песня о вашем друге",
+    "track_id": 113
+  },
+  {
+    "artist": "Драконь",
+    "title": "Испанская романтическая баллада об отважном Диего Вальдесе",
+    "track_id": 192
+  },
+  {
+    "artist": "Евгений Женевьев",
+    "title": "Офис сокровищ",
+    "track_id": 93
+  },
+  {
+    "artist": "Евгений Женевьев",
+    "title": "Идущие",
+    "track_id": 98
+  },
+  {
+    "artist": "Евгений Алексеев",
+    "title": "Аделаида",
+    "track_id": 94
+  },
+  {
+    "artist": "Mark the Hammer",
+    "title": "Back to the Future (Metal)",
+    "track_id": 101
+  },
+  {
+    "artist": "Геннадий Гладков",
+    "title": "Проезд цистерны",
+    "track_id": 103
+  },
+  {
+    "artist": "Евгений Крылатов",
+    "title": "Пираты",
+    "track_id": 104
+  },
+  {
+    "artist": "Stephan Sechi",
+    "title": "Lone Rider",
+    "track_id": 105
+  },
+  {
+    "artist": "Железный Занавес",
+    "title": "Так закалялась сталь",
+    "track_id": 109
+  },
+  {
+    "artist": "Vitamin String Quartet",
+    "title": "The Imperial March",
+    "track_id": 115
+  },
+  {
+    "artist": "The New Synthesizer Experience",
+    "title": "Rockit",
+    "track_id": 119
+  },
+  {
+    "artist": "Skrömta",
+    "title": "Egotrippen",
+    "track_id": 121
+  },
+  {
+    "artist": "Skrömta",
+    "title": "Skrömta-Rappen",
+    "track_id": 127
+  },
+  {
+    "artist": "Teufelstanz",
+    "title": "Skudrinka",
+    "track_id": 122
+  },
+  {
+    "artist": "Lama Tenzin Sangpo",
+    "title": "Kurukulle",
+    "track_id": 123
+  },
+  {
+    "artist": "Byron Metcalf",
+    "title": "Burundi Dreams",
+    "track_id": 124
+  },
+  {
+    "artist": "Byron Metcalf",
+    "title": "Arrival Of The Elves",
+    "track_id": 140
+  },
+  {
+    "artist": "The Brass Knuckle Steampunk Sinfonia",
+    "title": "The Watchmakers' apprentice",
+    "track_id": 125
+  },
+  {
+    "artist": "The Brass Knuckle Steampunk Sinfonia",
+    "title": "The Bowcommoner Gang",
+    "track_id": 136
+  },
+  {
+    "artist": "The Brass Knuckle Steampunk Sinfonia",
+    "title": "God Rest Ye Merry Gentlepunks",
+    "track_id": 151
+  },
+  {
+    "artist": "Ekseption",
+    "title": "Dance Macabre Opus 40",
+    "track_id": 131
+  },
+  {
+    "artist": "Дышать",
+    "title": "Тыпырдатып",
+    "track_id": 135
+  },
+  {
+    "artist": "SuNA Mantra",
+    "title": "Jaya Mata Kali",
+    "track_id": 137
+  },
+  {
+    "artist": "Jambey",
+    "title": "Pumputu",
+    "track_id": 138
+  },
+  {
+    "artist": "Hot Butter",
+    "title": "Palomitas de Maíz",
+    "track_id": 150
+  },
+  {
+    "artist": "Муха",
+    "title": "Микрофон",
+    "track_id": 155
+  },
+  {
+    "artist": "Jody Gwin",
+    "title": "Smooth Criminal",
+    "track_id": 161
+  },
+  {
+    "artist": "Jody Gwin",
+    "title": "The Trooper",
+    "track_id": 298
+  },
+  {
+    "artist": "Xploding Plastix",
+    "title": "Joy Comes in the Morning",
+    "track_id": 162
+  },
+  {
+    "artist": "Faraualla",
+    "title": "Un Due Tre Amen!",
+    "track_id": 163
+  },
+  {
+    "artist": "Faraualla",
+    "title": "Sind'",
+    "track_id": 166
+  },
+  {
+    "artist": "Mathias Duplessy",
+    "title": "The Road with You",
+    "track_id": 164
+  },
+  {
+    "artist": "Mathias Duplessy",
+    "title": "The Good, the Bad, the Ugly",
+    "track_id": 223
+  },
+  {
+    "artist": "Mathias Duplessy",
+    "title": "Speed Mongolia",
+    "track_id": 274
+  },
+  {
+    "artist": "musica nuda",
+    "title": "Il calabron",
+    "track_id": 165
+  },
+  {
+    "artist": "Настежь",
+    "title": "Маршрутка",
+    "track_id": 167
+  },
+  {
+    "artist": "Эдуард Артемьев",
+    "title": "Сибириада",
+    "track_id": 171
+  },
+  {
+    "artist": "Neil Zaza",
+    "title": "Palladio",
+    "track_id": 176
+  },
+  {
+    "artist": "London Festival Orchestra",
+    "title": "Shema - Hava Nagila",
+    "track_id": 180
+  },
+  {
+    "artist": "Карелия",
+    "title": "Место для шага вперёд",
+    "track_id": 186
+  },
+  {
+    "artist": "Thorr",
+    "title": "Overlord",
+    "track_id": 187
+  },
+  {
+    "artist": "Дмитрий Ревякин",
+    "title": "И так, и сяк",
+    "track_id": 188
+  },
+  {
+    "artist": "The Charades",
+    "title": "The Pink Panther Theme",
+    "track_id": 189
+  },
+  {
+    "artist": "IP Orchestra",
+    "title": "Два капитана: Увертюра",
+    "track_id": 190
+  },
+  {
+    "artist": "Дореволюціонный совѣтчикъ",
+    "title": "Метаморфоз!",
+    "track_id": 205
+  },
+  {
+    "artist": "Stoner Train",
+    "title": "Gandalf Took the Drug",
+    "track_id": 208
+  },
+  {
+    "artist": "Seasick Steve",
+    "title": "Roy's Gang",
+    "track_id": 209
+  },
+  {
+    "artist": "ICHI",
+    "title": "Vargan",
+    "track_id": 213
+  },
+  {
+    "artist": "HELVEGEN",
+    "title": "Top",
+    "track_id": 215
+  },
+  {
+    "artist": "The Tossers",
+    "title": "The Pub",
+    "track_id": 219
+  },
+  {
+    "artist": "James Last",
+    "title": "Easy Living / Coming Closer / Popcorn",
+    "track_id": 220
+  },
+  {
+    "artist": "Ÿuma",
+    "title": "Smek l-den by MoM Remix",
+    "track_id": 221
+  },
+  {
+    "artist": "Artem Uzunov",
+    "title": "Solo Darbuka",
+    "track_id": 225
+  },
+  {
+    "artist": "Artem Uzunov",
+    "title": "Davai",
+    "track_id": 302
+  },
+  {
+    "artist": "Artem Uzunov",
+    "title": "Melody of Heartbeat",
+    "track_id": 312
+  },
+  {
+    "artist": "Александр Ф. Скляр",
+    "title": "Скарабей",
+    "track_id": 228
+  },
+  {
+    "artist": "Бахыт Компот",
+    "title": "Бухгалтер Иванов",
+    "track_id": 230
+  },
+  {
+    "artist": "Василий Васильев",
+    "title": "Песня Яшки-цыгана",
+    "track_id": 231
+  },
+  {
+    "artist": "MarimbaMix",
+    "title": "Неуловимые мстители",
+    "track_id": 232
+  },
+  {
+    "artist": "Żywiołak",
+    "title": "Sol Invictus",
+    "track_id": 238
+  },
+  {
+    "artist": "Żywiołak",
+    "title": "Bóstwa",
+    "track_id": 311
+  },
+  {
+    "artist": "Hannes Wader",
+    "title": "Die Moorsoldaten",
+    "track_id": 240
+  },
+  {
+    "artist": "Ростислав Чебыкин",
+    "title": "Воины пафоса",
+    "track_id": 241
+  },
+  {
+    "artist": "Shedda",
+    "title": "Rolling Up, Rolling Down",
+    "track_id": 244
+  },
+  {
+    "artist": "Shedda",
+    "title": "Hungarian",
+    "track_id": 307
+  },
+  {
+    "artist": "Angelo Branduardi",
+    "title": "Sti Giorti Tis Avgi",
+    "track_id": 245
+  },
+  {
+    "artist": "Тропы не врут",
+    "title": "Пессимизм",
+    "track_id": 261
+  },
+  {
+    "artist": "Rokia Traoré",
+    "title": "Dounia",
+    "track_id": 266
+  },
+  {
+    "artist": "Saez",
+    "title": "Mon Européenne",
+    "track_id": 276
+  },
+  {
+    "artist": "Saez",
+    "title": "Bonnie",
+    "track_id": 314
+  },
+  {
+    "artist": "Живица",
+    "title": "Во горнице",
+    "track_id": 278
+  },
+  {
+    "artist": "Schiller",
+    "title": "Zenit",
+    "track_id": 279
+  },
+  {
+    "artist": "Зоя Ященко",
+    "title": "Голубая стрела",
+    "track_id": 281
+  },
+  {
+    "artist": "Элечка",
+    "title": "Хава нагила",
+    "track_id": 291
+  },
+  {
+    "artist": "Joachim Witt",
+    "title": "Dämon",
+    "track_id": 292
+  },
+  {
+    "artist": "Spiritual Seasons",
+    "title": "Villeman",
+    "track_id": 296
+  },
+  {
+    "artist": "Sabo",
+    "title": "Rise",
+    "track_id": 297
+  },
+  {
+    "artist": "Крыс",
+    "title": "Himno de la armada de barlovento de las islas",
+    "track_id": 301
+  },
+  {
+    "artist": "СолоИНК",
+    "title": "Еврейской казачество востало",
+    "track_id": 308
+  },
+  {
+    "artist": "Simply Three",
+    "title": "Believer",
+    "track_id": 309
+  },
+  {
+    "artist": "Gabriel Saban",
+    "title": "Hollywood Madness",
+    "track_id": 310
+  },
+  {
+    "artist": "Gae Bolg",
+    "title": "Totentanz",
+    "track_id": 313
+  }
+]
