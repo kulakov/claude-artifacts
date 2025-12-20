@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Artifacts</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #e5e5e5;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle { color: #737373; margin-bottom: 2rem; }
+        .artifacts-list { list-style: none; }
+        .artifact-item {
+            background: #171717;
+            border: 1px solid #262626;
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-color 0.2s;
+        }
+        .artifact-item:hover { border-color: #404040; }
+        .artifact-name { font-weight: 500; }
+        .artifact-link {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+        .artifact-link:hover { text-decoration: underline; }
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #525252;
+        }
+        footer {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #262626;
+            color: #525252;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Claude Artifacts</h1>
+        <p class="subtitle">Коллекция артефактов из Claude</p>
+        
+        <ul class="artifacts-list" id="artifacts">
+            <!-- Артефакты добавляются сюда -->
+            <li class="artifact-item">
+                <span class="artifact-name">example-demo</span>
+                <a href="artifacts/example-demo.html" class="artifact-link">Открыть →</a>
+            </li>
+        </ul>
+        
+        <footer>
+            Хостинг через GitHub Pages • Доступно из России
+        </footer>
+    </div>
+</body>
+</html>
