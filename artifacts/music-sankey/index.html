@@ -26,12 +26,12 @@
             min-height: 100vh;
             overflow-x: hidden;
         }
-        .sankey-container { padding: 40px 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .sankey-title { font-size: 2.4rem; font-weight: 600; margin-bottom: 8px; letter-spacing: 0.1em; background: linear-gradient(90deg, #fff 0%, #888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .sankey-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; font-family: 'JetBrains Mono', monospace; font-weight: 300; }
+        .sankey-container { padding: 20px 20px; display: flex; flex-direction: column; align-items: center; height: 100vh; overflow: hidden; }
+        .sankey-title { font-size: 1.8rem; font-weight: 600; margin-bottom: 4px; letter-spacing: 0.1em; background: linear-gradient(90deg, #fff 0%, #888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .sankey-subtitle { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 300; }
         #sankeyChart { width: 100%; max-width: 1400px; position: relative; }
         .sankey-link { fill: none; transition: stroke-opacity 0.15s; }
-        .column-labels { display: flex; justify-content: space-between; width: 100%; max-width: 1400px; padding: 0 40px; margin-bottom: 10px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--text-muted); opacity: 0.5; }
+        .column-labels { display: flex; justify-content: space-between; width: 100%; max-width: 1400px; padding: 0 40px; margin-bottom: 6px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--text-muted); opacity: 0.5; }
         .artist-card { position: absolute; width: 70px; height: 70px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 6px; cursor: pointer; transition: all 0.2s ease; z-index: 10; }
         .artist-card .artist-info { position: absolute; left: 100%; top: 50%; transform: translateY(-50%); margin-left: 10px; white-space: nowrap; pointer-events: none; max-width: 120px; }
         .artist-card:hover, .artist-card.frozen { border-color: var(--accent-blue); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
@@ -93,7 +93,7 @@
             { id: 'soviet-rock', name: 'Русский рок', color: '#ff6b6b' },
             { id: 'protest', name: 'Протест', color: '#ffd93d' },
             { id: 'world', name: 'World Music', color: '#6bcb77' },
-            { id: 'spiritual', name: 'Духовность', color: '#9d4edd' },
+            { id: 'spiritual', name: 'Медитатив', color: '#9d4edd' },
             { id: 'author', name: 'Авторская песня', color: '#4ecdc4' },
             { id: 'neofolk', name: 'Неофолк', color: '#a0522d' },
             { id: 'electronic', name: 'Электроника', color: '#00d4ff' },
@@ -160,7 +160,7 @@
             { id: 't2', name: 'Антиавторитарность', color: '#eab308' },
             { id: 't3', name: 'Космополитизм', color: '#3b82f6' },
             { id: 't4', name: 'Меланхолия', color: '#8b5cf6' },
-            { id: 't5', name: 'Духовность', color: '#ec4899' },
+            { id: 't5', name: 'Созерцательность', color: '#ec4899' },
             { id: 't6', name: 'Ирония как защита', color: '#f97316' },
             { id: 't7', name: 'Аутентичность', color: '#14b8a6' },
             { id: 't8', name: 'Интеллигенция', color: '#ef4444' },
@@ -204,8 +204,9 @@
         const chartDiv = document.getElementById('sankeyChart');
         const trackPanel = document.getElementById('trackPanel');
         const width = Math.min(1400, window.innerWidth - 40);
-        const height = 900;
-        const cardWidth = 70, cardHeight = 70;
+        const height = Math.min(900, window.innerHeight - 100);
+        const cardSize = Math.max(40, Math.min(70, (height - 40) / 16 - 4));
+        const cardWidth = cardSize, cardHeight = cardSize;
 
         chartDiv.style.width = width + 'px';
         chartDiv.style.height = height + 'px';
@@ -245,7 +246,7 @@
         artists.forEach(artist => {
             const card = document.createElement('div');
             card.className = 'artist-card';
-            card.style.cssText = `left: ${artist.x}px; top: ${artist.y}px`;
+            card.style.cssText = `left: ${artist.x}px; top: ${artist.y}px; width: ${cardSize}px; height: ${cardSize}px;`;
             card.dataset.id = artist.id;
             const hasImg = artist.image && artist.image.length > 0;
             const imgUrl = hasImg ? imagePath(artist.image) : '';
