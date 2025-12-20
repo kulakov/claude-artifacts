@@ -106,7 +106,15 @@
         .page-author {
             font-size: 11px;
             color: var(--text-muted);
-            margin-top: 14px;
+            margin-top: 24px;
+        }
+        
+        .page-author-inline {
+            font-size: 20px;
+            font-weight: 400;
+            color: var(--text-muted);
+            margin-left: 16px;
+            vertical-align: baseline;
         }
         
         .page-footer {
@@ -129,9 +137,31 @@
         
         .dashboard {
             display: grid;
-            grid-template-rows: auto auto;
-            gap: 12px;
+            grid-template-rows: auto auto auto;
+            gap: 4px;
             padding: 0 40px;
+        }
+        
+        .chart-labels-row {
+            display: flex;
+            position: relative;
+            height: 20px;
+        }
+        
+        .chart-label {
+            position: absolute;
+            font-size: 11px;
+            font-weight: 400;
+            color: var(--text-primary);
+            font-variant: small-caps;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        
+        #labelRating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .charts-row {
@@ -151,10 +181,11 @@
         .card-title {
             font-size: 11px;
             font-weight: 400;
-            color: var(--text-muted);
+            color: var(--text-primary);
             font-variant: small-caps;
             letter-spacing: 0.5px;
             margin-bottom: 4px;
+            text-align: center;
         }
         
         .card-header-with-tabs {
@@ -163,6 +194,10 @@
             justify-content: space-between;
             margin-bottom: 4px;
             flex-shrink: 0;
+        }
+        
+        .card-header-with-tabs .card-title {
+            text-align: left;
         }
         
         .card-header-with-tabs .card-title {
@@ -1224,8 +1259,7 @@
 <body>
     <header class="page-header">
         <div class="page-header-content">
-            <h1 class="page-title" onclick="goHome()" style="cursor:pointer">Формальные паттерны фасилитации в LARP</h1>
-            <p class="page-subtitle">Григорий Ноаров</p>
+            <h1 class="page-title" onclick="goHome()" style="cursor:pointer">Формальные паттерны фасилитации в LARP <span class="page-author-inline">Григорий Ноаров</span></h1>
         </div>
         <button class="theme-toggle desktop-only" id="themeToggleDesktop" title="Переключить тему">◐</button>
     </header>
@@ -1239,26 +1273,28 @@
     </div>
     
     <div class="dashboard">
+        <div class="chart-labels-row" id="chartLabelsRow">
+            <div class="chart-label" id="labelConnections">Связи</div>
+            <div class="chart-label" id="labelProfile">Профиль</div>
+            <div class="chart-label" id="labelRating">
+                <span>Рейтинг</span>
+                <div class="metric-sort-tabs" id="metricSortTabs">
+                    <button class="metric-sort-btn active" data-metric="total" onclick="sortByMetric('total')">Σ</button>
+                    <button class="metric-sort-btn" data-metric="cognitive" onclick="sortByMetric('cognitive')">К</button>
+                    <button class="metric-sort-btn" data-metric="immersion" onclick="sortByMetric('immersion')">П</button>
+                    <button class="metric-sort-btn" data-metric="resistance" onclick="sortByMetric('resistance')">С</button>
+                    <button class="metric-sort-btn" data-metric="time" onclick="sortByMetric('time')">В</button>
+                </div>
+            </div>
+        </div>
         <div class="charts-row">
             <div class="card">
-                <div class="card-title">Связи</div>
                 <div class="chart-container" id="network"></div>
             </div>
             <div class="card">
-                <div class="card-title">Профиль</div>
                 <div class="chart-container" id="radar"></div>
             </div>
             <div class="card">
-                <div class="card-header-with-tabs">
-                    <div class="card-title" id="barsTitle">Рейтинг</div>
-                    <div class="metric-sort-tabs" id="metricSortTabs">
-                        <button class="metric-sort-btn active" data-metric="total" onclick="sortByMetric('total')">Σ</button>
-                        <button class="metric-sort-btn" data-metric="cognitive" onclick="sortByMetric('cognitive')">К</button>
-                        <button class="metric-sort-btn" data-metric="immersion" onclick="sortByMetric('immersion')">П</button>
-                        <button class="metric-sort-btn" data-metric="resistance" onclick="sortByMetric('resistance')">С</button>
-                        <button class="metric-sort-btn" data-metric="time" onclick="sortByMetric('time')">В</button>
-                    </div>
-                </div>
                 <div class="chart-container" id="bars"></div>
             </div>
         </div>
@@ -1957,6 +1993,41 @@
             }
         }
         
+        function positionChartLabels() {
+            if (!window.sankeyCoords) return;
+            
+            const sankeyContainer = document.getElementById('sankeyChart');
+            const labelsRow = document.getElementById('chartLabelsRow');
+            if (!sankeyContainer || !labelsRow) return;
+            
+            const sankeyRect = sankeyContainer.getBoundingClientRect();
+            const labelsRect = labelsRow.getBoundingClientRect();
+            const dashboardPadding = 40; // padding dashboard
+            
+            // Смещение Sankey относительно labels row
+            const offsetX = sankeyRect.left - labelsRect.left;
+            
+            const { sourceX, techniqueX, patternX } = window.sankeyCoords;
+            
+            // Позиционируем заголовки
+            const labelConnections = document.getElementById('labelConnections');
+            const labelProfile = document.getElementById('labelProfile');
+            const labelRating = document.getElementById('labelRating');
+            
+            if (labelConnections) {
+                labelConnections.style.left = (offsetX + sourceX) + 'px';
+                labelConnections.style.transform = 'translateX(-50%)';
+            }
+            if (labelProfile) {
+                labelProfile.style.left = (offsetX + techniqueX) + 'px';
+                labelProfile.style.transform = 'translateX(-50%)';
+            }
+            if (labelRating) {
+                labelRating.style.left = (offsetX + patternX) + 'px';
+                labelRating.style.transform = 'translateX(-50%)';
+            }
+        }
+        
         function drawSankey() {
             const container = document.getElementById('sankeyChart');
             if (!container) return;
@@ -2044,7 +2115,7 @@
                 .nodeWidth(4)
                 .nodePadding(6)
                 .nodeAlign(d3.sankeyJustify)
-                .extent([[100, 22], [width - 140, height - 10]]);
+                .extent([[140, 22], [width - 140, height - 10]]);
             
             const { nodes, links } = sankey({
                 nodes: sankeyNodes.map(d => Object.assign({}, d)),
@@ -2064,13 +2135,16 @@
             const techniqueNodes = nodes.filter(n => n.type === 'technique');
             const patternNodes = nodes.filter(n => n.type === 'pattern');
             
-            const sourceX = sourceNodes.length ? (sourceNodes[0].x0 + sourceNodes[0].x1) / 2 : 100;
+            const sourceX = sourceNodes.length ? (sourceNodes[0].x0 + sourceNodes[0].x1) / 2 : 140;
             const techniqueX = techniqueNodes.length ? (techniqueNodes[0].x0 + techniqueNodes[0].x1) / 2 : width / 2;
             const patternX = patternNodes.length ? (patternNodes[0].x0 + patternNodes[0].x1) / 2 : width - 100;
             
             // Заголовки колонок
             const headerY = 12;
             const totalSources = sources.reduce((sum, s) => sum + s.refs.length, 0);
+            
+            // Сохраняем координаты глобально для выравнивания заголовков
+            window.sankeyCoords = { sourceX, techniqueX, patternX };
             
             svg.append('text')
                 .attr('x', sourceX)
@@ -2101,6 +2175,9 @@
                 .attr('letter-spacing', '0.5px')
                 .attr('fill', getCSSVar('--text-primary'))
                 .text(`паттерны (${patterns.length})`);
+            
+            // Позиционируем заголовки виджетов
+            positionChartLabels();
             
             // Рисуем связи - толщина 1px
             const linkG = svg.append('g')
@@ -2224,7 +2301,7 @@
             // Tooltip для источников с ссылками
             const sourceTooltip = document.createElement('div');
             sourceTooltip.className = 'source-tooltip';
-            sourceTooltip.style.cssText = 'position:absolute;left:10px;top:30px;padding:8px 12px;background:var(--bg-primary);border:1px solid var(--border);border-radius:4px;font-size:11px;color:var(--text-primary);pointer-events:none;opacity:0;transition:opacity 0.15s;z-index:100;line-height:1.8;max-width:280px;';
+            sourceTooltip.style.cssText = 'position:absolute;padding:8px 12px;background:var(--bg-primary);border:1px solid var(--border);border-radius:4px;font-size:11px;color:var(--text-primary);pointer-events:none;opacity:0;transition:opacity 0.15s;z-index:100;line-height:1.8;max-width:280px;';
             container.appendChild(sourceTooltip);
             
             // Стили для ссылок в tooltip
@@ -2240,6 +2317,9 @@
                     sourceTooltip.innerHTML = node.refs.map(r => 
                         `<a href="${r.url}" target="_blank" style="color:var(--accent-blue);text-decoration:none;display:block;padding:2px 0;">${r.name}</a>`
                     ).join('');
+                    // Позиционируем справа от узла источника
+                    sourceTooltip.style.left = (node.x1 + 10) + 'px';
+                    sourceTooltip.style.top = (node.y0) + 'px';
                     sourceTooltip.style.opacity = '1';
                     sourceTooltip.style.pointerEvents = lockedSource !== null ? 'auto' : 'none';
                 } else if (lockedSource === null) {
@@ -2585,14 +2665,15 @@
             const container = document.getElementById('radar');
             const rect = container.getBoundingClientRect();
             const size = Math.min(rect.width, rect.height);
-            const cx = rect.width / 2, cy = size / 2;
-            const radius = size * 0.38;
+            const cx = rect.width / 2;
+            const cy = rect.height / 2; // Центр по вертикали контейнера
+            const radius = size * 0.26; // Уменьшить радиус для меток
             const axisColor = currentTheme === 'dark' ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.2)';
             const gridColor = currentTheme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.15)';
             const labelColor = getCSSVar('--text-muted');
 
             d3.select('#radar').selectAll('*').remove();
-            const svg = d3.select('#radar').append('svg').attr('width', rect.width).attr('height', size);
+            const svg = d3.select('#radar').append('svg').attr('width', rect.width).attr('height', rect.height);
             const angleSlice = (Math.PI * 2) / metrics.length;
 
             for (let level = 1; level <= 5; level++) {
@@ -2610,7 +2691,10 @@
                     .attr('x2', cx + radius * Math.cos(angle)).attr('y2', cy + radius * Math.sin(angle)).attr('stroke', axisColor);
                 const labelR = radius + 12;
                 const lx = cx + labelR * Math.cos(angle);
-                const ly = cy + labelR * Math.sin(angle);
+                let ly = cy + labelR * Math.sin(angle);
+                // Корректировка для верхней и нижней подписи
+                if (i === 0) ly -= 2; // top
+                if (i === 2) ly += 2; // bottom
                 // Позиционирование: 0=top, 1=right, 2=bottom, 3=left
                 const anchors = ['middle', 'start', 'middle', 'end'];
                 const baselines = ['auto', 'middle', 'hanging', 'middle'];
