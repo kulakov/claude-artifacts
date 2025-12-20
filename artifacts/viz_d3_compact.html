@@ -78,7 +78,7 @@
         }
         
         .page-header {
-            padding: 24px 40px 16px;
+            padding: 16px 40px 12px;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
@@ -89,10 +89,10 @@
         }
         
         .page-title {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 600;
             color: var(--text-primary);
-            margin: 0 0 4px;
+            margin: 0;
             letter-spacing: -0.3px;
         }
         
@@ -104,14 +104,14 @@
         }
         
         .page-author {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-muted);
-            margin-top: 8px;
+            margin-top: 14px;
         }
         
         .page-footer {
-            padding: 12px 40px;
-            font-size: 12px;
+            padding: 8px 40px;
+            font-size: 11px;
             color: var(--text-muted);
             text-align: center;
         }
@@ -129,16 +129,16 @@
         
         .dashboard {
             display: grid;
-            grid-template-rows: minmax(180px, auto) minmax(300px, auto);
-            gap: 24px;
+            grid-template-rows: auto auto;
+            gap: 12px;
             padding: 0 40px;
         }
         
         .charts-row {
             display: grid;
             grid-template-columns: 1.2fr 1.2fr 1fr;
-            gap: 24px;
-            min-height: 180px;
+            gap: 16px;
+            align-items: start;
         }
         
         .card {
@@ -149,19 +149,19 @@
         }
         
         .card-title {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 400;
             color: var(--text-muted);
             font-variant: small-caps;
             letter-spacing: 0.5px;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
         
         .card-header-with-tabs {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             flex-shrink: 0;
         }
         
@@ -246,11 +246,14 @@
         .chart-container {
             position: relative;
             height: 140px;
-            overflow-y: auto;
+        }
+        
+        #network, #radar {
+            height: 140px;
         }
         
         #bars {
-            overflow-y: auto;
+            height: 140px;
         }
         
         /* Mobile navigation - hidden on desktop */
@@ -472,23 +475,18 @@
         
         /* Sankey diagram */
         .sankey-container {
-            padding: 32px 20px;
+            padding: 8px 20px 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
         
         .sankey-title {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-        }
-        
-        .sankey-subtitle {
             font-size: 14px;
+            font-weight: 400;
             color: var(--text-muted);
-            margin-bottom: 24px;
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
         }
         
         #sankeyChart {
@@ -1172,13 +1170,9 @@
             }
             
             .sankey-title {
-                font-size: 16px;
-            }
-            
-            .sankey-subtitle {
-                font-size: 11px;
-                margin-bottom: 16px;
+                font-size: 12px;
                 text-align: center;
+                margin-bottom: 16px;
             }
             
             #sankeyChart {
@@ -1678,17 +1672,74 @@
             }
             if (window.barGroups) {
                 window.barGroups.classed('hover-dim', d => d.id !== pattern.id);
+                // Показать значение для подсвеченного паттерна
+                window.barGroups.each(function(d) {
+                    d3.select(this).select('.bar-value').attr('opacity', d.id === pattern.id ? 1 : 0);
+                });
             }
             if (window.heatmapCells) {
                 window.heatmapCells.classed('hover-dim', d => d.pattern.id !== pattern.id);
+            }
+            // Подсветка в Sankey
+            if (window.sankeyHighlight) {
+                window.sankeyHighlight(pattern.id, true);
             }
         }
         
         function clearHighlight() {
             if (window.networkNodes) window.networkNodes.classed('hover-dim', false);
-            if (window.barGroups) window.barGroups.classed('hover-dim', false);
+            if (window.barGroups) {
+                window.barGroups.classed('hover-dim', false);
+                // Скрыть все значения кроме выбранного
+                window.barGroups.each(function(d) {
+                    const isSelected = selectedPattern && d.id === selectedPattern.id;
+                    d3.select(this).select('.bar-value').attr('opacity', isSelected ? 1 : 0);
+                });
+            }
             if (window.heatmapCells) window.heatmapCells.classed('hover-dim', false);
+            // Сброс подсветки Sankey
+            if (window.sankeyHighlight) {
+                window.sankeyHighlight(null, false);
+            }
         }
+        
+        // Hover подсветка всех виджетов + временный радар
+        let hoverPattern = null;
+        
+        function crossHighlight(pattern) {
+            if (hoverPattern === pattern) return;
+            hoverPattern = pattern;
+            highlightPattern(pattern);
+            // Временно показать радар для этого паттерна
+            drawRadar(pattern);
+        }
+        
+        function crossClearHighlight() {
+            // Не очищаем при mouseleave - только при клике вне или новом hover
+        }
+        
+        function forceСlearHighlight() {
+            const hadHoverPattern = hoverPattern !== null;
+            hoverPattern = null;
+            if (hadHoverPattern) {
+                clearHighlight();
+                // Вернуть радар к выбранному паттерну
+                drawRadar(selectedPattern);
+            }
+            // Всегда сбрасывать Sankey подсветку
+            if (window.sankeyClearHighlight) {
+                window.sankeyClearHighlight();
+            }
+        }
+        
+        // Клик вне виджетов сбрасывает подсветку
+        document.addEventListener('click', (e) => {
+            // Если клик не по интерактивному элементу
+            const isInteractive = e.target.closest('.node, .bar-row, .cell, #sankeyChart');
+            if (!isInteractive) {
+                forceСlearHighlight();
+            }
+        });
         
         function toggleAllTechniques() {
             const items = document.querySelectorAll('.technique-item');
@@ -1786,8 +1837,6 @@
             if (!pattern) {
                 panel.innerHTML = `
                     <div class="sankey-container">
-                        <div class="sankey-title">Конденсация знаний</div>
-                        <div class="sankey-subtitle">8 категорий источников → 24 приёма → 14 паттернов</div>
                         <div id="sankeyChart"></div>
                     </div>
                 `;
@@ -1913,7 +1962,7 @@
             if (!container) return;
             
             const width = Math.min(container.clientWidth, 1000);
-            const height = 700;
+            const height = 540;
             
             // Подготовка данных
             const sankeyNodes = [];
@@ -1995,7 +2044,7 @@
                 .nodeWidth(4)
                 .nodePadding(6)
                 .nodeAlign(d3.sankeyJustify)
-                .extent([[100, 28], [width - 140, height - 20]]);
+                .extent([[100, 22], [width - 140, height - 10]]);
             
             const { nodes, links } = sankey({
                 nodes: sankeyNodes.map(d => Object.assign({}, d)),
@@ -2021,6 +2070,8 @@
             
             // Заголовки колонок
             const headerY = 12;
+            const totalSources = sources.reduce((sum, s) => sum + s.refs.length, 0);
+            
             svg.append('text')
                 .attr('x', sourceX)
                 .attr('y', headerY)
@@ -2029,7 +2080,7 @@
                 .attr('font-variant', 'small-caps')
                 .attr('letter-spacing', '0.5px')
                 .attr('fill', getCSSVar('--text-primary'))
-                .text('источники');
+                .text(`источники (${totalSources})`);
             
             svg.append('text')
                 .attr('x', techniqueX)
@@ -2039,7 +2090,7 @@
                 .attr('font-variant', 'small-caps')
                 .attr('letter-spacing', '0.5px')
                 .attr('fill', getCSSVar('--text-primary'))
-                .text('приёмы');
+                .text(`приёмы (${techniques.length})`);
             
             svg.append('text')
                 .attr('x', patternX)
@@ -2049,7 +2100,7 @@
                 .attr('font-variant', 'small-caps')
                 .attr('letter-spacing', '0.5px')
                 .attr('fill', getCSSVar('--text-primary'))
-                .text('паттерны');
+                .text(`паттерны (${patterns.length})`);
             
             // Рисуем связи - толщина 1px
             const linkG = svg.append('g')
@@ -2087,7 +2138,7 @@
                 .attr('opacity', d => d.type === 'technique' ? 0.4 : 0.8)
                 .attr('rx', 1);
             
-            // Подписи для источников (слева)
+            // Подписи для источников (слева) - с количеством источников в категории
             nodeG.filter(d => d.type === 'source')
                 .append('text')
                 .attr('x', d => d.x0 - 6)
@@ -2098,7 +2149,7 @@
                 .attr('fill', getCSSVar('--text-muted'))
                 .style('cursor', 'pointer')
                 .style('letter-spacing', '0.3px')
-                .text(d => d.name);
+                .text(d => `${d.name} (${d.refs.length})`);
             
             // Подписи для приёмов (под узлом, короткие) - только номер
             nodeG.filter(d => d.type === 'technique')
@@ -2305,10 +2356,35 @@
             
             // События hover
             nodeG.on('mouseenter', (e, d) => {
-                    if (lockedSource === null) highlightNode(d, true);
+                    if (lockedSource === null) {
+                        // Сначала сбросить предыдущую подсветку если она была
+                        if (window.sankeyLastNode && window.sankeyLastNode !== d) {
+                            highlightNode(window.sankeyLastNode, false);
+                        }
+                        
+                        // Для паттернов интегрируем с глобальной подсветкой
+                        if (d.type === 'pattern') {
+                            const pattern = patterns.find(p => p.id === d.id);
+                            if (pattern) {
+                                // Использовать crossHighlight для синхронизации всех виджетов
+                                // crossHighlight вызовет sankeyHighlight который вызовет highlightNode
+                                crossHighlight(pattern);
+                                window.sankeyLastNode = d;
+                            }
+                        } else {
+                            // Для не-паттернов: сбросить другие виджеты и подсветить только Sankey
+                            if (hoverPattern) {
+                                clearHighlight();
+                                hoverPattern = null;
+                                drawRadar(selectedPattern);
+                            }
+                            highlightNode(d, true);
+                            window.sankeyLastNode = d;
+                        }
+                    }
                 })
                 .on('mouseleave', (e, d) => {
-                    if (lockedSource === null) highlightNode(d, false);
+                    // Не очищаем - подсветка остается
                 });
             
             // Клик на источник - фиксация состояния
@@ -2348,6 +2424,45 @@
                     const pattern = patterns.find(p => p.id === d.id);
                     if (pattern) selectPattern(pattern);
                 });
+            
+            // Глобальная функция для подсветки паттерна из других виджетов
+            window.sankeyHighlight = function(patternId, highlight) {
+                // Сначала сбросить предыдущую подсветку если была
+                if (window.sankeyLastNode && !highlight) {
+                    // Полный сброс запрошен
+                    linkG.attr('stroke-opacity', 0.25);
+                    nodeG.select('rect').attr('opacity', d => d.type === 'technique' ? 0.4 : 0.8);
+                    nodeG.selectAll('.label-text').attr('opacity', d => d.type === 'technique' ? 0.6 : 0.9);
+                    // Скрыть fullname
+                    fullnameLayer.selectAll('.technique-fullname-group').attr('opacity', 0);
+                    nodeG.selectAll('.technique-label').attr('opacity', 0.6);
+                    window.sankeyLastNode = null;
+                    return;
+                }
+                
+                if (!patternId) return;
+                
+                // Сбросить предыдущую подсветку Sankey перед новой
+                if (window.sankeyLastNode) {
+                    highlightNode(window.sankeyLastNode, false);
+                }
+                
+                // Найти узел паттерна
+                const patternNode = nodes.find(n => n.type === 'pattern' && n.id === patternId);
+                if (!patternNode) return;
+                
+                // Подсветить как hover
+                highlightNode(patternNode, true);
+                window.sankeyLastNode = patternNode;
+            };
+            
+            // Функция сброса подсветки Sankey
+            window.sankeyClearHighlight = function() {
+                if (window.sankeyLastNode) {
+                    highlightNode(window.sankeyLastNode, false);
+                    window.sankeyLastNode = null;
+                }
+            };
         }
 
         function drawNetwork() {
@@ -2412,9 +2527,15 @@
             
             node.append('text').attr('text-anchor', 'middle').attr('dy', '0.3em').attr('font-size', '10px').text(d => d.id).attr('fill', '#fff');
             node.on('click', (e, d) => selectPatternMobile(d))
-                .on('mouseenter', (e, d) => showTooltip(e, d))
+                .on('mouseenter', (e, d) => {
+                    crossHighlight(d);
+                    showTooltip(e, d);
+                })
                 .on('mousemove', (e) => positionTooltip(e))
-                .on('mouseleave', hideTooltip);
+                .on('mouseleave', () => {
+                    crossClearHighlight();
+                    hideTooltip();
+                });
 
             const padding = 15;
             const getNodeRadius = (d) => 5 + getTotal(d) * 0.35;
@@ -2441,7 +2562,7 @@
                     
                     // Стили
                     el.attr('stroke', isActive ? activeEdgeColor : linkColor)
-                      .attr('stroke-width', isActive ? 2 : 1)
+                      .attr('stroke-width', 1)
                       .attr('opacity', isActive ? 0.9 : (selectedPattern ? 0.15 : 0.35));
                     
                     // Координаты
@@ -2590,9 +2711,9 @@
             const sorted = [...patterns].sort((a, b) => getValue(b) - getValue(a));
             
             const barHeight = 1;
-            const rowSpacing = 22;
+            const rowSpacing = 10;
             const svgHeight = sorted.length * rowSpacing + 10;
-            const maxWidth = width - 20;
+            const maxWidth = width - 30;
 
             d3.select('#bars').selectAll('*').remove();
             const svg = d3.select('#bars').append('svg').attr('width', width).attr('height', svgHeight);
@@ -2600,7 +2721,7 @@
             const bars = svg.selectAll('g').data(sorted).join('g')
                 .attr('class', 'bar-row')
                 .attr('data-pattern-id', d => d.id)
-                .attr('transform', (d, i) => `translate(0, ${i * rowSpacing + rowSpacing / 2})`);
+                .attr('transform', (d, i) => `translate(0, ${i * rowSpacing + rowSpacing / 2 + 2})`);
             
             // Невидимая широкая зона для ховера
             bars.append('rect').attr('x', 0).attr('y', -rowSpacing/2).attr('width', width).attr('height', rowSpacing).attr('fill', 'transparent').attr('class', 'hover-zone');
@@ -2647,23 +2768,31 @@
                 });
             }
             
-            // Значение справа
+            // Значение справа - скрыто по умолчанию
             bars.append('text')
+                .attr('class', 'bar-value')
                 .attr('x', d => 4 + (getValue(d) / maxValue) * maxWidth)
                 .attr('y', 0)
-                .attr('dominant-baseline', 'middle').attr('font-size', '12px').attr('font-weight', '600')
+                .attr('dominant-baseline', 'middle').attr('font-size', '10px').attr('font-weight', '600')
                 .attr('fill', d => {
                     if (selectedPattern && d.id === selectedPattern.id) {
                         return isTotal ? getCSSVar('--text-primary') : metricColors[currentSortMetric];
                     }
                     return valueColor;
                 })
+                .attr('opacity', d => (selectedPattern && d.id === selectedPattern.id) ? 1 : 0)
                 .text(d => getValue(d));
             
             bars.on('click', (e, d) => selectPatternMobile(d))
-                .on('mouseenter', (e, d) => showTooltip(e, d))
+                .on('mouseenter', function(e, d) {
+                    crossHighlight(d);
+                    showTooltip(e, d);
+                })
                 .on('mousemove', (e) => positionTooltip(e))
-                .on('mouseleave', hideTooltip);
+                .on('mouseleave', function(e, d) {
+                    crossClearHighlight();
+                    hideTooltip();
+                });
 
             window.barGroups = bars;
         }
@@ -2744,9 +2873,15 @@
                 .style('cursor', 'pointer');
             
             cells.on('click', (e, d) => selectPatternMobile(d.pattern))
-                .on('mouseenter', (e, d) => showTooltip(e, d.pattern))
+                .on('mouseenter', (e, d) => {
+                    crossHighlight(d.pattern);
+                    showTooltip(e, d.pattern);
+                })
                 .on('mousemove', (e) => positionTooltip(e))
-                .on('mouseleave', hideTooltip);
+                .on('mouseleave', () => {
+                    crossClearHighlight();
+                    hideTooltip();
+                });
 
             window.heatmapCells = cells;
         }
