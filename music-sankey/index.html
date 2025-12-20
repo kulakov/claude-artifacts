@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Музыкальная ДНК — Sankey</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+
+    <style>
+        :root {
+            --text-primary: #fafafa;
+            --text-muted: #a1a1aa;
+            --text-dim: #71717a;
+            --card-bg: #1f1f28;
+            --card-border: #2a2a3a;
+            --accent-blue: #60a5fa;
+            --accent-green: #22c55e;
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #1a1a2e;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-primary) 100%);
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .sankey-container { padding: 40px 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .sankey-title { font-size: 2.4rem; font-weight: 600; margin-bottom: 8px; letter-spacing: 0.1em; background: linear-gradient(90deg, #fff 0%, #888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .sankey-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; font-family: 'JetBrains Mono', monospace; font-weight: 300; }
+        #sankeyChart { width: 100%; max-width: 1400px; position: relative; }
+        .sankey-link { fill: none; transition: stroke-opacity 0.15s; }
+        .column-labels { display: flex; justify-content: space-between; width: 100%; max-width: 1400px; padding: 0 40px; margin-bottom: 10px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--text-muted); opacity: 0.5; }
+        .artist-card { position: absolute; width: 140px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 10px; cursor: pointer; transition: all 0.2s ease; z-index: 10; }
+        .artist-card:hover, .artist-card.frozen { border-color: var(--accent-blue); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+        .artist-card.frozen { border-color: var(--accent-green); box-shadow: 0 0 20px rgba(34, 197, 94, 0.3); }
+        .artist-card.dimmed { opacity: 0.15; transform: scale(0.98); }
+        .artist-card.highlighted { border-color: var(--accent-blue); box-shadow: 0 0 20px rgba(96, 165, 250, 0.3); }
+        .artist-avatar { width: 100%; height: 55px; border-radius: 4px; margin-bottom: 8px; position: relative; overflow: hidden; background-size: cover; background-position: center top; }
+        .artist-avatar .fallback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 24px; opacity: 0; transition: opacity 0.3s; }
+        .artist-avatar.no-img .fallback { opacity: 1; }
+        .artist-name { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 400; color: var(--text-primary); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .artist-desc { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .genre-label, .trait-label { position: absolute; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; transition: opacity 0.15s; }
+        .genre-label { text-align: right; padding-right: 8px; }
+        .trait-label { padding-left: 8px; display: flex; align-items: center; gap: 6px; }
+        .genre-label.dimmed, .trait-label.dimmed { opacity: 0.15; }
+        .genre-dot { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; vertical-align: middle; }
+        .trait-bar { width: 4px; height: 20px; border-radius: 2px; }
+        .track-panel { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); width: 300px; max-height: 75vh; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 16px; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.2s; overflow-y: auto; }
+        .track-panel.visible { opacity: 1; pointer-events: auto; }
+        .track-panel.frozen { border-color: var(--accent-green); box-shadow: 0 0 30px rgba(34, 197, 94, 0.2); }
+        .track-panel-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--card-border); }
+        .track-panel-image { width: 64px; height: 64px; border-radius: 6px; overflow: hidden; flex-shrink: 0; background-size: cover; background-position: center; }
+        .track-panel-title { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 400; }
+        .track-panel-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); }
+        .track-panel-hint { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--accent-green); margin-top: 4px; }
+        .track-list { list-style: none; }
+        .track-item { display: flex; align-items: center; gap: 8px; padding: 8px; margin: 4px 0; border-radius: 6px; cursor: pointer; transition: background 0.15s; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+        .track-item:hover { background: rgba(96, 165, 250, 0.15); }
+        .track-item .spotify-icon { width: 16px; height: 16px; color: #1DB954; flex-shrink: 0; }
+        .track-item .track-name { flex: 1; color: var(--text-primary); line-height: 1.3; }
+        .track-item .track-arrow { color: var(--text-dim); font-size: 10px; }
+        .close-btn { position: absolute; top: 12px; right: 12px; width: 24px; height: 24px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 18px; display: none; }
+        .track-panel.frozen .close-btn { display: block; }
+        .close-btn:hover { color: var(--text-primary); }
+        @media (max-width: 1200px) { .artist-card { width: 120px; padding: 8px; } .artist-avatar { height: 45px; } .artist-name { font-size: 10px; } .track-panel { width: 260px; right: 10px; } }
+        @media (max-width: 900px) { .sankey-container { padding: 20px 10px; } .sankey-title { font-size: 1.6rem; } .artist-card { width: 100px; padding: 6px; } .artist-avatar { height: 38px; } .artist-name { font-size: 9px; } .artist-desc { display: none; } .genre-label, .trait-label { font-size: 9px; } .track-panel { width: 220px; } }
+    </style>
+</head>
+<body>
+    <div class="sankey-container" id="container">
+        <h1 class="sankey-title">МУЗЫКАЛЬНАЯ ДНК</h1>
+        <p class="sankey-subtitle">12 жанров → 16 артистов → 8 черт личности</p>
+        <div class="column-labels"><span>ЖАНРЫ</span><span>АРТИСТЫ</span><span>ЛИЧНОСТЬ</span></div>
+        <div id="sankeyChart"></div>
+    </div>
+    <div class="track-panel" id="trackPanel">
+        <button class="close-btn" id="closeBtn">×</button>
+        <div class="track-panel-header">
+            <div class="track-panel-image" id="panelImage"></div>
+            <div><div class="track-panel-title" id="panelTitle"></div><div class="track-panel-subtitle" id="panelSubtitle"></div><div class="track-panel-hint" id="panelHint"></div></div>
+        </div>
+        <ul class="track-list" id="trackList"></ul>
+    </div>
+    <script>
+        // Local images path - for GitHub Pages use './images/'
+        const imagePath = (filename) => `./images/${filename}`;
+
+        const genres = [
+            { id: 'soviet-rock', name: 'Русский рок', color: '#ff6b6b' },
+            { id: 'protest', name: 'Протест', color: '#ffd93d' },
+            { id: 'world', name: 'World Music', color: '#6bcb77' },
+            { id: 'spiritual', name: 'Духовность', color: '#9d4edd' },
+            { id: 'author', name: 'Авторская песня', color: '#4ecdc4' },
+            { id: 'neofolk', name: 'Неофолк', color: '#a0522d' },
+            { id: 'electronic', name: 'Электроника', color: '#00d4ff' },
+            { id: 'virtuoso', name: 'Виртуозы', color: '#ff9f1c' },
+            { id: 'irony', name: 'Ирония', color: '#ff85a2' },
+            { id: 'soundtrack', name: 'Саундтреки', color: '#7b68ee' },
+            { id: 'modern-rap', name: 'Рэп', color: '#e63946' },
+            { id: 'melancholy', name: 'Меланхолия', color: '#457b9d' },
+        ];
+
+        const artists = [
+            { id: 'a1', name: 'КИНО', desc: 'Виктор Цой, русский рок 80-х', emoji: '⭐', bgColor: '#ff6b6b',
+              image: 'kino.jpg',
+              tracks: [{ title: 'Перемен', search: 'КИНО Перемен' },{ title: 'Группа крови', search: 'КИНО Группа крови' },{ title: 'Город', search: 'КИНО Город' },{ title: 'Муравейник', search: 'КИНО Муравейник' }]},
+            { id: 'a2', name: 'Высоцкий', desc: 'Бард, поэт, актёр', emoji: '🎭', bgColor: '#4ecdc4',
+              image: 'vysotsky.jpg',
+              tracks: [{ title: 'Мой Гамлет', search: 'Высоцкий Мой Гамлет' },{ title: 'Як-истребитель', search: 'Высоцкий Як-истребитель' },{ title: 'Песня космических негодяев', search: 'Высоцкий Песня космических негодяев' }]},
+            { id: 'a3', name: 'Noize MC', desc: 'Протестный рэп, социальная лирика', emoji: '🔥', bgColor: '#ffd93d',
+              image: 'noize-mc.jpg',
+              tracks: [{ title: 'Иордан', search: 'Noize MC Иордан' },{ title: 'Всё как у людей', search: 'Noize MC Всё как у людей' },{ title: 'Столетняя война', search: 'Noize MC Столетняя война' },{ title: 'Вояджер-1', search: 'Noize MC Вояджер' },{ title: 'Почитай старших', search: 'Noize MC Почитай старших' }]},
+            { id: 'a4', name: 'БГ', desc: 'Аквариум, духовные поиски', emoji: '🕉️', bgColor: '#9d4edd',
+              image: 'bg.jpg',
+              tracks: [{ title: 'Om Namah Shivaya', search: 'Гребенщиков Om Namah Shivaya' },{ title: 'Поезд в огне', search: 'Аквариум Поезд в огне' },{ title: 'Вон Вавилон', search: 'Гребенщиков Вон Вавилон' },{ title: 'Назад в Архангельск', search: 'Аквариум Назад в Архангельск' }]},
+            { id: 'a5', name: 'Василий К.', desc: 'Авторский сарказм и ирония', emoji: '😏', bgColor: '#ff85a2',
+              image: '',
+              tracks: [{ title: 'Не моя', search: 'Василий К Не моя' },{ title: 'Держава', search: 'Василий К Держава' },{ title: 'Ганеша', search: 'Василий К Ганеша' },{ title: 'Интеллигенты', search: 'Василий К Интеллигенты' }]},
+            { id: 'a6', name: 'Heilung', desc: 'Скандинавский пейган', emoji: '🦌', bgColor: '#a0522d',
+              image: 'heilung.jpg',
+              tracks: [{ title: 'Fylgija Ear', search: 'Heilung Fylgija Ear' },{ title: 'Hakkerskaldyr', search: 'Heilung Hakkerskaldyr' }]},
+            { id: 'a7', name: 'Hans Zimmer', desc: 'Эпические саундтреки', emoji: '🎬', bgColor: '#7b68ee',
+              image: 'hans-zimmer.jpg',
+              tracks: [{ title: 'Interstellar Suite', search: 'Hans Zimmer Interstellar Suite' },{ title: 'Dust', search: 'Hans Zimmer Dust Interstellar' }]},
+            { id: 'a8', name: 'Rodrigo y Gabriela', desc: 'Виртуозы акустической гитары', emoji: '🎸', bgColor: '#ff9f1c',
+              image: 'rodrigo-gabriela.jpg',
+              tracks: [{ title: 'Electric Soul', search: 'Rodrigo y Gabriela Electric Soul' },{ title: 'Ixtapa', search: 'Rodrigo y Gabriela Ixtapa' }]},
+            { id: 'a9', name: 'Каста', desc: 'Социальный рэп Ростова', emoji: '🎤', bgColor: '#e63946',
+              image: '',
+              tracks: [{ title: 'Самый счастливый человек', search: 'Каста Самый счастливый человек' },{ title: 'На порядок выше', search: 'Каста На порядок выше' },{ title: 'Радиосигналы', search: 'Каста Радиосигналы' }]},
+            { id: 'a10', name: 'Nick Cave', desc: 'Тёмная романтика, готика', emoji: '🖤', bgColor: '#457b9d',
+              image: 'nick-cave.jpg',
+              tracks: [{ title: 'Papa Won\'t Leave You, Henry', search: 'Nick Cave Papa Wont Leave You Henry' },{ title: 'Red Right Hand', search: 'Nick Cave Red Right Hand' }]},
+            { id: 'a11', name: 'Nine Treasures', desc: 'Монгольский фолк-метал', emoji: '🏔️', bgColor: '#6bcb77',
+              image: 'nine-treasures.jpg',
+              tracks: [{ title: 'The Dream About Ancient City', search: 'Nine Treasures Dream Ancient City' }]},
+            { id: 'a12', name: 'Jean-Michel Jarre', desc: 'Пионер электронной музыки', emoji: '🌌', bgColor: '#00d4ff',
+              image: 'jarre.jpg',
+              tracks: [{ title: 'Equinoxe, Pt. 4', search: 'Jean Michel Jarre Equinoxe 4' }]},
+            { id: 'a13', name: 'Пушной', desc: 'Ироничный интеллектуал', emoji: '🤓', bgColor: '#ff85a2',
+              image: 'pushnoy.jpg',
+              tracks: [{ title: 'Вершина', search: 'Пушной Вершина' },{ title: 'Город Омск', search: 'Пушной Город Омск' }]},
+            { id: 'a14', name: 'Oxxxymiron', desc: 'Литературный баттл-рэп', emoji: '📚', bgColor: '#ffd93d',
+              image: 'oxxxymiron.jpg',
+              tracks: [{ title: 'Где нас нет', search: 'Oxxxymiron Где нас нет' },{ title: 'Город под подошвой', search: 'Oxxxymiron Город под подошвой' }]},
+            { id: 'a15', name: 'Corvus Corax', desc: 'Средневековый неофолк', emoji: '🏰', bgColor: '#a0522d',
+              image: 'corvus-corax.jpg',
+              tracks: [{ title: 'In Taberna', search: 'Corvus Corax In Taberna' },{ title: 'Skál', search: 'Corvus Corax Skal' }]},
+            { id: 'a16', name: 'Krishna Das', desc: 'Киртан, мантры', emoji: '🙏', bgColor: '#9d4edd',
+              image: 'krishna-das.jpg',
+              tracks: [{ title: 'Hallelujah Chalisa', search: 'Krishna Das Hallelujah Chalisa' }]},
+        ];
+
+        const traits = [
+            { id: 't1', name: 'Открытость опыту', color: '#22c55e' },
+            { id: 't2', name: 'Антиавторитарность', color: '#eab308' },
+            { id: 't3', name: 'Космополитизм', color: '#3b82f6' },
+            { id: 't4', name: 'Меланхолия', color: '#8b5cf6' },
+            { id: 't5', name: 'Духовность', color: '#ec4899' },
+            { id: 't6', name: 'Ирония как защита', color: '#f97316' },
+            { id: 't7', name: 'Аутентичность', color: '#14b8a6' },
+            { id: 't8', name: 'Интеллигенция', color: '#ef4444' },
+        ];
+
+        const genreToArtist = [
+            { source: 'soviet-rock', target: 'a1' },{ source: 'soviet-rock', target: 'a2' },
+            { source: 'protest', target: 'a3' },{ source: 'protest', target: 'a14' },
+            { source: 'world', target: 'a11' },{ source: 'world', target: 'a8' },
+            { source: 'spiritual', target: 'a4' },{ source: 'spiritual', target: 'a16' },
+            { source: 'author', target: 'a5' },{ source: 'author', target: 'a2' },
+            { source: 'neofolk', target: 'a6' },{ source: 'neofolk', target: 'a15' },
+            { source: 'electronic', target: 'a12' },{ source: 'electronic', target: 'a7' },
+            { source: 'virtuoso', target: 'a8' },{ source: 'virtuoso', target: 'a7' },
+            { source: 'irony', target: 'a13' },{ source: 'irony', target: 'a5' },
+            { source: 'soundtrack', target: 'a7' },
+            { source: 'modern-rap', target: 'a3' },{ source: 'modern-rap', target: 'a9' },{ source: 'modern-rap', target: 'a14' },
+            { source: 'melancholy', target: 'a10' },{ source: 'melancholy', target: 'a1' },
+        ];
+
+        const artistToTrait = [
+            { source: 'a1', target: 't8' },{ source: 'a1', target: 't4' },
+            { source: 'a2', target: 't7' },{ source: 'a2', target: 't8' },
+            { source: 'a3', target: 't2' },
+            { source: 'a4', target: 't5' },{ source: 'a4', target: 't1' },
+            { source: 'a5', target: 't6' },{ source: 'a5', target: 't7' },
+            { source: 'a6', target: 't1' },{ source: 'a6', target: 't3' },
+            { source: 'a7', target: 't1' },
+            { source: 'a8', target: 't7' },{ source: 'a8', target: 't3' },
+            { source: 'a9', target: 't2' },
+            { source: 'a10', target: 't4' },
+            { source: 'a11', target: 't3' },{ source: 'a11', target: 't1' },
+            { source: 'a12', target: 't1' },
+            { source: 'a13', target: 't6' },
+            { source: 'a14', target: 't2' },{ source: 'a14', target: 't8' },
+            { source: 'a15', target: 't1' },
+            { source: 'a16', target: 't5' },
+        ];
+
+        let frozenArtistId = null;
+        const chartDiv = document.getElementById('sankeyChart');
+        const trackPanel = document.getElementById('trackPanel');
+        const width = Math.min(1400, window.innerWidth - 40);
+        const height = 900;
+        const cardWidth = 140, cardHeight = 110;
+
+        chartDiv.style.width = width + 'px';
+        chartDiv.style.height = height + 'px';
+
+        const col1X = 120, col2X = width / 2 - cardWidth / 2, col3X = width - 180;
+        genres.forEach((g, i) => { g.y = 20 + i * (height - 40) / genres.length + (height - 40) / genres.length / 2; g.x = col1X; });
+        artists.forEach((a, i) => { a.y = 20 + i * (height - 40) / artists.length; a.x = col2X; });
+        traits.forEach((t, i) => { t.y = 20 + i * (height - 40) / traits.length + (height - 40) / traits.length / 2; t.x = col3X; });
+
+        const svg = d3.select('#sankeyChart').append('svg').attr('width', width).attr('height', height).style('position', 'absolute').style('top', 0).style('left', 0);
+
+        const linkElements1 = [], linkElements2 = [];
+        genreToArtist.forEach(link => {
+            const genre = genres.find(g => g.id === link.source), artist = artists.find(a => a.id === link.target);
+            linkElements1.push(svg.append('path').attr('class', 'sankey-link')
+                .attr('d', `M ${genre.x} ${genre.y} C ${genre.x + 100} ${genre.y}, ${artist.x - 50} ${artist.y + cardHeight/2}, ${artist.x} ${artist.y + cardHeight/2}`)
+                .attr('stroke', '#a1a1aa').attr('stroke-width', 1).attr('stroke-opacity', 0.2).datum({ source: link.source, target: link.target }));
+        });
+        artistToTrait.forEach(link => {
+            const artist = artists.find(a => a.id === link.source), trait = traits.find(t => t.id === link.target);
+            linkElements2.push(svg.append('path').attr('class', 'sankey-link')
+                .attr('d', `M ${artist.x + cardWidth} ${artist.y + cardHeight/2} C ${artist.x + cardWidth + 50} ${artist.y + cardHeight/2}, ${trait.x - 100} ${trait.y}, ${trait.x} ${trait.y}`)
+                .attr('stroke', trait.color).attr('stroke-width', 1).attr('stroke-opacity', 0.2).datum({ source: link.source, target: link.target }));
+        });
+
+        genres.forEach(genre => {
+            const label = document.createElement('div');
+            label.className = 'genre-label';
+            label.innerHTML = `<span class="genre-dot" style="background: ${genre.color}"></span>${genre.name}`;
+            label.style.cssText = `left: 10px; top: ${genre.y - 8}px; color: ${genre.color}`;
+            label.dataset.id = genre.id;
+            label.onmouseenter = () => { if (!frozenArtistId) highlightFromGenre(genre.id, true); };
+            label.onmouseleave = () => { if (!frozenArtistId) highlightFromGenre(genre.id, false); };
+            chartDiv.appendChild(label);
+        });
+
+        artists.forEach(artist => {
+            const card = document.createElement('div');
+            card.className = 'artist-card';
+            card.style.cssText = `left: ${artist.x}px; top: ${artist.y}px`;
+            card.dataset.id = artist.id;
+            const hasImg = artist.image && artist.image.length > 0;
+            const imgUrl = hasImg ? imagePath(artist.image) : '';
+            card.innerHTML = `
+                <div class="artist-avatar ${hasImg ? '' : 'no-img'}" style="background: ${hasImg ? `url('${imgUrl}') center/cover` : `linear-gradient(135deg, ${artist.bgColor}60, ${artist.bgColor}25)`}">
+                    <div class="fallback" style="background: linear-gradient(135deg, ${artist.bgColor}60, ${artist.bgColor}25);">${artist.emoji}</div>
+                </div>
+                <div class="artist-name">${artist.name}</div>
+                <div class="artist-desc">${artist.desc}</div>
+            `;
+            card.onmouseenter = () => { if (!frozenArtistId) { highlightFromArtist(artist.id, true); showTrackPanel(artist, false); } };
+            card.onmouseleave = () => { if (!frozenArtistId) { highlightFromArtist(artist.id, false); hideTrackPanel(); } };
+            card.onclick = (e) => { e.stopPropagation(); frozenArtistId === artist.id ? unfreezeArtist() : freezeArtist(artist); };
+            chartDiv.appendChild(card);
+        });
+
+        traits.forEach(trait => {
+            const label = document.createElement('div');
+            label.className = 'trait-label';
+            label.innerHTML = `<span class="trait-bar" style="background: ${trait.color}"></span>${trait.name}`;
+            label.style.cssText = `left: ${trait.x + 10}px; top: ${trait.y - 10}px; color: ${trait.color}`;
+            label.dataset.id = trait.id;
+            label.onmouseenter = () => { if (!frozenArtistId) highlightFromTrait(trait.id, true); };
+            label.onmouseleave = () => { if (!frozenArtistId) highlightFromTrait(trait.id, false); };
+            chartDiv.appendChild(label);
+        });
+
+        function showTrackPanel(artist, frozen) {
+            const panelImg = document.getElementById('panelImage');
+            const hasImg = artist.image && artist.image.length > 0;
+            panelImg.style.background = hasImg ? `url('${imagePath(artist.image)}') center/cover` : `linear-gradient(135deg, ${artist.bgColor}60, ${artist.bgColor}20)`;
+            panelImg.innerHTML = hasImg ? '' : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:28px;">${artist.emoji}</div>`;
+            document.getElementById('panelTitle').textContent = artist.name;
+            document.getElementById('panelSubtitle').textContent = `${artist.tracks.length} треков`;
+            document.getElementById('panelHint').textContent = frozen ? 'Кликни на трек → Spotify' : 'Кликни для фиксации';
+            const trackList = document.getElementById('trackList');
+            trackList.innerHTML = '';
+            artist.tracks.forEach(track => {
+                const li = document.createElement('li');
+                li.className = 'track-item';
+                li.innerHTML = `<svg class="spotify-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg><span class="track-name">${track.title}</span><span class="track-arrow">→</span>`;
+                li.onclick = (e) => { e.stopPropagation(); window.open(`https://open.spotify.com/search/${encodeURIComponent(track.search)}`, '_blank'); };
+                trackList.appendChild(li);
+            });
+            trackPanel.classList.add('visible');
+            trackPanel.classList.toggle('frozen', frozen);
+        }
+
+        function hideTrackPanel() { trackPanel.classList.remove('visible'); }
+        function freezeArtist(artist) { if (frozenArtistId) document.querySelector(`.artist-card[data-id="${frozenArtistId}"]`)?.classList.remove('frozen'); frozenArtistId = artist.id; document.querySelector(`.artist-card[data-id="${artist.id}"]`)?.classList.add('frozen'); highlightFromArtist(artist.id, true); showTrackPanel(artist, true); }
+        function unfreezeArtist() { if (frozenArtistId) document.querySelector(`.artist-card[data-id="${frozenArtistId}"]`)?.classList.remove('frozen'); frozenArtistId = null; updateHighlight(null, null, null); hideTrackPanel(); }
+
+        document.getElementById('closeBtn').onclick = unfreezeArtist;
+        document.onclick = (e) => { if (frozenArtistId && !e.target.closest('.artist-card') && !e.target.closest('.track-panel')) unfreezeArtist(); };
+
+        function highlightFromGenre(id, on) { const a = new Set(), t = new Set(); if (on) { genreToArtist.forEach(l => { if (l.source === id) a.add(l.target); }); artistToTrait.forEach(l => { if (a.has(l.source)) t.add(l.target); }); } updateHighlight(on ? new Set([id]) : null, on ? a : null, on ? t : null); }
+        function highlightFromArtist(id, on) { const g = new Set(), t = new Set(); if (on) { genreToArtist.forEach(l => { if (l.target === id) g.add(l.source); }); artistToTrait.forEach(l => { if (l.source === id) t.add(l.target); }); } updateHighlight(on ? g : null, on ? new Set([id]) : null, on ? t : null); }
+        function highlightFromTrait(id, on) { const a = new Set(), g = new Set(); if (on) { artistToTrait.forEach(l => { if (l.target === id) a.add(l.source); }); genreToArtist.forEach(l => { if (a.has(l.target)) g.add(l.source); }); } updateHighlight(on ? g : null, on ? a : null, on ? new Set([id]) : null); }
+
+        function updateHighlight(aG, aA, aT) {
+            const on = aG !== null;
+            document.querySelectorAll('.genre-label').forEach(el => el.classList.toggle('dimmed', on && !aG.has(el.dataset.id)));
+            document.querySelectorAll('.artist-card').forEach(el => { if (on) { el.classList.toggle('dimmed', !aA.has(el.dataset.id)); el.classList.toggle('highlighted', aA.has(el.dataset.id) && el.dataset.id !== frozenArtistId); } else el.classList.remove('dimmed', 'highlighted'); });
+            document.querySelectorAll('.trait-label').forEach(el => el.classList.toggle('dimmed', on && !aT.has(el.dataset.id)));
+            linkElements1.forEach(p => { const d = p.datum(); p.attr('stroke-opacity', on ? (aG.has(d.source) && aA.has(d.target) ? 0.6 : 0.03) : 0.2); });
+            linkElements2.forEach(p => { const d = p.datum(); p.attr('stroke-opacity', on ? (aA.has(d.source) && aT.has(d.target) ? 0.6 : 0.03) : 0.2); });
+        }
+    </script>
+</body>
+</html>
