@@ -527,6 +527,7 @@
         #sankeyChart {
             width: 100%;
             max-width: 1000px;
+            position: relative;
         }
         
         .sankey-node text {
@@ -2321,7 +2322,7 @@
                     sourceTooltip.style.left = (node.x1 + 10) + 'px';
                     sourceTooltip.style.top = (node.y0) + 'px';
                     sourceTooltip.style.opacity = '1';
-                    sourceTooltip.style.pointerEvents = lockedSource !== null ? 'auto' : 'none';
+                    sourceTooltip.style.pointerEvents = 'auto';
                 } else if (lockedSource === null) {
                     sourceTooltip.style.opacity = '0';
                     sourceTooltip.style.pointerEvents = 'none';
@@ -2476,12 +2477,14 @@
                         // Разблокировать
                         lockedSource = null;
                         sourceTooltip.style.pointerEvents = 'none';
+                        sourceTooltip.style.opacity = '0';
                         highlightNode(d, false);
                     } else {
                         // Заблокировать на этом источнике
                         lockedSource = d.index;
                         highlightNode(d, true);
                         updateSourceTooltip(d, true);
+                        sourceTooltip.style.pointerEvents = 'auto';
                     }
                 });
             
