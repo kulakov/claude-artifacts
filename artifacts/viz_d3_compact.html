@@ -1,0 +1,2893 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Паттерны фасилитации LARP</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600;700&display=swap');
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { 
+            height: 100%; 
+            overflow-x: hidden;
+            overflow-y: auto;
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 16px;
+        }
+        
+        /* Типографика: 4 стиля */
+        .t-h1 { font-size: 24px; font-weight: 600; }
+        .t-section { font-size: 12px; font-weight: 700; font-variant: small-caps; letter-spacing: 0.5px; }
+        .t-label { font-size: 12px; font-weight: 400; }
+        .t-body { font-size: 16px; font-weight: 400; }
+        
+        /* Все кнопки наследуют шрифт */
+        button, input, select, textarea { font-family: inherit; }
+        
+        :root {
+            --bg-primary: #fdfcfa;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f8f7f4;
+            --border: #e5e3dc;
+            --border-hover: #d0cec4;
+            --text-primary: #1a1a18;
+            --text-secondary: #6a6a66;
+            --text-muted: #9a9a94;
+            --text-dim: #c5c5be;
+            /* CMYK for light theme */
+            --accent-blue: #00bcd4;    /* Cyan - когнитивная */
+            --accent-green: #ec4899;   /* Magenta - погружение */
+            --accent-yellow: #ffc107;  /* Yellow - сопротивление */
+            --accent-red: #424242;     /* Key (Black) - время */
+            --tooltip-bg: rgba(255, 255, 255, 0.98);
+            --heatmap-low: #f5f4f0;
+            --node-dim: 0.25;
+            --bar-bg: #f0efe8;
+            --mono-fill: #c5c5be;
+            --mono-stroke: #9a9a94;
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: #1c1c1a;
+            --bg-card: #262624;
+            --bg-card-hover: #302f2c;
+            --border: #3a3936;
+            --border-hover: #4a4944;
+            --text-primary: #f5f5f2;
+            --text-secondary: #a5a4a0;
+            --text-muted: #7a7972;
+            --text-dim: #4a4944;
+            /* RGBW for dark theme */
+            --accent-blue: #ef4444;    /* Red - когнитивная */
+            --accent-green: #22c55e;   /* Green - погружение */
+            --accent-yellow: #3b82f6;  /* Blue - сопротивление */
+            --accent-red: #f5f5f5;     /* White - время */
+            --tooltip-bg: rgba(38, 38, 36, 0.98);
+            --heatmap-low: #2a2a28;
+            --node-dim: 0.15;
+            --bar-bg: #2a2a28;
+            --mono-fill: #4a4944;
+            --mono-stroke: #5a5956;
+        }
+        
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background 0.3s, color 0.3s;
+        }
+        
+        .page-header {
+            padding: 24px 40px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .page-header-content {
+            flex: 1;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 4px;
+            letter-spacing: -0.3px;
+        }
+        
+        .page-subtitle {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin: 0;
+            font-weight: 400;
+        }
+        
+        .page-author {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+        
+        .page-footer {
+            padding: 12px 40px;
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+        
+        .page-footer a {
+            color: var(--text-muted);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            transition: color 0.2s;
+        }
+        
+        .page-footer a:hover {
+            color: var(--accent-green);
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-rows: minmax(180px, auto) minmax(300px, auto);
+            gap: 24px;
+            padding: 0 40px;
+        }
+        
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1.2fr 1.2fr 1fr;
+            gap: 24px;
+            min-height: 180px;
+        }
+        
+        .card {
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            padding: 0;
+        }
+        
+        .card-title {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--text-muted);
+            font-variant: small-caps;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .card-header-with-tabs {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            flex-shrink: 0;
+        }
+        
+        .card-header-with-tabs .card-title {
+            margin-bottom: 0;
+        }
+        
+        .chart-tabs {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .chart-tab {
+            padding: 2px 6px;
+            font-size: 12px;
+            font-weight: 500;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.15s;
+            font-variant: small-caps;
+            letter-spacing: 0.5px;
+        }
+        
+        .chart-tab:hover {
+            color: var(--text-secondary);
+            border-color: var(--border-hover);
+        }
+        
+        .chart-tab.active {
+            background: var(--text-muted);
+            border-color: var(--text-muted);
+            color: white;
+        }
+        
+        .metric-sort-tabs {
+            display: flex;
+            gap: 2px;
+        }
+        
+        .metric-sort-btn {
+            width: 18px;
+            height: 18px;
+            padding: 0;
+            font-size: 10px;
+            font-weight: 700;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        
+        .metric-sort-btn:hover {
+            border-color: var(--border-hover);
+        }
+        
+        .metric-sort-btn.active {
+            background: var(--text-muted);
+            border-color: var(--text-muted);
+            color: white;
+        }
+        
+        .metric-sort-btn[data-metric="cognitive"].active { background: var(--accent-blue); border-color: var(--accent-blue); color: white; }
+        .metric-sort-btn[data-metric="immersion"].active { background: var(--accent-green); border-color: var(--accent-green); color: white; }
+        .metric-sort-btn[data-metric="resistance"].active { background: var(--accent-yellow); border-color: var(--accent-yellow); color: white; }
+        .metric-sort-btn[data-metric="time"].active { background: var(--accent-red); border-color: var(--accent-red); color: white; }
+        
+        .metrics-legend {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 4px;
+            margin-bottom: 2px;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-variant: small-caps;
+            letter-spacing: 0.3px;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 140px;
+            overflow-y: auto;
+        }
+        
+        #bars {
+            overflow-y: auto;
+        }
+        
+        /* Mobile navigation - hidden on desktop */
+        .mobile-nav {
+            display: none;
+        }
+        
+        /* Article panel */
+        .article-panel {
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            padding: 0;
+        }
+        
+        .article-fixed {
+            padding: 32px 40px 0 0;
+        }
+        
+        .article-scroll {
+            padding: 0 40px 32px 0;
+        }
+        
+        .article-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .article-mini-radar {
+            display: none;
+            width: 50px;
+            height: 50px;
+            flex-shrink: 0;
+        }
+        
+        .article-id {
+            
+            font-size: 24px;
+            font-weight: 400;
+            color: var(--accent-green);
+            line-height: 1;
+            flex-shrink: 0;
+        }
+        
+        .article-title {
+            
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.3;
+            letter-spacing: -0.3px;
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .article-metrics {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+        
+        .article-metric {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .article-metric-label {
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+        
+        .article-metric-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+        
+        .article-metric-value {
+            font-size: 16px;
+            font-weight: 600;
+            min-width: 10px;
+            color: var(--text-secondary);
+        }
+        
+        .article-total {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-left: 12px;
+            border-left: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        
+        .article-total-value {
+            
+            font-size: 24px;
+            font-weight: 400;
+            color: var(--accent-yellow);
+            line-height: 1;
+        }
+        
+        .article-total-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            font-variant: small-caps;
+            letter-spacing: 1px;
+        }
+        
+        .metric-cognitive { color: var(--accent-blue); }
+        .metric-immersion { color: var(--accent-green); }
+        .metric-resistance { color: var(--accent-yellow); }
+        .metric-time { color: var(--accent-red); }
+        
+        .article-total {
+            text-align: right;
+        }
+        
+        .article-total-value {
+            
+            font-size: 24px;
+            font-weight: 400;
+            color: var(--accent-yellow);
+        }
+        
+        .article-total-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-variant: small-caps;
+            letter-spacing: 1px;
+        }
+        
+        .article-description {
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--text-primary);
+            margin-bottom: 0;
+            max-width: 720px;
+            font-weight: 400;
+        }
+        
+        .article-section {
+            margin-top: 32px;
+            margin-bottom: 0;
+        }
+        
+        .article-section:first-child {
+            margin-top: 0;
+        }
+        
+        .article-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+        
+        .article-section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+            margin-bottom: 0;
+        }
+        
+        .article-section > .article-section-title {
+            margin-bottom: 8px;
+        }
+        
+        .article-connections {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        
+        .connection-tag {
+            padding: 4px 8px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 0;
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .connection-tag:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--border-hover);
+            color: var(--text-primary);
+        }
+        
+        .no-connections {
+            color: var(--text-dim);
+            font-size: 16px;
+            font-style: italic;
+        }
+        
+        .article-placeholder {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 16px;
+            font-weight: 300;
+        }
+        
+        /* Sankey diagram */
+        .sankey-container {
+            padding: 32px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .sankey-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        
+        .sankey-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+        
+        #sankeyChart {
+            width: 100%;
+            max-width: 1000px;
+        }
+        
+        .sankey-node text {
+            font-size: 10px;
+            fill: var(--text-muted);
+            pointer-events: all;
+        }
+        
+        .sankey-node {
+            cursor: default;
+        }
+        
+        .sankey-link {
+            fill: none;
+            transition: stroke-opacity 0.15s;
+        }
+        
+        /* Techniques accordions */
+        .techniques-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 0;
+            column-gap: 32px;
+            margin-bottom: 32px;
+        }
+        
+        .technique-item {
+            border: none;
+            border-bottom: 1px solid var(--border);
+            border-radius: 0;
+            overflow: hidden;
+            transition: border-color 0.2s;
+            background: transparent;
+            padding-right: 24px;
+        }
+        
+        .technique-item:hover {
+            border-color: var(--border-hover);
+        }
+        
+        .technique-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 0;
+        }
+        
+        .technique-clickable {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .technique-clickable:hover {
+            background: transparent;
+        }
+        
+        .technique-toggle {
+            color: var(--text-muted);
+            font-size: 12px;
+            transition: transform 0.2s;
+            flex-shrink: 0;
+        }
+        
+        .technique-item.open .technique-toggle {
+            transform: rotate(90deg);
+        }
+        
+        .technique-id {
+            
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--text-muted);
+            min-width: 32px;
+        }
+        
+        .technique-name {
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--text-primary);
+            flex: 1;
+        }
+        
+        .technique-body {
+            display: none;
+            padding: 16px 0;
+            background: transparent;
+            border-top: none;
+        }
+        
+        .technique-item.open .technique-body {
+            display: block;
+        }
+        
+        .technique-lead {
+            padding: 0 0 12px 0;
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-primary);
+            font-weight: 400;
+        }
+        
+        .technique-field {
+            margin-top: 12px;
+        }
+        
+        .technique-field:first-child {
+            margin-top: 0;
+        }
+        
+        .technique-field-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--text-muted);
+            font-variant: small-caps;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+        
+        .technique-field-value {
+            display: block;
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--text-primary);
+            font-weight: 400;
+        }
+        
+        .technique-desc {
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--text-primary);
+            font-weight: 400;
+        }
+        
+        .expand-all-btn {
+            padding: 4px 0;
+            font-size: 12px;
+            font-weight: 400;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-variant: small-caps;
+            letter-spacing: 0.5px;
+        }
+        
+        .expand-all-btn:hover {
+            color: var(--accent-green);
+        }
+        
+        .sources-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .source-link {
+            display: inline-block;
+            padding: 6px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-size: 12px;
+            letter-spacing: 0.2px;
+            transition: all 0.15s;
+        }
+        
+        .source-link:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-blue);
+        }
+        
+        /* Network */
+        .node { cursor: pointer; transition: opacity 0.15s; }
+        .node text { font-size: 12px; font-weight: 600; fill: white; pointer-events: none; }
+        .link { stroke: var(--border); stroke-width: 1; opacity: 0.3; }
+        .link.highlighted { stroke: var(--accent-red); stroke-width: 1.5; opacity: 1; }
+        .node.dimmed { opacity: 0.15; }
+        .node.hover-dim { opacity: 0.25; }
+        .node.selected circle { stroke: var(--text-primary); stroke-width: 2; }
+        .link.dimmed { opacity: 0.1; }
+        
+        /* Radar */
+        .radar-axis { stroke: var(--border); }
+        .radar-grid { stroke: var(--border); fill: none; stroke-dasharray: 2,2; }
+        .radar-area { fill-opacity: 0.15; stroke-width: 1.5; }
+        .radar-label { font-size: 12px; fill: var(--text-muted); }
+        
+        /* Bar */
+        .bar-bg { fill: var(--bar-bg); }
+        .bar-label { font-size: 12px; fill: var(--text-muted); }
+        .bar-value { font-size: 12px; font-weight: 600; fill: var(--text-secondary); }
+        .bar-row { cursor: pointer; transition: opacity 0.15s; }
+        .bar-row.selected rect:first-of-type { fill: var(--bg-card-hover); }
+        .bar-row.hover-dim { opacity: 0.25; }
+        .hover-zone { cursor: pointer; }
+        
+        /* Heatmap */
+        .heatmap-cell { stroke: var(--bg-primary); stroke-width: 1; cursor: pointer; transition: opacity 0.15s; }
+        .heatmap-label { font-size: 12px; fill: var(--text-muted); }
+        .heatmap-value { font-size: 12px; font-weight: 600; fill: white; pointer-events: none; }
+        .cell.hover-dim rect { opacity: 0.25; }
+        .cell.hover-dim circle { opacity: 0.15; }
+        .cell.hover-dim text { opacity: 0.35; }
+        
+        /* Tooltip */
+        .tooltip {
+            position: fixed;
+            background: var(--tooltip-bg);
+            border: 1px solid var(--border);
+            border-radius: 0;
+            padding: 12px 16px;
+            pointer-events: none;
+            z-index: 1000;
+            font-size: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            opacity: 0;
+            transition: opacity 0.15s;
+            max-width: 220px;
+        }
+        .tooltip.visible { opacity: 1; }
+        .tooltip-id { 
+            font-size: 16px; 
+            color: var(--accent-green); 
+            font-weight: 400;
+            margin-bottom: 4px;
+            
+        }
+        .tooltip-title { 
+            font-weight: 600; 
+            margin-bottom: 8px;
+            line-height: 1.3;
+            color: var(--text-primary);
+        }
+        .tooltip-metrics {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 12px;
+        }
+        .tooltip-metric {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            color: var(--text-secondary);
+        }
+        .tooltip-metric-label { font-weight: 500; }
+        .tooltip-metric-value { font-weight: 600; }
+        .tooltip-total {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        /* Theme toggle */
+        .theme-toggle {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: all 0.2s;
+            
+            flex-shrink: 0;
+        }
+        .theme-toggle:hover {
+            border-color: var(--accent-yellow);
+            color: var(--accent-yellow);
+        }
+        
+        .card-header-with-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            flex-shrink: 0;
+        }
+        
+        .card-header-with-toggle .card-title {
+            margin-bottom: 0;
+        }
+        
+        .desktop-only {
+            display: flex;
+        }
+        
+        /* Mobile header */
+        .mobile-header {
+            display: none;
+            padding: 16px 14px;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .mobile-header-content {
+            flex: 1;
+        }
+        
+        .mobile-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 2px;
+            letter-spacing: -0.2px;
+        }
+        
+        .mobile-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin: 0;
+        }
+        
+        .mobile-header .theme-toggle {
+            display: flex;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        
+        /* Tablet: 768px - 1024px */
+        @media (max-width: 1024px) {
+            .dashboard {
+                grid-template-rows: auto 1fr;
+                height: auto;
+                min-height: 100vh;
+            }
+            
+            .charts-row {
+                grid-template-columns: 1fr 1fr 1fr;
+                grid-template-rows: auto;
+            }
+            
+            .card {
+                min-height: 160px;
+            }
+            
+            .article-panel {
+                padding: 0;
+            }
+            
+            .article-fixed {
+                padding: 20px 24px 0 24px;
+            }
+            
+            .article-scroll {
+                padding: 0 24px 20px 24px;
+            }
+            
+            .article-title {
+                font-size: 16px;
+            }
+            
+            .techniques-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-tab {
+                padding: 3px 8px;
+                font-size: 12px;
+            }
+        }
+        
+        /* Mobile: < 768px */
+        @media (max-width: 768px) {
+            html, body {
+                overflow: auto;
+                height: auto;
+                display: block;
+                flex-direction: unset;
+            }
+            
+            .page-header, .page-footer {
+                display: none;
+            }
+            
+            .mobile-header {
+                display: flex;
+            }
+            
+            .desktop-only {
+                display: none;
+            }
+            
+            /* Скрываем десктопные графики на мобилке */
+            .charts-row {
+                display: none;
+            }
+            
+            /* Мобильная навигация */
+            .mobile-nav {
+                display: block;
+                padding: 12px 0;
+            }
+            
+            .dashboard {
+                display: block;
+                height: auto;
+                padding: 0;
+                gap: 0;
+            }
+            
+            .mobile-nav-scroll {
+                display: flex;
+                gap: 12px;
+                overflow-x: auto;
+                padding: 0 14px 12px 14px;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+            
+            .mobile-nav-scroll::-webkit-scrollbar {
+                display: none;
+            }
+            
+            .mobile-pattern-card {
+                flex-shrink: 0;
+                width: 140px;
+                padding: 12px;
+                background: var(--card-bg);
+                border-radius: 1px;
+                border: 1px solid var(--border);
+                cursor: pointer;
+                scroll-snap-align: start;
+                transition: border-color 0.2s, background 0.2s;
+            }
+            
+            .mobile-pattern-card:hover,
+            .mobile-pattern-card.active {
+                border-color: var(--text-primary);
+            }
+            
+            .mobile-pattern-card.active {
+                background: var(--hover-bg);
+            }
+            
+            .mobile-card-header {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                margin-bottom: 8px;
+            }
+            
+            .mobile-card-id {
+                font-size: 11px;
+                color: var(--text-muted);
+                font-variant-numeric: tabular-nums;
+            }
+            
+            .mobile-card-title {
+                font-size: 13px;
+                font-weight: 500;
+                color: var(--text-primary);
+                line-height: 1.3;
+                margin-bottom: 10px;
+                min-height: 34px;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            
+            .mobile-card-bars {
+                display: flex;
+                flex-direction: column;
+                gap: 3px;
+            }
+            
+            .mobile-metric-bar {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+            
+            .mobile-metric-label {
+                font-size: 9px;
+                width: 10px;
+                color: var(--text-muted);
+            }
+            
+            .mobile-metric-track {
+                flex: 1;
+                height: 1px;
+                background: var(--border);
+                border-radius: 0;
+                overflow: hidden;
+            }
+            
+            .mobile-metric-fill {
+                height: 100%;
+                border-radius: 0;
+                opacity: 0.3;
+            }
+            
+            .mobile-pattern-card.active .mobile-metric-fill {
+                opacity: 1;
+            }
+            
+            .mobile-metric-value {
+                font-size: 9px;
+                width: 8px;
+                text-align: right;
+                color: var(--text-muted);
+            }
+            
+            .article-panel {
+                display: block;
+                padding: 0;
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+                min-height: auto;
+                overflow-y: visible;
+            }
+            
+            .article-fixed {
+                padding: 24px 14px 0 14px;
+            }
+            
+            .article-scroll {
+                padding: 0 14px 14px 14px;
+                overflow: visible;
+            }
+            
+            .article-header {
+                flex-wrap: wrap;
+                gap: 8px 12px;
+                margin-bottom: 12px;
+                padding-bottom: 10px;
+            }
+            
+            .article-mini-radar {
+                display: block;
+                width: 50px;
+                height: 50px;
+                margin-left: auto;
+            }
+            
+            .article-id {
+                font-size: 24px;
+            }
+            
+            .article-title {
+                font-size: 16px;
+                flex-basis: 100%;
+                order: -1;
+            }
+            
+            .article-metrics {
+                gap: 8px;
+            }
+            
+            .article-metric-label {
+                font-size: 12px;
+            }
+            
+            .article-metric-dot {
+                width: 5px;
+                height: 5px;
+            }
+            
+            .article-metric-value {
+                font-size: 12px;
+            }
+            
+            .article-total {
+                padding-left: 8px;
+            }
+            
+            .article-total-value {
+                font-size: 24px;
+            }
+            
+            .article-description {
+                font-size: 16px;
+                line-height: 1.6;
+                margin-bottom: 0;
+            }
+            
+            .article-section {
+                margin-top: 24px;
+                margin-bottom: 0;
+            }
+            
+            .article-section:first-child {
+                margin-top: 0;
+            }
+            
+            .article-section-title {
+                font-size: 12px;
+                margin-bottom: 6px;
+            }
+            
+            .techniques-list {
+                grid-template-columns: 1fr;
+                gap: 0;
+                margin-bottom: 24px;
+            }
+            
+            .technique-header {
+                padding: 10px 0;
+            }
+            
+            .technique-id {
+                font-size: 16px;
+                min-width: 28px;
+            }
+            
+            .technique-name {
+                font-size: 16px;
+            }
+            
+            .technique-lead {
+                font-size: 16px;
+                padding: 0 0 10px 0;
+                line-height: 1.5;
+            }
+            
+            .technique-body {
+                padding: 10px 0;
+            }
+            
+            .technique-field {
+                margin-top: 10px;
+            }
+            
+            .technique-field:first-child {
+                margin-top: 0;
+            }
+            
+            .technique-field-label {
+                font-size: 12px;
+                margin-bottom: 2px;
+            }
+            
+            .technique-field-value {
+                font-size: 16px;
+                line-height: 1.5;
+            }
+            
+            .connection-tag {
+                font-size: 12px;
+                padding: 3px 6px;
+            }
+            
+            .article-section-header {
+                gap: 8px;
+                margin-bottom: 8px;
+            }
+            
+            .expand-all-btn {
+                padding: 4px 0;
+                font-size: 12px;
+            }
+            
+            .article-placeholder {
+                font-size: 16px;
+                padding: 30px 16px;
+                text-align: center;
+            }
+            
+            .sankey-container {
+                padding: 16px 8px;
+            }
+            
+            .sankey-title {
+                font-size: 16px;
+            }
+            
+            .sankey-subtitle {
+                font-size: 11px;
+                margin-bottom: 16px;
+                text-align: center;
+            }
+            
+            #sankeyChart {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .mobile-tabs {
+                padding: 6px 8px;
+                padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+                gap: 6px;
+            }
+            
+            .mobile-tab {
+                padding: 10px 12px;
+                font-size: 16px;
+            }
+        }
+        
+        /* Small mobile: < 400px */
+        @media (max-width: 400px) {
+            .charts-row {
+                grid-template-columns: 1fr 1fr 1fr;
+                grid-template-rows: 100px;
+            }
+            
+            .article-id {
+                font-size: 24px;
+            }
+            
+            .article-title {
+                font-size: 16px;
+            }
+            
+            .article-metrics {
+                gap: 6px;
+            }
+            
+            .technique-name {
+                font-size: 16px;
+            }
+            
+            .technique-lead {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="page-header">
+        <div class="page-header-content">
+            <h1 class="page-title" onclick="goHome()" style="cursor:pointer">Формальные паттерны фасилитации в LARP</h1>
+            <p class="page-subtitle">Григорий Ноаров</p>
+        </div>
+        <button class="theme-toggle desktop-only" id="themeToggleDesktop" title="Переключить тему">◐</button>
+    </header>
+    
+    <div class="mobile-header">
+        <div class="mobile-header-content">
+            <h1 class="mobile-title" onclick="goHome()" style="cursor:pointer">Формальные паттерны фасилитации в LARP</h1>
+            <p class="mobile-subtitle">Григорий Ноаров</p>
+        </div>
+        <button class="theme-toggle" id="themeToggle" title="Переключить тему">◐</button>
+    </div>
+    
+    <div class="dashboard">
+        <div class="charts-row">
+            <div class="card">
+                <div class="card-title">Связи</div>
+                <div class="chart-container" id="network"></div>
+            </div>
+            <div class="card">
+                <div class="card-title">Профиль</div>
+                <div class="chart-container" id="radar"></div>
+            </div>
+            <div class="card">
+                <div class="card-header-with-tabs">
+                    <div class="card-title" id="barsTitle">Рейтинг</div>
+                    <div class="metric-sort-tabs" id="metricSortTabs">
+                        <button class="metric-sort-btn active" data-metric="total" onclick="sortByMetric('total')">Σ</button>
+                        <button class="metric-sort-btn" data-metric="cognitive" onclick="sortByMetric('cognitive')">К</button>
+                        <button class="metric-sort-btn" data-metric="immersion" onclick="sortByMetric('immersion')">П</button>
+                        <button class="metric-sort-btn" data-metric="resistance" onclick="sortByMetric('resistance')">С</button>
+                        <button class="metric-sort-btn" data-metric="time" onclick="sortByMetric('time')">В</button>
+                    </div>
+                </div>
+                <div class="chart-container" id="bars"></div>
+            </div>
+        </div>
+        
+        <div class="mobile-nav" id="mobileNav">
+            <div class="mobile-nav-scroll" id="mobileNavScroll">
+                <!-- Карточки паттернов генерируются динамически -->
+            </div>
+        </div>
+        
+        <div class="article-panel" id="articlePanel">
+            <div class="article-placeholder">Выберите паттерн на графике</div>
+        </div>
+    </div>
+    
+    <footer class="page-footer">
+        <span>© 2025 Григорий Ноаров · <a href="https://hsedesign.ru/books/book/d95950617e51431f8b0a13765811d6ad" target="_blank">Оригинал исследования</a></span>
+    </footer>
+    
+    <div class="tooltip" id="tooltip"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-sankey/0.12.3/d3-sankey.min.js"></script>
+    <script>
+        // Theme management
+        let currentTheme = 'dark';
+        const themeToggle = document.getElementById('themeToggle');
+        const themeToggleDesktop = document.getElementById('themeToggleDesktop');
+        
+        function toggleTheme() {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            // Update button icons
+            const icon = currentTheme === 'dark' ? '◐' : '◑';
+            themeToggle.textContent = icon;
+            if (themeToggleDesktop) themeToggleDesktop.textContent = icon;
+            // Redraw all charts with new theme
+            init();
+        }
+        
+        themeToggle.addEventListener('click', toggleTheme);
+        if (themeToggleDesktop) themeToggleDesktop.addEventListener('click', toggleTheme);
+        
+        // Get computed CSS variable
+        function getCSSVar(name) {
+            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        }
+        
+        // Mix colors based on pattern values
+        // Light: CMYK (Cyan, Magenta, Yellow, Key)
+        // Dark: RGBW (Red, Green, Blue, White)
+        function getPatternColor(pattern) {
+            const colors = currentTheme === 'dark' 
+                ? [[239, 68, 68], [34, 197, 94], [59, 130, 246], [245, 245, 245]]   // RGBW
+                : [[0, 188, 212], [236, 72, 153], [255, 193, 7], [66, 66, 66]];     // CMYK
+            
+            const weights = [pattern.cognitive, pattern.immersion, pattern.resistance, pattern.time];
+            const total = weights.reduce((a, b) => a + b, 0);
+            
+            let r = 0, g = 0, b = 0;
+            for (let i = 0; i < 4; i++) {
+                r += colors[i][0] * weights[i];
+                g += colors[i][1] * weights[i];
+                b += colors[i][2] * weights[i];
+            }
+            
+            return `rgb(${Math.round(r/total)}, ${Math.round(g/total)}, ${Math.round(b/total)})`;
+        }
+        
+        // Get mono color for inactive elements
+        function getMonoColor() {
+            return getCSSVar('--mono-fill');
+        }
+        
+        // Highlight pattern across all widgets (Network, Bars) on Sankey hover
+        function highlightWidgetPattern(patternId, highlight) {
+            // Highlight in Network
+            const networkNodes = d3.selectAll('#network .node');
+            networkNodes.each(function() {
+                const el = d3.select(this);
+                const nodeId = el.attr('data-pattern-id');
+                if (highlight) {
+                    el.select('circle').attr('opacity', nodeId === patternId ? 1 : 0.15);
+                    el.select('text').attr('opacity', nodeId === patternId ? 1 : 0.2);
+                } else {
+                    el.select('circle').attr('opacity', selectedPattern ? (nodeId === selectedPattern.id ? 1 : 0.4) : 0.7);
+                    el.select('text').attr('opacity', 1);
+                }
+            });
+            
+            // Highlight in Bars
+            const barRows = d3.selectAll('#bars .bar-row');
+            barRows.each(function() {
+                const el = d3.select(this);
+                const rowId = el.attr('data-pattern-id');
+                if (highlight) {
+                    el.selectAll('rect:not(.hover-zone)').attr('opacity', rowId === patternId ? 1 : 0.1);
+                    el.select('text').attr('opacity', rowId === patternId ? 1 : 0.2);
+                } else {
+                    // Restore normal state
+                    const isSelected = selectedPattern && rowId === selectedPattern.id;
+                    el.selectAll('rect:not(.hover-zone)').attr('opacity', d => {
+                        if (el.classed('bar-row')) {
+                            return isSelected ? 1 : (currentSortMetric === 'total' ? 0.3 : 0.4);
+                        }
+                        return 1;
+                    });
+                    el.select('text').attr('opacity', 1);
+                }
+            });
+            
+            // Show temporary radar for hovered pattern
+            if (highlight && patternId) {
+                const pattern = patterns.find(p => p.id === patternId);
+                if (pattern && !selectedPattern) {
+                    drawRadar(pattern);
+                }
+            } else if (!highlight && !selectedPattern) {
+                drawRadar(null);
+            }
+        }
+        
+        const patterns = [
+            { id: "1", name: "Разбиение на кусочки", desc: "Большой блок информации разбивается на маленькие части для лучшего усвоения. Этот паттерн снижает когнитивную нагрузку, позволяя участникам сосредоточиться на одном аспекте за раз. Особенно эффективен при работе со сложным материалом или большим объёмом данных.", cognitive: 5, immersion: 4, resistance: 3, time: 2, connections: ["4", "11"] },
+            { id: "2", name: "Peer-To-Peer", desc: "Участники объясняют материал друг другу на понятном им языке. Когда человек учит другого, он сам глубже понимает тему. Снижает сопротивление к новой информации, потому что она приходит от равного, а не от авторитета.", cognitive: 4, immersion: 4, resistance: 5, time: 2, connections: ["11", "13"] },
+            { id: "3", name: "Молчание — золото", desc: "Время на молчание заставляет участников думать глубже перед ответом. Пауза даёт возможность интровертам сформулировать мысли, а экстравертам — не доминировать в обсуждении. Качество ответов значительно повышается.", cognitive: 3, immersion: 3, resistance: 4, time: 2, connections: ["8", "11"] },
+            { id: "4", name: "Работа в подгруппах", desc: "Деление на малые группы вовлекает всех и снижает влияние доминирующих голосов. В маленькой группе каждый получает больше времени на высказывание. Создаёт более безопасную среду для робких участников.", cognitive: 4, immersion: 4, resistance: 4, time: 2, connections: [] },
+            { id: "5", name: "Разговор о чувствах", desc: "Возможность высказаться о чувствах снижает эмоциональное напряжение. Признание эмоций делает их менее подавляющими. Создаёт атмосферу психологической безопасности и доверия в группе.", cognitive: 4, immersion: 3, resistance: 5, time: 2, connections: ["3", "8", "11"] },
+            { id: "6", name: "Визуализация связей", desc: "Графическое представление связей между идеями и концепциями. Карты, диаграммы и схемы помогают увидеть общую картину. Особенно полезно для визуалов и при работе со сложными системами.", cognitive: 4, immersion: 4, resistance: 3, time: 1, connections: ["11", "12", "13"] },
+            { id: "7", name: "Импринтинг реакции", desc: "Формирование автоматической реакции на определённый триггер. Через повторение и ассоциации создаётся связка стимул-реакция. Используется для закрепления желаемого поведения или навыка.", cognitive: 4, immersion: 4, resistance: 2, time: 2, connections: [] },
+            { id: "8", name: "Запрет критики", desc: "Безопасное пространство где можно говорить всё без осуждения. Отключение внутреннего критика высвобождает креативность. Основа брейнсторминга и других техник генерации идей.", cognitive: 4, immersion: 4, resistance: 5, time: 3, connections: [] },
+            { id: "9", name: "Использование артефакта", desc: "Физический предмет удерживает фокус внимания группы. Артефакт может передаваться, указывая на говорящего. Материальный объект делает абстрактные идеи более осязаемыми.", cognitive: 4, immersion: 4, resistance: 4, time: 3, connections: ["6"] },
+            { id: "10", name: "Отбор идей участниками", desc: "Участники сами голосуют и отбирают лучшие идеи. Демократический процесс повышает вовлечённость и ответственность за результат. Снижает сопротивление к финальному решению.", cognitive: 4, immersion: 4, resistance: 2, time: 2, connections: ["11", "13"] },
+            { id: "11", name: "Рефлексия информации", desc: "Структурированное время для осмысления полученного опыта. Без рефлексии обучение поверхностно. Вопросы и фреймворки помогают извлечь инсайты из пережитого.", cognitive: 2, immersion: 3, resistance: 1, time: 2, connections: ["3", "8"] },
+            { id: "12", name: "Выявление связей", desc: "Поиск и артикуляция связей между разными идеями. Соединение знаний из разных областей создаёт новое понимание. Развивает системное мышление участников.", cognitive: 3, immersion: 4, resistance: 4, time: 2, connections: ["6", "13"] },
+            { id: "13", name: "Переструктурирование", desc: "Реорганизация идей в новую логическую структуру. Группировка, категоризация и иерархия помогают увидеть паттерны. Хаос превращается в понятную систему.", cognitive: 1, immersion: 4, resistance: 3, time: 2, connections: ["1", "12"] },
+            { id: "14", name: "Использование пространства", desc: "Физическое пространство как инструмент мышления и коммуникации. Расположение в комнате отражает позиции и отношения. Движение тела активирует мышление и запоминание. Самый эффективный паттерн по совокупности показателей.", cognitive: 5, immersion: 5, resistance: 5, time: 4, connections: ["10", "12"] }
+        ];
+
+        // Техники (приёмы) и их связь с паттернами
+        const techniques = [
+            { id: "001", name: "1-2-4-All", patterns: ["3", "4", "10"], 
+              lead: "Расширение круга обсуждения: от личного осмысления к диалогу. 1 мин индивидуально → 2 мин в парах → 4 мин в четвёрках → общее обсуждение.",
+              condition: "Необходимо чтобы большой коллектив подумал над одним вопросом, придумал необычные решения проблемы.",
+              desc: "Задаётся контекст, над которым необходимо подумать. Затем: 1 минута — чтобы все подумали индивидуально и молча; 2 минуты — по парам обсудили идеи, придумывали новые; 4 минуты — обмен идеями в группах по 4 человека; 5 минут — обсуждение лучших идей всей группой.",
+              principle: "Расширение круга обсуждения: от личного осмысления к диалогу, от диалога к коллективному обсуждению. 1-й этап рождает и раскрывает «молчаливые» мысли, которые обычно теряются. 2-й, 3-й, 4-й — эти мысли и идеи обогащаются за счёт сопоставления разных взглядов, отбираются наилучшие.",
+              effect: "Вовлекает всех участников в работу, позволяет избежать доминирования отдельных участников. Создаёт атмосферу безопасного, равного участия, повышает качество наблюдений и рекомендаций." },
+            { id: "002", name: "Jigsaw", patterns: ["1", "2", "4", "13"], 
+              lead: "Каждый изучает свою часть материала, затем объясняет другим. Группы перемешиваются для обмена знаниями.",
+              condition: "Необходимо изучить многогранную тему или проблему через групповую работу и обеспечить вовлечение каждого участника.",
+              desc: "Каждому выдаются материалы для изучения. 40 минут на индивидуальное чтение. Потом участники с одинаковой темой собираются в небольшие подгруппы: 4-7 участников. 20 минут на обсуждение. После чего группы перемешиваются так, чтобы все были с участниками, у которых другая тема — 60 минут, чтобы каждому объяснить свой аспект проблемы.",
+              principle: "Активирует и вовлекает каждого участника посредством дискуссии в малых группах. А благодаря обмену знаниями в полной группе формирует общего комплексного понимания темы.",
+              effect: "Повышает качества усвоения материала, стимулирует навыков сотрудничества и коммуникации, предотвращает доминирования отдельных голосов, помогает создать общую картину по теме." },
+            { id: "003", name: "Check-in", patterns: ["5", "8"], 
+              lead: "Участники по очереди называют эмоциональное состояние и ожидания от сессии перед началом работы.",
+              condition: "Применяется перед групповой работой, чтобы участники выразили текущее состояние и настроились на взаимодействие.",
+              desc: "Участники по очереди называют своё эмоциональное состояние и кратко делятся ожиданиями от сессии. Ведущий фиксирует общую атмосферу, возможные тревоги или потребности.",
+              principle: "Активизирует внимание к внутренним ощущениям, что помогает снизить напряжение и улучшить сосредоточенность. А также это проблематизирует — задаёт чёткую цель, с которой вы все сюда пришли.",
+              effect: "Повышает вовлечённость, снижает социальное напряжение, улучшает коммуникацию, создаёт безопасное пространство для работы." },
+            { id: "004", name: "3-2-1 Processor", patterns: ["11", "13"], 
+              lead: "Каждый пишет 3 ключевые идеи, 2 интересных момента, 1 вопрос. Структурирует осмысление материала.",
+              condition: "Нужно заставить участников глубоко осмыслить пройдённый материал, содержание текста, лекции, фильма.",
+              desc: "Каждый должен написать 3 ключевые идеи материала, 2 интересных или необычных для них момента, 1 вопрос, который остался неясным.",
+              principle: "Выписывание идей и интересных моментов подталкивает глубже анализировать информацию. Формулирование вопроса направляет мысль куда-то за пределами изученного материала.",
+              effect: "Повышает вовлечённость в изучение темы. Участники лучше понимают и усваивают информацию. Обеспечивает возвратную связь для преподавателя." },
+            { id: "005", name: "Clustering", patterns: ["1", "2", "4", "6", "12", "13"], 
+              lead: "Участники ищут связи между идеями, рисуют линии, создают визуальные кластеры и презентуют их.",
+              condition: "Необходимо собрать из отдельных идей фактов и данных общую картину, построить сетку связей.",
+              desc: "Группе выдаётся список утверждений или идей и участники ищут связи, противоречия и конфликты между ними. Они рисуют линии между противопоставленными элементами, добавляют стрелки. Затем участники творчески визуализируют кластеры, используя рисунки, концептуальные карты, цвета.",
+              principle: "Неограниченное и нелинейное расположение элементов активирует творческое восприятие информации, что создаёт новые связи между идеями. Визуализация всех связей помогает мозгу устанавливать причинно-следственные связи.",
+              effect: "Создаёт визуальную картину проблемы, концепции или проекта. Позволяет увидеть сетку идей, связи между ними, сформировать новые." },
+            { id: "006", name: "Brainstorm", patterns: ["3", "8", "10", "12"], 
+              lead: "Генерация идей без критики. Все предложения фиксируются, затем структурируются и отбираются лучшие.",
+              condition: "Необходимо сгенерировать множество разнообразных креативных идей, решений проблемы.",
+              desc: "Фасилитатор задаёт тему или проблему для обсуждения и объясняет правила сессии. Участники последовательно предлагают идеи в неограниченном количестве, при этом запрещается критиковать или оценивать предложения. Ведущий фиксирует все предложения.",
+              principle: "Отсутствие критики активирует творческое мышление и убирает страх перед осуждением. Группа расширяет выборку идей за счёт ассоциативной цепочки: одна идея вдохновляет участника на другую.",
+              effect: "Повышает креативность и стимулирует активное участие группы в формировании идей, улучшает мотивацию и вовлечённость участников." },
+            { id: "007", name: "Правило поднятой руки", patterns: ["3", "7"], 
+              lead: "Если видишь поднятую руку — замолкаешь и тоже поднимаешь. Цепная реакция для привлечения внимания.",
+              condition: "В процессе дальнейшей работы необходимо привлекать внимание для новой информации или смены фазы.",
+              desc: "Перед работой вводиться правило: если вы видите поднятую руку, то замолкаете и тоже поднимаете руку. Тем самым ведущий может обрывать работу участников и привлекать внимание к себе, добиваться тишины. Обязательно при введении правила необходимо его протестировать.",
+              principle: "Здесь работает социальное давление — все подняли руку и я поднял, а понять руку = замолчать, и по цепной реакции вся аудитория замолкает.",
+              effect: "Позволяет добиться тишины даже когда все работают в подгруппах и их внимание не на фасилитаторе. Даже когда часть находиться к нему спиной." },
+            { id: "008", name: "Подготовленное пространство", patterns: ["14"], 
+              lead: "Расстановка стульев до прихода участников формирует нужную групповую структуру без сопротивления.",
+              condition: "Нужно без сопротивления сформировать групповую структуру.",
+              desc: "Перед приходом участников расставить стулья в нужную форму, например, кругом или же отдельными группами. И когда участники будут приходить то просто рассаживаясь будут формировать нужную структуру группы.",
+              principle: "Люди легко принимают эту структуру и принимают «правила игры», так как это происходит одновременно с тем, как они пришли.",
+              effect: "В зависимости от того как подготовить пространство, оно может способствовать и глубокому диалогу, и сотрудничеству, и ощущению равного участия." },
+            { id: "009", name: "Spiderweb", patterns: ["3", "5", "6", "8", "9"], 
+              lead: "Участники передают клубок пряжи, делясь историями. Паутина — метафора связей в команде.",
+              condition: "Укрепление командного единства, создание визуального образа взаимосвязей между участниками.",
+              desc: "Участники становятся или садятся в круг, держа в руках клубок пряжи. Каждый делится личной историей и передает клубок другому, удерживая часть нитки. В результате образуется паутина — метафора связей внутри команды.",
+              principle: "Последовательный обмен рассказами и удерживание нитей создают символическое и визуальное представление взаимосвязи. Это стимулирует внимательное слушание, доверие и эмпатию.",
+              effect: "Развитие доверия, активного слушания, эмпатии и коммуникативных навыков. Участники ощущают принадлежность к команде." },
+            { id: "010", name: "6-3-5 Brainwriting", patterns: ["3", "8", "12"], 
+              lead: "6 человек пишут по 3 идеи за 5 минут, передают листы по кругу. Молчаливая генерация без давления.",
+              condition: "Необходимо сгенерировать множество идей, обеспечив равное участие всех членов группы.",
+              desc: "Собираются группы из 6 участников. Каждому выдаётся лист. За 5 минут каждый участник молча записывает 3 идеи на своём листе. Когда время истекает, лист передаётся соседу справа. Новый участник читает уже записанные идеи и добавляет 3 собственные, опираясь на прочитанное. И так 6 раз.",
+              principle: "Молчаливая генерация идей защищает от давления группы и доминирования громких голосов и освобождает мышление. Чтение чужих идей даёт новые ассоциации.",
+              effect: "Обеспечивает равное участие всех членов команды, минимизирует влияние доминирующих личностей, создаёт разнообразный набор идей." },
+            { id: "011", name: "Метод репертуарной сетки", patterns: ["11", "12", "13"], 
+              lead: "Классификация идей в сетке с категориями (согласен/не согласен). Визуальное структурирование мнений.",
+              condition: "Когда группе нужно систематически сравнить или разделить идеи, мнения. Выявить различия и общие точки зрения.",
+              desc: "Техника предполагает использование сетки как структуры для формулирования мыслей и идей группы. Например, сетка может содержать категории на основе пар противоположностей: согласен/не согласен, похоже/различается. Участникам предлагается классифицировать вопросы, размещая их в соответствующих ячейках.",
+              principle: "Структурирование информации визуально помогает точнее формулировать мысли и видеть взаимосвязи между идеями. Классификация в сетке стимулирует групповой диалог.",
+              effect: "Повышает качество и глубину обсуждения, способствует ясности мышления и выработке консенсуса. Помогает найти точки в которых все сходятся." },
+            { id: "012", name: "Перенаправление вопросов", patterns: ["11", "13"], 
+              lead: "Вместо ответа — встречный вопрос. Побуждает группу самостоятельно искать решения.",
+              condition: "Нужно поддерживать самостоятельное мышление в группе, избежать сценария, когда участники ждут готовых ответов.",
+              desc: "Вместо прямого ответа на вопрос участника, фасилитатор задаёт встречный вопрос, побуждая группу или конкретного участника самому найти решение. Например: «В чем суть этого вопроса?», «Где можно найти похожий пример?»",
+              principle: "Техника разрывает цикл зависимости от ведущего, подталкивает к самостоятельному обучению, групповому взаимодействию, альтернативным подходам.",
+              effect: "Участники учатся лучше решать задачи самостоятельно, перестают пассивно ждать подсказок, развивают аналитическое и критическое мышление." },
+            { id: "013", name: "Время на подумать", patterns: ["3", "11"], 
+              lead: "Пауза 3-10 секунд после вопроса. Активирует рефлексию, больше людей отвечают качественнее.",
+              condition: "Когда нужно задать вопрос и этим подтолкнуть размышление, чтобы больше людей ответили и ответы были качественнее.",
+              desc: "Ведущий задаёт вопрос и молчит: 1–3 секунды для простых вопросов, 4–6 секунд для вопросов с подсчётами, 6–10 секунд для сложных аналитических вопросов. Также и после ответа участника ведущий делает паузу, давая возможность развить мысль.",
+              principle: "Молчание переводит участников из фонового состояния в фокусированное внимание, активирует внутреннюю рефлексию. Вторая пауза после ответа открывает возможность для глубокого обдумывания.",
+              effect: "Больше студентов начинают отвечать, ответы становятся точнее, развёрнутее, аргументированнее. Стеснительные участники начинают участвовать." },
+            { id: "014", name: "Проверка понимания", patterns: ["11", "13"], 
+              lead: "Открытые вопросы: «Объясни как понял?», «Приведи пример». Проверка глубины усвоения.",
+              condition: "После подачи материала, когда прежде чем идти дальше стоит проверить, действительно ли участники поняли.",
+              desc: "Ведущий использует открытые вопросы: «Объясни, пожалуйста, как ты это понял?», «Можешь показать, где это в задаче?», «Приведи пример». Наблюдает за невербальной коммуникацией. Просит участников записать основные моменты или придумать свою метафору.",
+              principle: "Открытые вопросы вынуждают участника вербализовать понимание, перевести внутреннее представление во внешнюю речь. Наблюдение невербальной коммуникации выявляет скрытое непонимание.",
+              effect: "Ведущий получает точную обратную связь о понимании. Если понимание недостаточно, ведущий может адаптировать сессию." },
+            { id: "015", name: "Impromptu Networking", patterns: ["4", "5", "12"], 
+              lead: "Быстрый обмен в парах о вызовах и ожиданиях. Пары перемешиваются несколько раз.",
+              condition: "Начало совместной сессии, когда нужно быстро установить новые связи между участниками, выявить ключевые вызовы и ожидания.",
+              desc: "Участники в парах отвечают на вопросы о своих основных вызовах и ожиданиях: «Какой главный вызов вы ставите себе на этой встрече?» (2 минуты на человека). После чего пары перемешиваются — каждый должен встать с незнакомым участником.",
+              principle: "Обмен личными историями пробуждает любопытство и чувство сопричастности, расшатывает застенчивость. Повторение и смена партнёров углубляют взаимодействие.",
+              effect: "Вовлечение, формирование новых социальных связей, улучшение групповой атмосферы. Помогает преодолеть застенчивость." },
+            { id: "016", name: "25/10 Crowd Sourcing", patterns: ["10", "12"], 
+              lead: "Идеи на карточках передаются и оцениваются анонимно. Топ идей определяется суммой баллов.",
+              condition: "Нужно в большой группе быстро собрать множество смелых практических идей и выявить самые привлекательные.",
+              desc: "Первые 5 минут каждый пишет на карточке свою смелую идею и первый шаг её реализации. 15 минут — пять циклов по 3 минуты, где карточки передаются, и участники им ставят оценки от 1 до 5. После чего подсчитывается сумма баллов и определяется топ идей.",
+              principle: "Анонимность карточек и оценок раскрепощает и снижает влияние авторитета. Многократный обмен карточками даёт увидеть разные точки зрения.",
+              effect: "Вовлекает всю аудиторию, ускоряет появление и отбор свежих инновационных идей, создаёт прозрачность выбора." },
+            { id: "017", name: "Микро-рефлексивные циклы", patterns: ["1", "5", "11", "13"], 
+              lead: "После каждого этапа — 1-3 минуты рефлексии. «Что знаю?», «Что заинтересовало?»",
+              condition: "Нужно быстро повысить вовлечённость и осознанность учащихся в процессе урока, когда нет времени на длинные рефлексии.",
+              desc: "После каждого упражнения или этапа проводиться микро-рефлексия на 1–3 минуты. Участники отвечают на открытые вопросы: «Что я уже знаю?», «Что меня заинтересовало?», «Что помогло понять?»",
+              principle: "Короткая рефлексия активирует метакогнитивное осознавание, удерживает внимание на процессе обучения, стимулирует самоконтроль за пониманием.",
+              effect: "Повышает вовлечённость, участие, удержание информации и формирует регулярную привычку осмысления." },
+            { id: "018", name: "Социограмма", patterns: ["5", "6", "12"], 
+              lead: "Визуализация социальных связей группы. Узлы — участники, линии — отношения и доверие.",
+              condition: "Необходимо лучше понять структуру социальных отношений в группе, выявить лидеров, изолированных участников.",
+              desc: "Рисуется граф социальный связей, где каждый участник представлен узлом, а связи — линиями, показывающими взаимодействия, предпочтения или доверие. Данные собираются с помощью вопросов типа «Кому вы доверяете?», «С кем хотите работать?»",
+              principle: "Отображение данных в виде схемы позволяет анализировать социальную динамику, выявлять лидеров, изолированных и межгрупповые связи.",
+              effect: "Помогает выявить структуру группы, способствует принятию решений по формированию команд, повышает осознанность участников о своей роли." },
+            { id: "019", name: "Разделительная линия", patterns: ["11", "13", "14"], 
+              lead: "Линия на полу + полярное утверждение. Участники встают в позицию, отражающую их мнение.",
+              condition: "Нужно быстро понять распределение мнений по полярному утверждению и визуализировать зоны согласия/несогласия.",
+              desc: "Скотчем сделать линию на полу и озвучить чёткое полярное утверждение. Участники должны встать в ту часть пространства, которая отражает их позицию. Потом пригласить представителей с разных точек кратко пояснить выбор.",
+              principle: "Визуальная шкала переводит внутреннюю позицию в внешнее пространство, снижая неопределённость и упрощая сравнение позиций.",
+              effect: "Выявляет распределение взглядов, обнажает крайние и промежуточные позиции, повышает вовлечённость в аргументацию." },
+            { id: "020", name: "Fishbowl Discussion", patterns: ["2", "3", "4", "14"], 
+              lead: "Внутренний круг обсуждает, внешний наблюдает. Свободное кресло для желающих присоединиться.",
+              condition: "Нужно обсудить сложную тему или конфликтный вопрос в большой группе, обеспечить равноправное участие.",
+              desc: "Формируют внутренний круг (4–6 человек) и внешний круг наблюдателей. Внутренний круг обсуждает 15–20 минут, остальные слушают. Любой может занять свободное кресло на внутреннем круге по желанию.",
+              principle: "Разделение на круги активирует внимание, переключает роли между участниками, предотвращает доминирование голосов, создаёт безопасную среду.",
+              effect: "Усиливает равноправие, вовлекает интровертов, повышает качество диалога, позволяет эффективно обсуждать противоречия." },
+            { id: "021", name: "Open Space Technology", patterns: ["1", "2", "10", "14"], 
+              lead: "Участники сами формируют сессии и повестку. Правило двух ног: не учат — уходи.",
+              condition: "Нужно решить сложную общую проблему в большой группе, высвободить творческий потенциал и лидерство участников.",
+              desc: "Участники сами формируют множество отдельных сессий для обсуждения. На каждой сессии участники сами формируют повестку. Участники свободно переходят между сессиями по правилу двух ног: если тут не учат и не вносят вклад — переходят в другое место.",
+              principle: "Самостоятельно формируя программу и выбирая участие, участники активируют внутреннюю мотивацию и ответственность, это раскрывает новых лидеров.",
+              effect: "Повышается вовлечённость и ответственность всех участников, появляется множество инициатив и решений." },
+            { id: "022", name: "Предмет для говорения", patterns: ["3", "5", "7", "8", "9"], 
+              lead: "Физический объект определяет право слова. Говорит только держащий предмет.",
+              condition: "Когда важны внимательное слушание и равное предоставление слова каждому участнику.",
+              desc: "Физический объект (палочка, ракушка, камень или предмет с символическим значением), который передаётся участникам по очереди. Тот, кто держит предмет, говорит от сердца без перебиваний, остальные могут только внимательно слушать.",
+              principle: "Предмет визуально и тактильно обозначает право слова, помогает управлять вниманием группы, предотвращает перебивания, поддерживает эмоциональную безопасность.",
+              effect: "Укрепляет доверие, даёт равный голос каждому, улучшает качество слушания, помогает справляться с чувствительными вопросами." },
+            { id: "023", name: "Консультации в тройках", patterns: ["2", "4", "5", "11"], 
+              lead: "Клиент + 2 консультанта. Клиент отворачивается и слушает советы. Роли меняются.",
+              condition: "Когда нужна быстрая, практическая и творческая помощь коллег по насущным проблемам в небольших группах.",
+              desc: "Участники собираются в тройки: один клиент и два консультанта. Клиент формулирует вопрос или вызов. Консультанты уточняют запрос, затем клиент отворачивается и слушает советы и идеи от консультантов. После обмена клиент делится впечатлениями. Роли меняются по кругу.",
+              principle: "Структурированный ротационный коучинг в формате peer-to-peer, где клиент получает свежие идеи, консультанты развивают навыки эмпатии и слушания.",
+              effect: "Помогает находить неожиданные решения и новые взгляды, развивает умение формулировать проблемы." },
+            { id: "024", name: "Зона отложенных тем", patterns: ["9"], 
+              lead: "Доска для вопросов не по теме. Сохраняет фокус, не теряя важные мысли.",
+              condition: "Во время длинных воркшопов, чтобы удержать фокус на повестке и при этом сохранить отвлекающие темы для последующего обсуждения.",
+              desc: "Заводиться специальное место на физическом носителе: например доска со стикерами, куда помещаются вопросы, идеи или темы, не относящиеся к текущей дискуссии. Эти темы записываются, группируются и обсуждаются отдельно.",
+              principle: "Сохранение актуального фокуса дискуссии при фиксировании всех важных, но не насущных тем. С участников снимается ответственность за то, чтобы про все эти темы помнить.",
+              effect: "Помогает управлять отклонениями от темы без игнорирования идей, способствует планированию последующих действий." }
+        ];
+
+        // Источники сгруппированы по категориям
+        const sources = [
+            { 
+                id: 'ls', 
+                name: 'Liberating Structures', 
+                techniques: ['001', '015', '016', '021', '023'],
+                refs: [
+                    { name: 'Liberating Structures', url: 'https://www.liberatingstructures.com/' }
+                ]
+            },
+            { 
+                id: 'efe', 
+                name: 'EFE Project', 
+                techniques: ['002', '004', '005'],
+                refs: [
+                    { name: 'EFE Project', url: 'https://efeproject.org/' }
+                ]
+            },
+            { 
+                id: 'larc', 
+                name: 'LARC Sonoma', 
+                techniques: ['012', '013', '014'],
+                refs: [
+                    { name: 'LARC Sonoma', url: 'https://larcsonoma.org/' }
+                ]
+            },
+            { 
+                id: 'academic', 
+                name: 'Академические', 
+                techniques: ['002', '006', '011'],
+                refs: [
+                    { name: 'Aronson E. — Jigsaw Classroom', url: 'https://www.jigsaw.org/' },
+                    { name: 'Kolb D. — Experiential Learning', url: 'https://en.wikipedia.org/wiki/Experiential_learning' },
+                    { name: 'Tuckman B. — Group Development', url: 'https://en.wikipedia.org/wiki/Tuckman%27s_stages_of_group_development' }
+                ]
+            },
+            { 
+                id: 'facilitation', 
+                name: 'Фасилитация', 
+                techniques: ['003', '007', '008', '022'],
+                refs: [
+                    { name: 'IAF Methods Database', url: 'https://www.sessionlab.com/library' },
+                    { name: 'Kaner S. — Facilitator\'s Guide', url: 'https://www.communityatwork.com/' }
+                ]
+            },
+            { 
+                id: 'teamwork', 
+                name: 'Командная работа', 
+                techniques: ['009', '010', '019', '020'],
+                refs: [
+                    { name: 'Agile Retrospectives', url: 'https://www.amazon.com/Agile-Retrospectives-Making-Teams-Great/dp/0977616649' },
+                    { name: 'Lencioni P. — Five Dysfunctions', url: 'https://www.tablegroup.com/product/dysfunctions/' }
+                ]
+            },
+            { 
+                id: 'edtech', 
+                name: 'EdTech', 
+                techniques: ['017', '018'],
+                refs: [
+                    { name: 'Miro Templates', url: 'https://miro.com/templates/' },
+                    { name: 'IDEO Design Thinking', url: 'https://designthinking.ideo.com/' }
+                ]
+            },
+            { 
+                id: 'ux', 
+                name: 'UX/NN Group', 
+                techniques: ['024'],
+                refs: [
+                    { name: 'Nielsen Norman Group', url: 'https://www.nngroup.com/' }
+                ]
+            }
+        ];
+
+        const metrics = ['cognitive', 'immersion', 'resistance', 'time'];
+        const metricLabels = { cognitive: 'Когнитивная нагрузка', immersion: 'Погружение', resistance: 'Сопротивление', time: 'Время' };
+        
+        const getTotal = p => p.cognitive + p.immersion + p.resistance + p.time;
+        const getColor = p => getPatternColor(p);
+
+        let selectedPattern = null;
+        let currentSortMetric = 'total';
+        const tooltip = document.getElementById('tooltip');
+
+        function showTooltip(e, pattern) {
+            const blue = getCSSVar('--accent-blue');
+            const green = getCSSVar('--accent-green');
+            const yellow = getCSSVar('--accent-yellow');
+            const red = getCSSVar('--accent-red');
+            const accentColor = getPatternColor(pattern);
+            tooltip.innerHTML = `
+                <div class="tooltip-id" style="color:${accentColor}">#${pattern.id}</div>
+                <div class="tooltip-title">${pattern.name}</div>
+                <div class="tooltip-metrics">
+                    <div class="tooltip-metric"><span class="tooltip-metric-label" style="color:${blue}">Когнитивная нагрузка</span><span class="tooltip-metric-value">${pattern.cognitive}</span></div>
+                    <div class="tooltip-metric"><span class="tooltip-metric-label" style="color:${green}">Погружение</span><span class="tooltip-metric-value">${pattern.immersion}</span></div>
+                    <div class="tooltip-metric"><span class="tooltip-metric-label" style="color:${yellow}">Сопротивление</span><span class="tooltip-metric-value">${pattern.resistance}</span></div>
+                    <div class="tooltip-metric"><span class="tooltip-metric-label" style="color:${red}">Время</span><span class="tooltip-metric-value">${pattern.time}</span></div>
+                </div>
+                <div class="tooltip-total"><span>Σ</span><span style="color:${accentColor}">${getTotal(pattern)}</span></div>
+            `;
+            tooltip.classList.add('visible');
+            positionTooltip(e);
+            highlightPattern(pattern);
+        }
+        
+        function positionTooltip(e) {
+            const x = e.clientX + 12;
+            const y = e.clientY + 12;
+            const rect = tooltip.getBoundingClientRect();
+            const maxX = window.innerWidth - rect.width - 8;
+            const maxY = window.innerHeight - rect.height - 8;
+            tooltip.style.left = Math.min(x, maxX) + 'px';
+            tooltip.style.top = Math.min(y, maxY) + 'px';
+        }
+        
+        function hideTooltip() {
+            tooltip.classList.remove('visible');
+            clearHighlight();
+        }
+        
+        function highlightPattern(pattern) {
+            if (window.networkNodes) {
+                window.networkNodes.classed('hover-dim', d => d.id !== pattern.id);
+            }
+            if (window.barGroups) {
+                window.barGroups.classed('hover-dim', d => d.id !== pattern.id);
+            }
+            if (window.heatmapCells) {
+                window.heatmapCells.classed('hover-dim', d => d.pattern.id !== pattern.id);
+            }
+        }
+        
+        function clearHighlight() {
+            if (window.networkNodes) window.networkNodes.classed('hover-dim', false);
+            if (window.barGroups) window.barGroups.classed('hover-dim', false);
+            if (window.heatmapCells) window.heatmapCells.classed('hover-dim', false);
+        }
+        
+        function toggleAllTechniques() {
+            const items = document.querySelectorAll('.technique-item');
+            const btn = document.querySelector('.expand-all-btn');
+            const allOpen = Array.from(items).every(item => item.classList.contains('open'));
+            
+            items.forEach(item => {
+                if (allOpen) {
+                    item.classList.remove('open');
+                } else {
+                    item.classList.add('open');
+                }
+            });
+            
+            btn.textContent = allOpen ? 'Развернуть всё' : 'Свернуть всё';
+        }
+        
+        function switchChartTab(tab) {
+            const heatmap = document.getElementById('heatmap');
+            const radar = document.getElementById('radar');
+            const tabs = document.querySelectorAll('.chart-tab');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            if (tab === 'heatmap') {
+                tabs[0].classList.add('active');
+                heatmap.style.display = 'block';
+                radar.style.display = 'none';
+            } else {
+                tabs[1].classList.add('active');
+                heatmap.style.display = 'none';
+                radar.style.display = 'block';
+                drawRadar(selectedPattern);
+            }
+        }
+        
+        // Scroll to article on mobile when pattern selected
+        function selectPatternMobile(pattern) {
+            selectPattern(pattern);
+            if (window.innerWidth <= 768) {
+                document.getElementById('articlePanel').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+        
+        // Return to home (Sankey view)
+        function goHome() {
+            selectedPattern = null;
+            drawNetwork();
+            drawBars();
+            drawRadar(null);
+            renderArticle(null);
+            updateMobileNavActive();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        const edges = [];
+        const edgeSet = new Set();
+        patterns.forEach(p => {
+            p.connections.forEach(tid => {
+                // Создаём уникальный ключ для ребра (меньший id-больший id)
+                const [a, b] = [parseInt(p.id), parseInt(tid)].sort((x, y) => x - y);
+                const key = `${a}-${b}`;
+                if (!edgeSet.has(key)) {
+                    edgeSet.add(key);
+                    edges.push({ source: String(a), target: String(b) });
+                }
+            });
+        });
+
+        function selectPattern(pattern) {
+            selectedPattern = pattern;
+            // Перерисовываем все графики для обновления цветов
+            drawNetwork();
+            drawBars();
+            drawRadar(pattern);
+            renderArticle(pattern);
+            // Обновляем мобильную навигацию
+            updateMobileNavActive();
+        }
+        
+        function updateMobileNavActive() {
+            const container = document.getElementById('mobileNavScroll');
+            if (!container) return;
+            
+            container.querySelectorAll('.mobile-pattern-card').forEach(card => {
+                card.classList.toggle('active', selectedPattern && card.dataset.id === selectedPattern.id);
+            });
+        }
+
+        function updateAllHighlights() {
+            // Теперь графики перерисовываются в selectPattern
+        }
+
+        function renderArticle(pattern) {
+            const panel = document.getElementById('articlePanel');
+            if (!pattern) {
+                panel.innerHTML = `
+                    <div class="sankey-container">
+                        <div class="sankey-title">Конденсация знаний</div>
+                        <div class="sankey-subtitle">8 категорий источников → 24 приёма → 14 паттернов</div>
+                        <div id="sankeyChart"></div>
+                    </div>
+                `;
+                drawSankey();
+                return;
+            }
+            
+            const blue = getCSSVar('--accent-blue');
+            const green = getCSSVar('--accent-green');
+            const yellow = getCSSVar('--accent-yellow');
+            const red = getCSSVar('--accent-red');
+            const metricColorsMap = { cognitive: blue, immersion: green, resistance: yellow, time: red };
+            
+            const connectionsHtml = pattern.connections.length > 0
+                ? pattern.connections.map(id => {
+                    const p = patterns.find(x => x.id === id);
+                    return `<div class="connection-tag" onclick="selectPatternMobile(patterns.find(p => p.id === '${id}'))">#${id} ${p.name}</div>`;
+                }).join('')
+                : '<span class="no-connections">Изолированный паттерн — нет связей с другими</span>';
+            
+            // Найти техники, использующие этот паттерн
+            const relatedTechniques = techniques.filter(t => t.patterns.includes(pattern.id));
+            const techniquesHtml = relatedTechniques.length > 0
+                ? `<div class="techniques-list">
+                    ${relatedTechniques.map(t => `
+                        <div class="technique-item" data-id="${t.id}">
+                            <div class="technique-clickable" onclick="this.parentElement.classList.toggle('open')">
+                                <div class="technique-header">
+                                    <span class="technique-toggle">▶</span>
+                                    <span class="technique-id">${t.id}</span>
+                                    <span class="technique-name">${t.name}</span>
+                                </div>
+                                <div class="technique-lead">${t.lead}</div>
+                            </div>
+                            <div class="technique-body">
+                                <div class="technique-field">
+                                    <span class="technique-field-label">Условие для применения</span>
+                                    <span class="technique-field-value">${t.condition}</span>
+                                </div>
+                                <div class="technique-field">
+                                    <span class="technique-field-label">Описание</span>
+                                    <span class="technique-field-value">${t.desc}</span>
+                                </div>
+                                <div class="technique-field">
+                                    <span class="technique-field-label">Принцип работы</span>
+                                    <span class="technique-field-value">${t.principle}</span>
+                                </div>
+                                <div class="technique-field">
+                                    <span class="technique-field-label">Описанный в источнике эффект</span>
+                                    <span class="technique-field-value">${t.effect}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>`
+                : '<span class="no-connections">Паттерн не привязан к конкретным техникам</span>';
+            
+            const expandBtnHtml = relatedTechniques.length > 0 
+                ? `<button class="expand-all-btn" onclick="toggleAllTechniques()">Развернуть всё</button>`
+                : '';
+            
+            // Найти источники для этих техник
+            const techniqueIds = relatedTechniques.map(t => t.id);
+            const relatedSources = sources.filter(s => 
+                s.techniques.some(tId => techniqueIds.includes(tId))
+            );
+            // Собрать уникальные ссылки
+            const allRefs = [];
+            const seenUrls = new Set();
+            relatedSources.forEach(s => {
+                s.refs.forEach(ref => {
+                    if (!seenUrls.has(ref.url)) {
+                        seenUrls.add(ref.url);
+                        allRefs.push(ref);
+                    }
+                });
+            });
+            const sourcesHtml = allRefs.length > 0
+                ? `<div class="sources-list">${allRefs.map(ref => 
+                    `<a href="${ref.url}" target="_blank" class="source-link">${ref.name}</a>`
+                ).join('')}</div>`
+                : '';
+            
+            const accentColor = getPatternColor(pattern);
+            
+            panel.innerHTML = `
+                <div class="article-fixed">
+                    <div class="article-header">
+                        <div class="article-id" style="color: ${accentColor}">#${pattern.id}</div>
+                        <div class="article-title">${pattern.name}</div>
+                        <div class="article-mini-radar" id="articleMiniRadar"></div>
+                    </div>
+                    <div class="article-connections">${connectionsHtml}</div>
+                </div>
+                <div class="article-scroll">
+                    <div class="article-description">${pattern.desc}</div>
+                    <div class="article-section">
+                        <div class="article-section-header">
+                            <div class="article-section-title">Техники с этим паттерном (${relatedTechniques.length})</div>
+                            ${expandBtnHtml}
+                        </div>
+                        ${techniquesHtml}
+                    </div>
+                    ${allRefs.length > 0 ? `
+                    <div class="article-section">
+                        <div class="article-section-header">
+                            <div class="article-section-title">Источники (${allRefs.length})</div>
+                        </div>
+                        ${sourcesHtml}
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            // Рисуем мини-радар в заголовке на мобилке
+            if (window.innerWidth <= 768) {
+                drawMiniRadar(pattern, 'articleMiniRadar');
+            }
+        }
+        
+        function drawSankey() {
+            const container = document.getElementById('sankeyChart');
+            if (!container) return;
+            
+            const width = Math.min(container.clientWidth, 1000);
+            const height = 700;
+            
+            // Подготовка данных
+            const sankeyNodes = [];
+            const sankeyLinks = [];
+            const nodeIndex = {};
+            
+            // Добавляем источники (слева)
+            sources.forEach((s, i) => {
+                nodeIndex[`s_${s.id}`] = sankeyNodes.length;
+                // Получаем названия техник для этого источника
+                const techNames = s.techniques.map(tId => {
+                    const tech = techniques.find(t => t.id === tId);
+                    return tech ? `${tech.id} ${tech.name}` : tId;
+                });
+                sankeyNodes.push({ 
+                    name: s.name, 
+                    type: 'source',
+                    id: s.id,
+                    techniqueNames: techNames,
+                    refs: s.refs || []
+                });
+            });
+            
+            // Добавляем приёмы (центр)
+            techniques.forEach((t, i) => {
+                nodeIndex[`t_${t.id}`] = sankeyNodes.length;
+                sankeyNodes.push({ 
+                    name: t.id, 
+                    fullName: t.name,
+                    type: 'technique',
+                    id: t.id
+                });
+            });
+            
+            // Добавляем паттерны (справа)
+            patterns.forEach((p, i) => {
+                nodeIndex[`p_${p.id}`] = sankeyNodes.length;
+                sankeyNodes.push({ 
+                    name: `#${p.id}`, 
+                    fullName: p.name,
+                    type: 'pattern',
+                    id: p.id,
+                    color: getPatternColor(p)
+                });
+            });
+            
+            // Связи источников → приёмы
+            sources.forEach(s => {
+                s.techniques.forEach(tId => {
+                    const sourceIdx = nodeIndex[`s_${s.id}`];
+                    const targetIdx = nodeIndex[`t_${tId}`];
+                    if (sourceIdx !== undefined && targetIdx !== undefined) {
+                        sankeyLinks.push({
+                            source: sourceIdx,
+                            target: targetIdx,
+                            value: 1
+                        });
+                    }
+                });
+            });
+            
+            // Связи приёмы → паттерны
+            techniques.forEach(t => {
+                t.patterns.forEach(pId => {
+                    const sourceIdx = nodeIndex[`t_${t.id}`];
+                    const targetIdx = nodeIndex[`p_${pId}`];
+                    if (sourceIdx !== undefined && targetIdx !== undefined) {
+                        sankeyLinks.push({
+                            source: sourceIdx,
+                            target: targetIdx,
+                            value: 1
+                        });
+                    }
+                });
+            });
+            
+            // Создаём Sankey layout
+            const sankey = d3.sankey()
+                .nodeWidth(4)
+                .nodePadding(6)
+                .nodeAlign(d3.sankeyJustify)
+                .extent([[100, 28], [width - 140, height - 20]]);
+            
+            const { nodes, links } = sankey({
+                nodes: sankeyNodes.map(d => Object.assign({}, d)),
+                links: sankeyLinks.map(d => Object.assign({}, d))
+            });
+            
+            // Создаём SVG
+            d3.select('#sankeyChart').selectAll('*').remove();
+            const svg = d3.select('#sankeyChart')
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height)
+                .attr('viewBox', [0, 0, width, height]);
+            
+            // Вычисляем центры колонок по узлам
+            const sourceNodes = nodes.filter(n => n.type === 'source');
+            const techniqueNodes = nodes.filter(n => n.type === 'technique');
+            const patternNodes = nodes.filter(n => n.type === 'pattern');
+            
+            const sourceX = sourceNodes.length ? (sourceNodes[0].x0 + sourceNodes[0].x1) / 2 : 100;
+            const techniqueX = techniqueNodes.length ? (techniqueNodes[0].x0 + techniqueNodes[0].x1) / 2 : width / 2;
+            const patternX = patternNodes.length ? (patternNodes[0].x0 + patternNodes[0].x1) / 2 : width - 100;
+            
+            // Заголовки колонок
+            const headerY = 12;
+            svg.append('text')
+                .attr('x', sourceX)
+                .attr('y', headerY)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '11px')
+                .attr('font-variant', 'small-caps')
+                .attr('letter-spacing', '0.5px')
+                .attr('fill', getCSSVar('--text-primary'))
+                .text('источники');
+            
+            svg.append('text')
+                .attr('x', techniqueX)
+                .attr('y', headerY)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '11px')
+                .attr('font-variant', 'small-caps')
+                .attr('letter-spacing', '0.5px')
+                .attr('fill', getCSSVar('--text-primary'))
+                .text('приёмы');
+            
+            svg.append('text')
+                .attr('x', patternX)
+                .attr('y', headerY)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '11px')
+                .attr('font-variant', 'small-caps')
+                .attr('letter-spacing', '0.5px')
+                .attr('fill', getCSSVar('--text-primary'))
+                .text('паттерны');
+            
+            // Рисуем связи - толщина 1px
+            const linkG = svg.append('g')
+                .attr('fill', 'none')
+                .selectAll('path')
+                .data(links)
+                .join('path')
+                .attr('class', 'sankey-link')
+                .attr('d', d3.sankeyLinkHorizontal())
+                .attr('stroke', d => {
+                    if (d.target.type === 'pattern') return d.target.color;
+                    if (d.source.type === 'source') return getCSSVar('--text-muted');
+                    return getCSSVar('--text-muted');
+                })
+                .attr('stroke-width', 1)
+                .attr('stroke-opacity', 0.25);
+            
+            // Рисуем узлы
+            const nodeG = svg.append('g')
+                .selectAll('g')
+                .data(nodes)
+                .join('g')
+                .attr('class', 'sankey-node');
+            
+            nodeG.append('rect')
+                .attr('x', d => d.x0)
+                .attr('y', d => d.y0)
+                .attr('height', d => Math.max(1, d.y1 - d.y0))
+                .attr('width', d => d.x1 - d.x0)
+                .attr('fill', d => {
+                    if (d.type === 'pattern') return d.color;
+                    if (d.type === 'source') return getCSSVar('--accent-blue');
+                    return getCSSVar('--text-muted');
+                })
+                .attr('opacity', d => d.type === 'technique' ? 0.4 : 0.8)
+                .attr('rx', 1);
+            
+            // Подписи для источников (слева)
+            nodeG.filter(d => d.type === 'source')
+                .append('text')
+                .attr('x', d => d.x0 - 6)
+                .attr('y', d => (d.y0 + d.y1) / 2)
+                .attr('dy', '0.35em')
+                .attr('text-anchor', 'end')
+                .attr('font-size', '10px')
+                .attr('fill', getCSSVar('--text-muted'))
+                .style('cursor', 'pointer')
+                .style('letter-spacing', '0.3px')
+                .text(d => d.name);
+            
+            // Подписи для приёмов (под узлом, короткие) - только номер
+            nodeG.filter(d => d.type === 'technique')
+                .append('text')
+                .attr('class', 'technique-label')
+                .attr('x', d => (d.x0 + d.x1) / 2)
+                .attr('y', d => d.y1 + 3)
+                .attr('dy', '0.7em')
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '7px')
+                .attr('fill', getCSSVar('--text-muted'))
+                .attr('opacity', 0.7)
+                .style('cursor', 'pointer')
+                .text(d => d.name);
+            
+            // Подписи для паттернов (справа)
+            nodeG.filter(d => d.type === 'pattern')
+                .append('text')
+                .attr('x', d => d.x1 + 6)
+                .attr('y', d => (d.y0 + d.y1) / 2)
+                .attr('dy', '0.35em')
+                .attr('text-anchor', 'start')
+                .attr('font-size', '10px')
+                .attr('fill', d => d.color)
+                .style('cursor', 'pointer')
+                .style('letter-spacing', '0.3px')
+                .text(d => `${d.name} ${d.fullName}`);
+            
+            // Отдельный слой для всплывающих названий приёмов (поверх всего)
+            const bgColor = getCSSVar('--bg-primary');
+            const fullnameLayer = svg.append('g').attr('class', 'fullname-layer');
+            
+            const techniqueLabels = fullnameLayer.selectAll('.technique-fullname-group')
+                .data(techniqueNodes)
+                .join('g')
+                .attr('class', 'technique-fullname-group')
+                .attr('opacity', 0)
+                .style('pointer-events', 'none');
+            
+            // Фоновый прямоугольник
+            techniqueLabels.append('rect')
+                .attr('class', 'technique-fullname-bg')
+                .attr('fill', bgColor)
+                .attr('rx', 2);
+            
+            // Текст с номером и названием (без переноса, с разрядкой)
+            techniqueLabels.append('text')
+                .attr('class', 'technique-fullname')
+                .attr('x', d => (d.x0 + d.x1) / 2)
+                .attr('y', d => d.y0 - 8)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '9px')
+                .attr('fill', getCSSVar('--text-primary'))
+                .style('white-space', 'nowrap')
+                .style('letter-spacing', '0.3px')
+                .text(d => `${d.name}\u00A0${d.fullName}`);
+            
+            // Позиционируем фон после создания текста
+            techniqueLabels.each(function(d) {
+                const g = d3.select(this);
+                const text = g.select('text');
+                const bbox = text.node().getBBox();
+                g.select('rect')
+                    .attr('x', bbox.x - 6)
+                    .attr('y', bbox.y - 3)
+                    .attr('width', bbox.width + 12)
+                    .attr('height', bbox.height + 6);
+            });
+            
+            container.style.position = 'relative';
+            
+            // Tooltip для источников с ссылками
+            const sourceTooltip = document.createElement('div');
+            sourceTooltip.className = 'source-tooltip';
+            sourceTooltip.style.cssText = 'position:absolute;left:10px;top:30px;padding:8px 12px;background:var(--bg-primary);border:1px solid var(--border);border-radius:4px;font-size:11px;color:var(--text-primary);pointer-events:none;opacity:0;transition:opacity 0.15s;z-index:100;line-height:1.8;max-width:280px;';
+            container.appendChild(sourceTooltip);
+            
+            // Стили для ссылок в tooltip
+            const tooltipStyle = document.createElement('style');
+            tooltipStyle.textContent = '.source-tooltip a:hover { text-decoration: underline !important; }';
+            document.head.appendChild(tooltipStyle);
+            
+            // Состояние фиксации для источника
+            let lockedSource = null;
+            
+            function updateSourceTooltip(node, show) {
+                if (show && node.refs && node.refs.length > 0) {
+                    sourceTooltip.innerHTML = node.refs.map(r => 
+                        `<a href="${r.url}" target="_blank" style="color:var(--accent-blue);text-decoration:none;display:block;padding:2px 0;">${r.name}</a>`
+                    ).join('');
+                    sourceTooltip.style.opacity = '1';
+                    sourceTooltip.style.pointerEvents = lockedSource !== null ? 'auto' : 'none';
+                } else if (lockedSource === null) {
+                    sourceTooltip.style.opacity = '0';
+                    sourceTooltip.style.pointerEvents = 'none';
+                }
+            }
+            
+            // Hover подсветка
+            function highlightNode(node, highlight) {
+                const connectedLinks = links.filter(l => 
+                    l.source.index === node.index || l.target.index === node.index
+                );
+                
+                // Собираем все связанные узлы через цепочку
+                const connectedNodes = new Set([node.index]);
+                
+                if (highlight) {
+                    // Для паттернов - подсветить все пути к источникам
+                    if (node.type === 'pattern') {
+                        links.forEach(l => {
+                            if (l.target.index === node.index) {
+                                connectedNodes.add(l.source.index);
+                                // Найти источники для этих приёмов
+                                links.forEach(l2 => {
+                                    if (l2.target.index === l.source.index) {
+                                        connectedNodes.add(l2.source.index);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    // Для источников - подсветить все пути к паттернам
+                    else if (node.type === 'source') {
+                        links.forEach(l => {
+                            if (l.source.index === node.index) {
+                                connectedNodes.add(l.target.index);
+                                // Найти паттерны для этих приёмов
+                                links.forEach(l2 => {
+                                    if (l2.source.index === l.target.index) {
+                                        connectedNodes.add(l2.target.index);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    // Для приёмов - подсветить источники и паттерны
+                    else if (node.type === 'technique') {
+                        links.forEach(l => {
+                            if (l.source.index === node.index || l.target.index === node.index) {
+                                connectedNodes.add(l.source.index);
+                                connectedNodes.add(l.target.index);
+                            }
+                        });
+                    }
+                }
+                
+                // Обновляем opacity связей
+                linkG.attr('stroke-opacity', d => {
+                    if (!highlight) return 0.25;
+                    const isConnected = connectedNodes.has(d.source.index) && connectedNodes.has(d.target.index);
+                    return isConnected ? 0.7 : 0.05;
+                });
+                
+                // Обновляем opacity узлов
+                nodeG.select('rect').attr('opacity', d => {
+                    if (!highlight) return d.type === 'technique' ? 0.4 : 0.8;
+                    return connectedNodes.has(d.index) ? 1 : 0.1;
+                });
+                
+                nodeG.select('text').attr('opacity', d => {
+                    if (!highlight) return d.type === 'technique' ? 0.7 : 1;
+                    return connectedNodes.has(d.index) ? 1 : 0.2;
+                });
+                
+                // Скрываем номера приёмов когда показываем полные названия
+                nodeG.select('.technique-label').attr('opacity', d => {
+                    if (!highlight) return 0.7;
+                    if (d.type !== 'technique') return 0.7;
+                    // Скрываем номер если показываем полное название
+                    if (node.type === 'source' || node.type === 'pattern') {
+                        return connectedNodes.has(d.index) ? 0 : 0.2;
+                    }
+                    if (node.type === 'technique' && d.index === node.index) {
+                        return 0;
+                    }
+                    return connectedNodes.has(d.index) ? 0.7 : 0.2;
+                });
+                
+                // Показываем полные названия связанных приёмов (из отдельного слоя)
+                fullnameLayer.selectAll('.technique-fullname-group').attr('opacity', d => {
+                    if (!highlight) return 0;
+                    // Показываем только для связанных techniques при hover на source/pattern
+                    if (node.type === 'source' || node.type === 'pattern') {
+                        return connectedNodes.has(d.index) ? 1 : 0;
+                    }
+                    // При hover на сам technique - показываем его название
+                    if (node.type === 'technique' && d.index === node.index) {
+                        return 1;
+                    }
+                    return 0;
+                });
+                
+                // Подсветка виджетов при hover на паттерн
+                if (node.type === 'pattern') {
+                    highlightWidgetPattern(node.id, highlight);
+                }
+                
+                // Tooltip для источников
+                if (node.type === 'source' && lockedSource === null) {
+                    updateSourceTooltip(node, highlight);
+                }
+            }
+            
+            // События hover
+            nodeG.on('mouseenter', (e, d) => {
+                    if (lockedSource === null) highlightNode(d, true);
+                })
+                .on('mouseleave', (e, d) => {
+                    if (lockedSource === null) highlightNode(d, false);
+                });
+            
+            // Клик на источник - фиксация состояния
+            nodeG.filter(d => d.type === 'source')
+                .style('cursor', 'pointer')
+                .on('click', (e, d) => {
+                    e.stopPropagation();
+                    if (lockedSource === d.index) {
+                        // Разблокировать
+                        lockedSource = null;
+                        sourceTooltip.style.pointerEvents = 'none';
+                        highlightNode(d, false);
+                    } else {
+                        // Заблокировать на этом источнике
+                        lockedSource = d.index;
+                        highlightNode(d, true);
+                        updateSourceTooltip(d, true);
+                    }
+                });
+            
+            // Клик вне - сброс фиксации
+            svg.on('click', () => {
+                if (lockedSource !== null) {
+                    const prevLocked = lockedSource;
+                    lockedSource = null;
+                    sourceTooltip.style.pointerEvents = 'none';
+                    sourceTooltip.style.opacity = '0';
+                    // Сбросить подсветку
+                    highlightNode(nodes.find(n => n.index === prevLocked), false);
+                }
+            });
+            
+            // Клик на паттерн
+            nodeG.filter(d => d.type === 'pattern')
+                .style('cursor', 'pointer')
+                .on('click', (e, d) => {
+                    const pattern = patterns.find(p => p.id === d.id);
+                    if (pattern) selectPattern(pattern);
+                });
+        }
+
+        function drawNetwork() {
+            const container = document.getElementById('network');
+            const rect = container.getBoundingClientRect();
+            const width = rect.width, height = rect.height;
+            if (width < 10 || height < 10) return;
+            
+            const monoFill = getCSSVar('--mono-fill');
+            const linkColor = currentTheme === 'dark' ? '#888888' : '#999999';
+            const activeEdgeColor = currentTheme === 'dark' ? '#ffffff' : '#000000';
+
+            d3.select('#network').selectAll('*').remove();
+            const svg = d3.select('#network').append('svg').attr('width', width).attr('height', height);
+
+            const nodes = patterns.map(p => ({ ...p }));
+            const links = edges.map(e => ({ source: e.source, target: e.target }));
+
+            const simulation = d3.forceSimulation(nodes)
+                .force('link', d3.forceLink(links).id(d => d.id).distance(30))
+                .force('charge', d3.forceManyBody().strength(-80))
+                .force('center', d3.forceCenter(width / 2, height / 2))
+                .force('collision', d3.forceCollide().radius(12));
+
+            const selId = selectedPattern ? String(selectedPattern.id) : null;
+
+            // Все связи - стили будут применены в tick
+            const link = svg.append('g').selectAll('line').data(links).join('line');
+            
+            const node = svg.append('g').selectAll('g').data(nodes).join('g').attr('class', 'node')
+                .attr('data-pattern-id', d => d.id)
+                .call(d3.drag()
+                    .on('start', (e, d) => { if (!e.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+                    .on('drag', (e, d) => { d.fx = e.x; d.fy = e.y; })
+                    .on('end', (e, d) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }));
+
+            const blue = getCSSVar('--accent-blue');
+            const green = getCSSVar('--accent-green');
+            const yellow = getCSSVar('--accent-yellow');
+            const red = getCSSVar('--accent-red');
+            const metricColors = [blue, green, yellow, red];
+
+            node.each(function(d) {
+                const g = d3.select(this);
+                const r = 5 + getTotal(d) * 0.35;
+                const isSelected = selectedPattern && d.id === selectedPattern.id;
+                
+                if (isSelected) {
+                    const strokeWidth = 3;
+                    const outerR = r + strokeWidth;
+                    const values = [d.cognitive, d.immersion, d.resistance, d.time];
+                    const pie = d3.pie().sort(null);
+                    const arc = d3.arc().innerRadius(r).outerRadius(outerR);
+                    pie(values).forEach((arcData, i) => {
+                        g.append('path').attr('d', arc(arcData)).attr('fill', metricColors[i]);
+                    });
+                    g.append('circle').attr('r', r).attr('fill', '#1a1a18');
+                } else {
+                    g.append('circle').attr('r', r).attr('fill', monoFill).attr('opacity', selectedPattern ? 0.4 : 0.7);
+                }
+            });
+            
+            node.append('text').attr('text-anchor', 'middle').attr('dy', '0.3em').attr('font-size', '10px').text(d => d.id).attr('fill', '#fff');
+            node.on('click', (e, d) => selectPatternMobile(d))
+                .on('mouseenter', (e, d) => showTooltip(e, d))
+                .on('mousemove', (e) => positionTooltip(e))
+                .on('mouseleave', hideTooltip);
+
+            const padding = 15;
+            const getNodeRadius = (d) => 5 + getTotal(d) * 0.35;
+            
+            const shortenLine = (x1, y1, x2, y2, r1, r2) => {
+                const dx = x2 - x1, dy = y2 - y1;
+                const len = Math.sqrt(dx * dx + dy * dy);
+                if (len === 0) return { x1, y1, x2, y2 };
+                const ux = dx / len, uy = dy / len;
+                return { x1: x1 + ux * r1, y1: y1 + uy * r1, x2: x2 - ux * r2, y2: y2 - uy * r2 };
+            };
+            
+            simulation.on('tick', () => {
+                nodes.forEach(d => {
+                    d.x = Math.max(padding, Math.min(width - padding, d.x));
+                    d.y = Math.max(padding, Math.min(height - padding, d.y));
+                });
+                // Обновляем связи с координатами и стилями
+                link.each(function(d) {
+                    const srcId = String(d.source.id);
+                    const tgtId = String(d.target.id);
+                    const isActive = selId && (srcId === selId || tgtId === selId);
+                    const el = d3.select(this);
+                    
+                    // Стили
+                    el.attr('stroke', isActive ? activeEdgeColor : linkColor)
+                      .attr('stroke-width', isActive ? 2 : 1)
+                      .attr('opacity', isActive ? 0.9 : (selectedPattern ? 0.15 : 0.35));
+                    
+                    // Координаты
+                    if (isActive) {
+                        const isSourceSelected = srcId === selId;
+                        const isTargetSelected = tgtId === selId;
+                        const r1 = getNodeRadius(d.source) + (isSourceSelected ? 5 : 2);
+                        const r2 = getNodeRadius(d.target) + (isTargetSelected ? 5 : 2);
+                        const shortened = shortenLine(d.source.x, d.source.y, d.target.x, d.target.y, r1, r2);
+                        el.attr('x1', shortened.x1).attr('y1', shortened.y1).attr('x2', shortened.x2).attr('y2', shortened.y2);
+                    } else {
+                        el.attr('x1', d.source.x).attr('y1', d.source.y).attr('x2', d.target.x).attr('y2', d.target.y);
+                    }
+                });
+                node.attr('transform', d => `translate(${d.x},${d.y})`);
+            });
+        }
+
+        function drawRadar(pattern = null) {
+            const container = document.getElementById('radar');
+            const rect = container.getBoundingClientRect();
+            const size = Math.min(rect.width, rect.height);
+            const cx = rect.width / 2, cy = size / 2;
+            const radius = size * 0.38;
+            const axisColor = currentTheme === 'dark' ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.2)';
+            const gridColor = currentTheme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.15)';
+            const labelColor = getCSSVar('--text-muted');
+
+            d3.select('#radar').selectAll('*').remove();
+            const svg = d3.select('#radar').append('svg').attr('width', rect.width).attr('height', size);
+            const angleSlice = (Math.PI * 2) / metrics.length;
+
+            for (let level = 1; level <= 5; level++) {
+                const r = (level / 5) * radius;
+                const points = metrics.map((_, i) => {
+                    const angle = i * angleSlice - Math.PI / 2;
+                    return [cx + r * Math.cos(angle), cy + r * Math.sin(angle)];
+                });
+                svg.append('polygon').attr('points', points.map(p => p.join(',')).join(' ')).attr('fill', 'none').attr('stroke', gridColor);
+            }
+
+            metrics.forEach((m, i) => {
+                const angle = i * angleSlice - Math.PI / 2;
+                svg.append('line').attr('x1', cx).attr('y1', cy)
+                    .attr('x2', cx + radius * Math.cos(angle)).attr('y2', cy + radius * Math.sin(angle)).attr('stroke', axisColor);
+                const labelR = radius + 12;
+                const lx = cx + labelR * Math.cos(angle);
+                const ly = cy + labelR * Math.sin(angle);
+                // Позиционирование: 0=top, 1=right, 2=bottom, 3=left
+                const anchors = ['middle', 'start', 'middle', 'end'];
+                const baselines = ['auto', 'middle', 'hanging', 'middle'];
+                svg.append('text').attr('x', lx).attr('y', ly)
+                    .attr('text-anchor', anchors[i]).attr('dominant-baseline', baselines[i])
+                    .attr('font-size', '11px').attr('fill', labelColor).text(metricLabels[m].charAt(0));
+            });
+
+            if (pattern) {
+                const blue = getCSSVar('--accent-blue');
+                const green = getCSSVar('--accent-green');
+                const yellow = getCSSVar('--accent-yellow');
+                const red = getCSSVar('--accent-red');
+                const metricColors = { cognitive: blue, immersion: green, resistance: yellow, time: red };
+                const metricColorsList = [blue, green, yellow, red];
+                
+                const points = metrics.map((m, i) => {
+                    const angle = i * angleSlice - Math.PI / 2;
+                    const r = (pattern[m] / 5) * radius;
+                    return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle), metric: m, color: metricColors[m] };
+                });
+                
+                // Градиентная заливка - 4 треугольника от центра
+                const defs = svg.append('defs');
+                
+                // Clip path для polygon
+                const clipId = `clip-${pattern.id}`;
+                const clip = defs.append('clipPath').attr('id', clipId);
+                clip.append('polygon').attr('points', points.map(p => `${p.x},${p.y}`).join(' '));
+                
+                // Группа с clip
+                const fillGroup = svg.append('g').attr('clip-path', `url(#${clipId})`);
+                
+                // Радиальные градиенты от каждой вершины
+                points.forEach((p, i) => {
+                    const gradId = `radial-${pattern.id}-${i}`;
+                    const radGrad = defs.append('radialGradient')
+                        .attr('id', gradId)
+                        .attr('cx', p.x).attr('cy', p.y)
+                        .attr('r', radius * 1.5)
+                        .attr('gradientUnits', 'userSpaceOnUse');
+                    radGrad.append('stop').attr('offset', '0%').attr('stop-color', p.color).attr('stop-opacity', 0.5);
+                    radGrad.append('stop').attr('offset', '100%').attr('stop-color', p.color).attr('stop-opacity', 0);
+                    
+                    fillGroup.append('circle')
+                        .attr('cx', p.x).attr('cy', p.y)
+                        .attr('r', radius * 1.5)
+                        .attr('fill', `url(#${gradId})`);
+                });
+                
+                // Базовая прозрачная заливка для 30% opacity
+                svg.append('polygon').attr('points', points.map(p => `${p.x},${p.y}`).join(' '))
+                    .attr('fill', 'none').attr('stroke', 'none');
+                
+                // Градиентные рёбра
+                for (let i = 0; i < points.length; i++) {
+                    const p1 = points[i];
+                    const p2 = points[(i + 1) % points.length];
+                    const gradId = `grad-${pattern.id}-${i}`;
+                    
+                    const grad = defs.append('linearGradient')
+                        .attr('id', gradId)
+                        .attr('x1', p1.x).attr('y1', p1.y)
+                        .attr('x2', p2.x).attr('y2', p2.y)
+                        .attr('gradientUnits', 'userSpaceOnUse');
+                    grad.append('stop').attr('offset', '0%').attr('stop-color', p1.color);
+                    grad.append('stop').attr('offset', '100%').attr('stop-color', p2.color);
+                    
+                    svg.append('line')
+                        .attr('x1', p1.x).attr('y1', p1.y)
+                        .attr('x2', p2.x).attr('y2', p2.y)
+                        .attr('stroke', `url(#${gradId})`)
+                        .attr('stroke-width', 1);
+                }
+                
+                // Точки
+                points.forEach(p => svg.append('circle').attr('cx', p.x).attr('cy', p.y).attr('r', 3).attr('fill', p.color));
+            }
+        }
+
+        function drawBars() {
+            const container = document.getElementById('bars');
+            const rect = container.getBoundingClientRect();
+            const width = rect.width, height = rect.height;
+            const bgColor = getCSSVar('--bar-bg');
+            const valueColor = getCSSVar('--text-secondary');
+            const monoFill = getCSSVar('--mono-fill');
+            const blue = getCSSVar('--accent-blue');
+            const green = getCSSVar('--accent-green');
+            const yellow = getCSSVar('--accent-yellow');
+            const red = getCSSVar('--accent-red');
+            const metricColors = { cognitive: blue, immersion: green, resistance: yellow, time: red };
+
+            // Сортировка по выбранной метрике
+            const isTotal = currentSortMetric === 'total';
+            const getValue = (p) => isTotal ? getTotal(p) : p[currentSortMetric];
+            const maxValue = isTotal ? 20 : 5;
+            const sorted = [...patterns].sort((a, b) => getValue(b) - getValue(a));
+            
+            const barHeight = 1;
+            const rowSpacing = 22;
+            const svgHeight = sorted.length * rowSpacing + 10;
+            const maxWidth = width - 20;
+
+            d3.select('#bars').selectAll('*').remove();
+            const svg = d3.select('#bars').append('svg').attr('width', width).attr('height', svgHeight);
+
+            const bars = svg.selectAll('g').data(sorted).join('g')
+                .attr('class', 'bar-row')
+                .attr('data-pattern-id', d => d.id)
+                .attr('transform', (d, i) => `translate(0, ${i * rowSpacing + rowSpacing / 2})`);
+            
+            // Невидимая широкая зона для ховера
+            bars.append('rect').attr('x', 0).attr('y', -rowSpacing/2).attr('width', width).attr('height', rowSpacing).attr('fill', 'transparent').attr('class', 'hover-zone');
+            
+            // Фоновая линия
+            bars.append('rect').attr('x', 0).attr('y', -0.5).attr('width', maxWidth).attr('height', barHeight).attr('fill', bgColor);
+            
+            if (isTotal) {
+                // Σ выбрана - stacked bar с цветами метрик
+                bars.each(function(d) {
+                    const g = d3.select(this);
+                    const isSelected = selectedPattern && d.id === selectedPattern.id;
+                    const h = isSelected ? 2 : barHeight;
+                    const total = getTotal(d);
+                    let x = 0;
+                    const totalWidth = (total / 20) * maxWidth;
+                    
+                    metrics.forEach(m => {
+                        const segmentWidth = (d[m] / total) * totalWidth;
+                        g.append('rect')
+                            .attr('x', x)
+                            .attr('y', -h/2)
+                            .attr('width', segmentWidth)
+                            .attr('height', h)
+                            .attr('fill', metricColors[m])
+                            .attr('opacity', isSelected ? 1 : 0.3);
+                        x += segmentWidth;
+                    });
+                });
+            } else {
+                // Выбрана конкретная метрика - одна полоска её цветом
+                const metricColor = metricColors[currentSortMetric];
+                bars.each(function(d) {
+                    const g = d3.select(this);
+                    const isSelected = selectedPattern && d.id === selectedPattern.id;
+                    const h = isSelected ? 2 : barHeight;
+                    g.append('rect')
+                        .attr('x', 0)
+                        .attr('y', -h/2)
+                        .attr('width', (d[currentSortMetric] / 5) * maxWidth)
+                        .attr('height', h)
+                        .attr('fill', metricColor)
+                        .attr('opacity', isSelected ? 1 : 0.4);
+                });
+            }
+            
+            // Значение справа
+            bars.append('text')
+                .attr('x', d => 4 + (getValue(d) / maxValue) * maxWidth)
+                .attr('y', 0)
+                .attr('dominant-baseline', 'middle').attr('font-size', '12px').attr('font-weight', '600')
+                .attr('fill', d => {
+                    if (selectedPattern && d.id === selectedPattern.id) {
+                        return isTotal ? getCSSVar('--text-primary') : metricColors[currentSortMetric];
+                    }
+                    return valueColor;
+                })
+                .text(d => getValue(d));
+            
+            bars.on('click', (e, d) => selectPatternMobile(d))
+                .on('mouseenter', (e, d) => showTooltip(e, d))
+                .on('mousemove', (e) => positionTooltip(e))
+                .on('mouseleave', hideTooltip);
+
+            window.barGroups = bars;
+        }
+        
+        function sortByMetric(metric) {
+            currentSortMetric = metric;
+            // Обновляем активную кнопку
+            document.querySelectorAll('.metric-sort-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.metric === metric);
+            });
+            // Обновляем заголовок
+            const titles = { total: 'Рейтинг', cognitive: 'Когнитивная нагрузка', immersion: 'Погружение', resistance: 'Сопротивление', time: 'Время' };
+            document.getElementById('barsTitle').textContent = titles[metric];
+            drawBars();
+        }
+
+        function drawHeatmap() {
+            const container = document.getElementById('heatmap');
+            const rect = container.getBoundingClientRect();
+            const width = rect.width, height = rect.height;
+            const labelColor = getCSSVar('--text-muted');
+            const monoFill = getCSSVar('--mono-fill');
+            const blue = getCSSVar('--accent-blue');
+            const green = getCSSVar('--accent-green');
+            const yellow = getCSSVar('--accent-yellow');
+            const red = getCSSVar('--accent-red');
+
+            d3.select('#heatmap').selectAll('*').remove();
+            const svg = d3.select('#heatmap').append('svg').attr('width', width).attr('height', height);
+
+            // Повёрнуто на 90°: паттерны по вертикали (строки), метрики по горизонтали (столбцы)
+            const marginLeft = 14, marginTop = 4;
+            const cellSize = Math.min((width - marginLeft - 2) / metrics.length, (height - marginTop - 2) / patterns.length, 12);
+            const gridWidth = cellSize * metrics.length;
+            const gridHeight = cellSize * patterns.length;
+            const offsetX = marginLeft;
+            const offsetY = marginTop + (height - marginTop - gridHeight) / 2;
+
+            // Метки столбцов теперь в HTML легенде
+            const metricColors = { cognitive: blue, immersion: green, resistance: yellow, time: red };
+
+            // Метки строк (паттерны) - слева, всегда серые
+            svg.selectAll('.row-label').data(patterns).join('text')
+                .attr('x', offsetX - 2).attr('y', (d, i) => offsetY + i * cellSize + cellSize / 2)
+                .attr('text-anchor', 'end').attr('dominant-baseline', 'middle').attr('font-size', '12px')
+                .attr('fill', labelColor)
+                .text(d => d.id);
+
+            // Ячейки - паттерн x метрика
+            const cells = svg.selectAll('.cell')
+                .data(patterns.flatMap((p, pi) => metrics.map((m, mi) => ({ pattern: p, metric: m, pi, mi, value: p[m] }))))
+                .join('g').attr('class', 'cell')
+                .attr('transform', d => `translate(${offsetX + d.mi * cellSize + cellSize/2}, ${offsetY + d.pi * cellSize + cellSize/2})`);
+
+            // Фоновый прямоугольник для hover
+            cells.append('rect')
+                .attr('x', -cellSize/2).attr('y', -cellSize/2)
+                .attr('width', cellSize).attr('height', cellSize)
+                .attr('fill', 'transparent').style('cursor', 'pointer');
+            
+            // Круг с размером по значению
+            const maxRadius = (cellSize - 3) / 2;
+            const minRadius = 1.5;
+            
+            cells.append('circle')
+                .attr('r', d => minRadius + (d.value / 5) * (maxRadius - minRadius))
+                .attr('fill', d => {
+                    // Выбранный паттерн - цветной, остальные - моно
+                    if (selectedPattern && d.pattern.id === selectedPattern.id) {
+                        return metricColors[d.metric];
+                    }
+                    return monoFill;
+                })
+                .attr('opacity', d => {
+                    if (!selectedPattern) return 0.6;
+                    return d.pattern.id === selectedPattern.id ? 0.9 : 0.3;
+                })
+                .style('cursor', 'pointer');
+            
+            cells.on('click', (e, d) => selectPatternMobile(d.pattern))
+                .on('mouseenter', (e, d) => showTooltip(e, d.pattern))
+                .on('mousemove', (e) => positionTooltip(e))
+                .on('mouseleave', hideTooltip);
+
+            window.heatmapCells = cells;
+        }
+
+        // Мобильная навигация
+        function renderMobileNav() {
+            const container = document.getElementById('mobileNavScroll');
+            if (!container) return;
+            
+            const sorted = [...patterns].sort((a, b) => {
+                const totalA = metrics.reduce((sum, m) => sum + a[m], 0);
+                const totalB = metrics.reduce((sum, m) => sum + b[m], 0);
+                return totalB - totalA;
+            });
+            
+            const colors = {
+                cognitive: getCSSVar('--accent-blue'),
+                immersion: getCSSVar('--accent-green'),
+                resistance: getCSSVar('--accent-yellow'),
+                time: getCSSVar('--accent-red')
+            };
+            
+            const html = sorted.map(p => {
+                const isActive = selectedPattern && selectedPattern.id === p.id;
+                const barsHtml = metrics.map(m => {
+                    const value = p[m];
+                    const width = (value / 5) * 100;
+                    return `
+                        <div class="mobile-metric-bar">
+                            <span class="mobile-metric-label">${metricLabels[m].charAt(0)}</span>
+                            <div class="mobile-metric-track">
+                                <div class="mobile-metric-fill" style="width:${width}%;background:${colors[m]}"></div>
+                            </div>
+                            <span class="mobile-metric-value">${value}</span>
+                        </div>
+                    `;
+                }).join('');
+                
+                return `
+                    <div class="mobile-pattern-card${isActive ? ' active' : ''}" data-id="${p.id}">
+                        <div class="mobile-card-id">${p.id.padStart(3, '0')}</div>
+                        <div class="mobile-card-title">${p.name}</div>
+                        <div class="mobile-card-bars">${barsHtml}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = html;
+            
+            // Обработчики кликов
+            container.querySelectorAll('.mobile-pattern-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const id = card.dataset.id;
+                    const pattern = patterns.find(p => p.id === id);
+                    if (pattern) {
+                        selectPattern(pattern);
+                    }
+                });
+            });
+        }
+        
+        function drawMiniRadar(pattern, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            // Очищаем перед рисованием
+            d3.select(`#${containerId}`).selectAll('*').remove();
+            
+            const size = 50;
+            const cx = size / 2, cy = size / 2;
+            const radius = size * 0.38;
+            const gridColor = currentTheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+            
+            const svg = d3.select(`#${containerId}`).append('svg')
+                .attr('width', size).attr('height', size);
+            
+            const angleSlice = (Math.PI * 2) / metrics.length;
+            
+            // Сетка
+            const gridPoints = metrics.map((_, i) => {
+                const angle = i * angleSlice - Math.PI / 2;
+                return [cx + radius * Math.cos(angle), cy + radius * Math.sin(angle)];
+            });
+            svg.append('polygon')
+                .attr('points', gridPoints.map(p => p.join(',')).join(' '))
+                .attr('fill', 'none')
+                .attr('stroke', gridColor);
+            
+            // Данные
+            const colors = {
+                cognitive: getCSSVar('--accent-blue'),
+                immersion: getCSSVar('--accent-green'),
+                resistance: getCSSVar('--accent-yellow'),
+                time: getCSSVar('--accent-red')
+            };
+            
+            const points = metrics.map((m, i) => {
+                const angle = i * angleSlice - Math.PI / 2;
+                const r = (pattern[m] / 5) * radius;
+                return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle), color: colors[m] };
+            });
+            
+            // Заливка
+            const gradientId = `miniGrad${pattern.id}`;
+            const defs = svg.append('defs');
+            const gradient = defs.append('radialGradient')
+                .attr('id', gradientId)
+                .attr('cx', '50%').attr('cy', '50%').attr('r', '70%');
+            gradient.append('stop').attr('offset', '0%').attr('stop-color', getCSSVar('--text-primary')).attr('stop-opacity', 0.15);
+            gradient.append('stop').attr('offset', '100%').attr('stop-color', getCSSVar('--text-primary')).attr('stop-opacity', 0.03);
+            
+            svg.append('polygon')
+                .attr('points', points.map(p => `${p.x},${p.y}`).join(' '))
+                .attr('fill', `url(#${gradientId})`)
+                .attr('stroke', 'none');
+            
+            // Точки
+            points.forEach(p => {
+                svg.append('circle')
+                    .attr('cx', p.x).attr('cy', p.y).attr('r', 3)
+                    .attr('fill', p.color);
+            });
+        }
+
+        function init() { 
+            drawNetwork(); 
+            drawRadar(selectedPattern); 
+            drawBars();
+            renderMobileNav();
+            renderArticle(selectedPattern);
+        }
+        
+        let resizeTimeout;
+        window.addEventListener('resize', () => { clearTimeout(resizeTimeout); resizeTimeout = setTimeout(init, 150); });
+        
+        // Проверка загрузки D3
+        if (typeof d3 !== 'undefined') {
+            init();
+        } else {
+            document.body.innerHTML = '<div style="padding:40px;text-align:center;color:#a1a1aa;font-family:sans-serif;"><h2 style="color:#f87171;margin-bottom:16px;">⚠️ D3.js не загружен</h2><p>Скачайте файл и откройте его в браузере напрямую.</p></div>';
+        }
+    </script>
+</body>
+</html>

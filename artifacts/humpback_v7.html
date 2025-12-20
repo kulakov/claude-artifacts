@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Динамика популяции горбатых китов</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        :root {
+            --text-primary: #18181b;
+            --text-muted: #71717a;
+            --card-bg: #ffffff;
+            --border: #e4e4e7;
+            --accent-blue: #3b82f6;
+            --accent-gray: #71717a;
+            --accent-teal: #14b8a6;
+            --accent-red: #ef4444;
+            --accent-orange: #f97316;
+            --accent-purple: #a855f7;
+        }
+
+        [data-theme="dark"] {
+            --text-primary: #fafafa;
+            --text-muted: #a1a1aa;
+            --card-bg: #0a0a0b;
+            --border: #27272a;
+            --accent-blue: #60a5fa;
+            --accent-gray: #a1a1aa;
+            --accent-teal: #2dd4bf;
+            --accent-red: #f87171;
+            --accent-orange: #fb923c;
+            --accent-purple: #c084fc;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .container {
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .title {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 20px;
+            margin-bottom: 16px;
+            justify-content: center;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 12px;
+            padding: 6px 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        .control-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            font-size: 10px;
+            color: var(--text-muted);
+            transition: opacity 0.15s;
+            user-select: none;
+        }
+
+        .control-item:hover { opacity: 1; }
+        .control-item.inactive { opacity: 0.25; }
+
+        .control-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+        }
+
+        .chart-section {
+            width: 100%;
+            margin-bottom: 4px;
+        }
+
+        .section-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            margin-left: 55px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-label .region-tag {
+            font-size: 8px;
+            padding: 1px 5px;
+            border-radius: 3px;
+            background: var(--border);
+        }
+
+        .axis text {
+            font-size: 9px;
+            fill: var(--text-muted);
+        }
+
+        .axis line, .axis path {
+            stroke: var(--border);
+            stroke-width: 1;
+        }
+
+        .grid-line {
+            stroke: var(--border);
+            stroke-opacity: 0.3;
+        }
+
+        .data-line {
+            fill: none;
+            stroke-width: 2;
+            stroke-opacity: 0.6;
+            transition: stroke-opacity 0.15s;
+        }
+
+        .ci-area {
+            opacity: 0.12;
+        }
+
+        .k-line {
+            stroke-dasharray: 6,3;
+            stroke-width: 1.5;
+            stroke-opacity: 0.4;
+        }
+
+        .k-area {
+            opacity: 0.05;
+        }
+
+        .k-label {
+            font-size: 8px;
+            fill: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        .catch-bar {
+            opacity: 0.7;
+        }
+
+        .heatwave-zone {
+            opacity: 0.12;
+        }
+
+        .ume-bar {
+            opacity: 0.8;
+            transition: opacity 0.15s;
+        }
+
+        .ume-bar:hover { opacity: 1; }
+
+        .ume-label {
+            font-size: 8px;
+            fill: var(--text-muted);
+        }
+
+        .sst-line {
+            fill: none;
+            stroke-width: 2;
+            stroke-opacity: 0.8;
+        }
+
+        .sst-area {
+            opacity: 0.2;
+        }
+
+        .zoom-connector {
+            fill: none;
+            stroke: var(--accent-red);
+            stroke-width: 1;
+            stroke-opacity: 0.3;
+            stroke-dasharray: 3,2;
+        }
+
+        .zoom-rect {
+            fill: var(--accent-red);
+            opacity: 0.08;
+            stroke: var(--accent-red);
+            stroke-width: 1;
+            stroke-opacity: 0.3;
+        }
+
+        .crosshair {
+            stroke: var(--text-primary);
+            stroke-width: 1;
+            stroke-opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .crosshair-dot {
+            fill: var(--text-primary);
+            pointer-events: none;
+        }
+
+        .tooltip {
+            position: absolute;
+            padding: 10px 14px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 11px;
+            color: var(--text-primary);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s;
+            z-index: 100;
+            max-width: 320px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .tooltip-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 6px;
+            font-size: 13px;
+        }
+
+        .tooltip-section {
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid var(--border);
+        }
+
+        .tooltip-section-title {
+            font-size: 9px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .tooltip-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 2px 0;
+        }
+
+        .tooltip-label { color: var(--text-muted); }
+        .tooltip-value { font-weight: 500; }
+
+        .event-line {
+            stroke: var(--text-muted);
+            stroke-width: 1;
+            stroke-opacity: 0.3;
+            stroke-dasharray: 2,2;
+        }
+
+        .event-dot {
+            fill: var(--card-bg);
+            stroke: var(--text-muted);
+            stroke-width: 1.5;
+        }
+
+        .event-label {
+            font-size: 8px;
+            fill: var(--text-muted);
+        }
+
+        .event-year {
+            font-size: 7px;
+            fill: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        .baseline-label {
+            font-size: 7px;
+            fill: var(--text-muted);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+            width: 100%;
+        }
+
+        .stat-card {
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--card-bg);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 9px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .stat-detail {
+            font-size: 9px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .panel-connector {
+            width: 100%;
+            height: 20px;
+            position: relative;
+        }
+
+        .hover-overlay {
+            fill: transparent;
+            cursor: crosshair;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 12px 8px; }
+            .title { font-size: 16px; }
+            .controls { gap: 8px; }
+            .control-group { padding: 4px 8px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">◐</button>
+    
+    <div class="container" id="container">
+        <h1 class="title">Динамика популяции горбатых китов</h1>
+        <p class="subtitle">Атлантический и Тихий океаны · 1830–2024 · IWC, NOAA, Zerbini et al. 2019, Cheeseman et al. 2024</p>
+        
+        <div class="controls">
+            <div class="control-group">
+                <div class="control-item" data-series="na" onclick="toggleSeries('na')">
+                    <span class="control-dot" style="background: var(--accent-blue)"></span>
+                    <span>Сев. Атлантика</span>
+                </div>
+                <div class="control-item" data-series="wsa" onclick="toggleSeries('wsa')">
+                    <span class="control-dot" style="background: var(--accent-gray)"></span>
+                    <span>Зап. Юж. Атлантика</span>
+                </div>
+                <div class="control-item" data-series="np" onclick="toggleSeries('np')">
+                    <span class="control-dot" style="background: var(--accent-teal)"></span>
+                    <span>Сев. Тихий океан</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="control-item" data-series="ci" onclick="toggleSeries('ci')">
+                    <span class="control-dot" style="background: var(--text-muted); opacity: 0.3"></span>
+                    <span>95% CI</span>
+                </div>
+                <div class="control-item" data-series="k" onclick="toggleSeries('k')">
+                    <span class="control-dot" style="background: var(--accent-purple); opacity: 0.5"></span>
+                    <span>Ёмкость среды (K)</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="control-item" data-series="catch" onclick="toggleSeries('catch')">
+                    <span class="control-dot" style="background: var(--accent-red)"></span>
+                    <span>Вылов</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chart-section">
+            <svg id="mainChart"></svg>
+        </div>
+
+        <svg id="connectorSvg" class="panel-connector"></svg>
+
+        <div class="chart-section">
+            <div class="section-label">
+                Unusual Mortality Event — смертей/год
+                <span class="region-tag">Атлантика, вост. побережье США</span>
+            </div>
+            <svg id="umeChart"></svg>
+        </div>
+
+        <div class="chart-section" style="margin-top: 8px;">
+            <div class="section-label">
+                Аномалия температуры океана (SST) — The Blob
+                <span class="region-tag">Сев. Тихий океан</span>
+            </div>
+            <svg id="sstChart"></svg>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="control-dot" style="background: var(--accent-blue); width:6px; height:6px"></span>
+                    Сев. Атлантика
+                </div>
+                <div class="stat-value">35,000</div>
+                <div class="stat-detail">мин. 700 (1932) · K ≈ 15–20k</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="control-dot" style="background: var(--accent-gray); width:6px; height:6px"></span>
+                    Зап. Юж. Атлантика
+                </div>
+                <div class="stat-value">27,800</div>
+                <div class="stat-detail">мин. 440 (1958) · K = 27k · 100%</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="control-dot" style="background: var(--accent-teal); width:6px; height:6px"></span>
+                    Сев. Тихий океан
+                </div>
+                <div class="stat-value">26,662</div>
+                <div class="stat-detail">пик 33,488 (2012) · −20% после Blob</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="control-dot" style="background: var(--accent-red); width:6px; height:6px"></span>
+                    UME 2016–2025
+                </div>
+                <div class="stat-value">262</div>
+                <div class="stat-detail">смертей · 45% столкновения с судами</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        // ============ DATA ============
+        
+        const popData = {
+            wsa: [
+                { year: 1830, pop: 27000, ci_low: 22800, ci_high: 33000 },
+                { year: 1870, pop: 22000, ci_low: 18000, ci_high: 27000 },
+                { year: 1890, pop: 18000, ci_low: 14000, ci_high: 23000 },
+                { year: 1904, pop: 24700, ci_low: 20000, ci_high: 30000 },
+                { year: 1910, pop: 15000, ci_low: 10000, ci_high: 20000 },
+                { year: 1916, pop: 4000, ci_low: 2000, ci_high: 7000 },
+                { year: 1920, pop: 2000, ci_low: 800, ci_high: 4000 },
+                { year: 1926, pop: 700, ci_low: 400, ci_high: 1200 },
+                { year: 1940, pop: 550, ci_low: 250, ci_high: 1000 },
+                { year: 1950, pop: 480, ci_low: 200, ci_high: 900 },
+                { year: 1958, pop: 440, ci_low: 198, ci_high: 1400 },
+                { year: 1966, pop: 500, ci_low: 250, ci_high: 1000 },
+                { year: 1975, pop: 800, ci_low: 500, ci_high: 1300 },
+                { year: 1985, pop: 1800, ci_low: 1200, ci_high: 2800 },
+                { year: 1995, pop: 3500, ci_low: 2500, ci_high: 5000 },
+                { year: 2005, pop: 6400, ci_low: 5084, ci_high: 8068 },
+                { year: 2008, pop: 16410, ci_low: 10563, ci_high: 25495 },
+                { year: 2012, pop: 19429, ci_low: 15958, ci_high: 23654 },
+                { year: 2015, pop: 12123, ci_low: 10811, ci_high: 13531 },
+                { year: 2019, pop: 14552, ci_low: 7282, ci_high: 19874 },
+                { year: 2024, pop: 27800, ci_low: 23000, ci_high: 33000 }
+            ],
+            na: [
+                { year: 1870, pop: 15000, ci_low: 12000, ci_high: 18000 },
+                { year: 1890, pop: 12000, ci_low: 9000, ci_high: 15000 },
+                { year: 1904, pop: 10000, ci_low: 7000, ci_high: 13000 },
+                { year: 1915, pop: 5000, ci_low: 3000, ci_high: 8000 },
+                { year: 1925, pop: 2500, ci_low: 1500, ci_high: 4000 },
+                { year: 1932, pop: 700, ci_low: 500, ci_high: 1000 },
+                { year: 1940, pop: 800, ci_low: 500, ci_high: 1200 },
+                { year: 1950, pop: 900, ci_low: 600, ci_high: 1400 },
+                { year: 1958, pop: 700, ci_low: 400, ci_high: 1100 },
+                { year: 1966, pop: 900, ci_low: 600, ci_high: 1400 },
+                { year: 1975, pop: 2000, ci_low: 1400, ci_high: 3000 },
+                { year: 1979, pop: 5930, ci_low: 4800, ci_high: 7200 },
+                { year: 1985, pop: 7500, ci_low: 6000, ci_high: 9500 },
+                { year: 1992, pop: 10752, ci_low: 9800, ci_high: 11800 },
+                { year: 2000, pop: 11500, ci_low: 10000, ci_high: 13500 },
+                { year: 2006, pop: 14500, ci_low: 12500, ci_high: 17000 },
+                { year: 2015, pop: 22000, ci_low: 18000, ci_high: 27000 },
+                { year: 2024, pop: 35000, ci_low: 30000, ci_high: 42000 }
+            ],
+            np: [
+                { year: 1966, pop: 1400, ci_low: 1000, ci_high: 2000 },
+                { year: 1976, pop: 2500, ci_low: 1800, ci_high: 3500 },
+                { year: 1991, pop: 9819, ci_low: 7000, ci_high: 13000 },
+                { year: 2002, pop: 16875, ci_low: 10920, ci_high: 22830 },
+                { year: 2005, pop: 18302, ci_low: 15000, ci_high: 22000 },
+                { year: 2008, pop: 26000, ci_low: 22400, ci_high: 29600 },
+                { year: 2012, pop: 33488, ci_low: 28578, ci_high: 38398 },
+                { year: 2014, pop: 32000, ci_low: 27400, ci_high: 36600 },
+                { year: 2016, pop: 30000, ci_low: 25800, ci_high: 34200 },
+                { year: 2019, pop: 27500, ci_low: 23300, ci_high: 31700 },
+                { year: 2021, pop: 26662, ci_low: 22470, ci_high: 30854 }
+            ]
+        };
+
+        const catchData = [
+            { year: 1904, catch: 500 },
+            { year: 1908, catch: 5000 },
+            { year: 1910, catch: 12000 },
+            { year: 1912, catch: 11000 },
+            { year: 1914, catch: 8000 },
+            { year: 1916, catch: 1000 },
+            { year: 1920, catch: 1500 },
+            { year: 1925, catch: 2000 },
+            { year: 1930, catch: 3500 },
+            { year: 1935, catch: 4000 },
+            { year: 1940, catch: 2500 },
+            { year: 1950, catch: 6000 },
+            { year: 1955, catch: 8000 },
+            { year: 1958, catch: 5500 },
+            { year: 1962, catch: 3500 },
+            { year: 1966, catch: 1500 },
+            { year: 1970, catch: 200 },
+            { year: 1973, catch: 50 }
+        ];
+
+        const umeData = [
+            { year: 2016, deaths: 26 },
+            { year: 2017, deaths: 34 },
+            { year: 2018, deaths: 26 },
+            { year: 2019, deaths: 27 },
+            { year: 2020, deaths: 33 },
+            { year: 2021, deaths: 10 },
+            { year: 2022, deaths: 19 },
+            { year: 2023, deaths: 37 },
+            { year: 2024, deaths: 31 },
+            { year: 2025, deaths: 19 }
+        ];
+
+        // SST anomaly data - North Pacific (The Blob)
+        const sstData = [
+            { year: 2010.0, anomaly: 0.1 },
+            { year: 2010.5, anomaly: 0.0 },
+            { year: 2011.0, anomaly: -0.2 },
+            { year: 2011.5, anomaly: 0.1 },
+            { year: 2012.0, anomaly: 0.2 },
+            { year: 2012.5, anomaly: 0.3 },
+            { year: 2013.0, anomaly: 0.4 },
+            { year: 2013.5, anomaly: 1.0 },
+            { year: 2014.0, anomaly: 1.8 },
+            { year: 2014.5, anomaly: 2.5 },
+            { year: 2015.0, anomaly: 2.8 },
+            { year: 2015.5, anomaly: 2.6 },
+            { year: 2016.0, anomaly: 2.2 },
+            { year: 2016.5, anomaly: 1.5 },
+            { year: 2017.0, anomaly: 0.8 },
+            { year: 2017.5, anomaly: 0.4 },
+            { year: 2018.0, anomaly: 0.3 },
+            { year: 2018.5, anomaly: 0.5 },
+            { year: 2019.0, anomaly: 1.2 },
+            { year: 2019.5, anomaly: 1.8 },
+            { year: 2020.0, anomaly: 1.5 },
+            { year: 2020.5, anomaly: 0.9 },
+            { year: 2021.0, anomaly: 0.6 },
+            { year: 2021.5, anomaly: 0.4 },
+            { year: 2022.0, anomaly: 0.5 },
+            { year: 2022.5, anomaly: 0.7 },
+            { year: 2023.0, anomaly: 1.0 },
+            { year: 2023.5, anomaly: 1.3 },
+            { year: 2024.0, anomaly: 1.1 },
+            { year: 2024.5, anomaly: 0.9 }
+        ];
+
+        const events = [
+            { year: 1904, label: 'Начало промысла', sublabel: 'South Georgia' },
+            { year: 1946, label: 'IWC основана', sublabel: '' },
+            { year: 1966, label: 'Запрет IWC', sublabel: 'на горбачей' },
+            { year: 1986, label: 'Мораторий', sublabel: '' }
+        ];
+
+        const carryingCapacity = {
+            wsa: { k: 27000, low: 22800, high: 33000 },
+            na: { k: 17500, low: 15000, high: 20000 },
+            np: { k: 33500, low: 30000, high: 37000 }
+        };
+
+        // ============ STATE ============
+        const state = {
+            na: true, wsa: true, np: true,
+            ci: true, k: true,
+            catch: true
+        };
+
+        // ============ DIMENSIONS ============
+        const margin = { top: 20, right: 50, bottom: 70, left: 55 };
+        const width = 1000;
+        const height = 380;
+        const innerW = width - margin.left - margin.right;
+        const innerH = height - margin.top - margin.bottom;
+
+        // Shared X scale for main chart
+        const x = d3.scaleLinear().domain([1830, 2025]).range([0, innerW]);
+
+        // SHARED X scale for UME and SST (synchronized!)
+        const detailX = d3.scaleLinear().domain([2010, 2026]).range([0, innerW]);
+
+        // ============ MAIN CHART ============
+        const svg = d3.select('#mainChart')
+            .attr('viewBox', `0 0 ${width} ${height}`);
+
+        const g = svg.append('g')
+            .attr('transform', `translate(${margin.left},${margin.top})`);
+
+        const y = d3.scaleLinear().domain([0, 45000]).range([innerH, 0]);
+
+        // ============ UME CHART ============
+        const umeMargin = { top: 10, right: 50, bottom: 20, left: 55 };
+        const umeHeight = 100;
+        const umeInnerH = umeHeight - umeMargin.top - umeMargin.bottom;
+
+        const umeSvg = d3.select('#umeChart')
+            .attr('viewBox', `0 0 ${width} ${umeHeight}`);
+
+        const umeG = umeSvg.append('g')
+            .attr('transform', `translate(${umeMargin.left},${umeMargin.top})`);
+
+        const umeY = d3.scaleLinear().domain([0, 45]).range([umeInnerH, 0]);
+
+        // ============ SST CHART ============
+        const sstMargin = { top: 10, right: 50, bottom: 25, left: 55 };
+        const sstHeight = 120;
+        const sstInnerH = sstHeight - sstMargin.top - sstMargin.bottom;
+
+        const sstSvg = d3.select('#sstChart')
+            .attr('viewBox', `0 0 ${width} ${sstHeight}`);
+
+        const sstG = sstSvg.append('g')
+            .attr('transform', `translate(${sstMargin.left},${sstMargin.top})`);
+
+        const sstY = d3.scaleLinear().domain([-0.5, 3.5]).range([sstInnerH, 0]);
+
+        // ============ CONNECTOR SVG ============
+        const connectorSvg = d3.select('#connectorSvg')
+            .attr('viewBox', `0 0 ${width} 20`);
+
+        // ============ CROSSHAIR ELEMENTS ============
+        let mainCrosshair, umeCrosshair, sstCrosshair;
+        let mainDots = [], umeDot, sstDot;
+
+        function getCSSVar(name) {
+            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        }
+
+        // ============ RENDER MAIN ============
+        function renderMain() {
+            g.selectAll('*').remove();
+
+            const colors = {
+                na: getCSSVar('--accent-blue'),
+                wsa: getCSSVar('--accent-gray'),
+                np: getCSSVar('--accent-teal'),
+                catch: getCSSVar('--accent-red'),
+                k: getCSSVar('--accent-purple')
+            };
+
+            // Grid
+            [10000, 20000, 30000, 40000].forEach(v => {
+                g.append('line')
+                    .attr('class', 'grid-line')
+                    .attr('x1', 0).attr('x2', innerW)
+                    .attr('y1', y(v)).attr('y2', y(v));
+            });
+
+            // UME zoom highlight area on main chart (2010-2026 to match detail charts)
+            const umeStartX = x(2010);
+            const umeEndX = x(2025);
+            g.append('rect')
+                .attr('class', 'zoom-rect')
+                .attr('x', umeStartX)
+                .attr('width', umeEndX - umeStartX)
+                .attr('y', 0)
+                .attr('height', innerH);
+
+            // Carrying capacity
+            if (state.k) {
+                if (state.wsa) {
+                    g.append('rect')
+                        .attr('class', 'k-area')
+                        .attr('x', 0).attr('width', innerW)
+                        .attr('y', y(carryingCapacity.wsa.high))
+                        .attr('height', y(carryingCapacity.wsa.low) - y(carryingCapacity.wsa.high))
+                        .attr('fill', colors.wsa);
+                    
+                    g.append('line')
+                        .attr('class', 'k-line')
+                        .attr('x1', 0).attr('x2', innerW)
+                        .attr('y1', y(carryingCapacity.wsa.k))
+                        .attr('y2', y(carryingCapacity.wsa.k))
+                        .attr('stroke', colors.wsa);
+                    
+                    g.append('text')
+                        .attr('class', 'k-label')
+                        .attr('x', 5).attr('y', y(carryingCapacity.wsa.k) - 4)
+                        .text('K (WSA) = 27k');
+                }
+
+                if (state.np) {
+                    g.append('line')
+                        .attr('class', 'k-line')
+                        .attr('x1', x(1966)).attr('x2', innerW)
+                        .attr('y1', y(carryingCapacity.np.k))
+                        .attr('y2', y(carryingCapacity.np.k))
+                        .attr('stroke', colors.np)
+                        .attr('stroke-opacity', 0.3);
+                    
+                    g.append('text')
+                        .attr('class', 'k-label')
+                        .attr('x', x(1970)).attr('y', y(carryingCapacity.np.k) - 4)
+                        .text('K (NP) ≈ 33k');
+                }
+            }
+
+            // Catch bars
+            if (state.catch) {
+                const yCatch = d3.scaleLinear().domain([0, 15000]).range([innerH, innerH - 60]);
+                const barWidth = 2;
+                
+                g.selectAll('.catch-bar')
+                    .data(catchData)
+                    .join('rect')
+                    .attr('class', 'catch-bar')
+                    .attr('x', d => x(d.year) - barWidth/2)
+                    .attr('width', barWidth)
+                    .attr('y', d => yCatch(d.catch))
+                    .attr('height', d => innerH - yCatch(d.catch))
+                    .attr('fill', colors.catch)
+                    .attr('rx', 0);
+            }
+
+            // CI areas
+            const areaGen = d3.area()
+                .x(d => x(d.year))
+                .y0(d => y(d.ci_low))
+                .y1(d => y(d.ci_high))
+                .curve(d3.curveMonotoneX);
+
+            if (state.ci) {
+                if (state.wsa) {
+                    g.append('path').datum(popData.wsa)
+                        .attr('class', 'ci-area')
+                        .attr('d', areaGen)
+                        .attr('fill', colors.wsa);
+                }
+                if (state.na) {
+                    g.append('path').datum(popData.na)
+                        .attr('class', 'ci-area')
+                        .attr('d', areaGen)
+                        .attr('fill', colors.na);
+                }
+                if (state.np) {
+                    g.append('path').datum(popData.np)
+                        .attr('class', 'ci-area')
+                        .attr('d', areaGen)
+                        .attr('fill', colors.np);
+                }
+            }
+
+            // Population lines
+            const lineGen = d3.line()
+                .x(d => x(d.year))
+                .y(d => y(d.pop))
+                .curve(d3.curveMonotoneX);
+
+            if (state.wsa) {
+                g.append('path').datum(popData.wsa)
+                    .attr('class', 'data-line')
+                    .attr('d', lineGen)
+                    .attr('stroke', colors.wsa);
+            }
+            if (state.na) {
+                g.append('path').datum(popData.na)
+                    .attr('class', 'data-line')
+                    .attr('d', lineGen)
+                    .attr('stroke', colors.na);
+            }
+            if (state.np) {
+                g.append('path').datum(popData.np)
+                    .attr('class', 'data-line')
+                    .attr('d', lineGen)
+                    .attr('stroke', colors.np);
+            }
+
+            // Right labels
+            const lastPoints = {
+                na: popData.na[popData.na.length - 1],
+                wsa: popData.wsa[popData.wsa.length - 1],
+                np: popData.np[popData.np.length - 1]
+            };
+
+            if (state.na) {
+                g.append('text')
+                    .attr('x', innerW + 5).attr('y', y(lastPoints.na.pop) + 3)
+                    .attr('font-size', '9px').attr('fill', colors.na)
+                    .text('NA 35k');
+            }
+            if (state.wsa) {
+                g.append('text')
+                    .attr('x', innerW + 5).attr('y', y(lastPoints.wsa.pop) - 8)
+                    .attr('font-size', '9px').attr('fill', colors.wsa)
+                    .text('WSA 28k');
+            }
+            if (state.np) {
+                g.append('text')
+                    .attr('x', innerW + 5).attr('y', y(lastPoints.np.pop) + 12)
+                    .attr('font-size', '9px').attr('fill', colors.np)
+                    .text('NP 27k');
+            }
+
+            // Y axis
+            g.append('g').attr('class', 'axis')
+                .call(d3.axisLeft(y)
+                    .tickValues([0, 10000, 20000, 30000, 40000])
+                    .tickFormat(d => d === 0 ? '0' : (d/1000) + 'k')
+                    .tickSize(4))
+                .select('.domain').attr('stroke-opacity', 0.3);
+
+            // X axis
+            g.append('g')
+                .attr('class', 'axis')
+                .attr('transform', `translate(0,${innerH})`)
+                .call(d3.axisBottom(x)
+                    .tickValues([1850, 1900, 1950, 2000])
+                    .tickFormat(d => d)
+                    .tickSize(4))
+                .select('.domain').attr('stroke-opacity', 0.3);
+
+            // Event callouts
+            const eventY = innerH + 20;
+            
+            events.forEach((e, i) => {
+                const ex = x(e.year);
+                const labelOffset = 32 + (i % 2) * 12;
+                
+                const eventG = g.append('g').attr('class', 'event-marker');
+                
+                eventG.append('line')
+                    .attr('class', 'event-line')
+                    .attr('x1', ex).attr('x2', ex)
+                    .attr('y1', 0).attr('y2', innerH);
+                
+                eventG.append('line')
+                    .attr('x1', ex).attr('x2', ex)
+                    .attr('y1', innerH).attr('y2', eventY + labelOffset - 10)
+                    .attr('stroke', getCSSVar('--text-muted'))
+                    .attr('stroke-width', 1)
+                    .attr('stroke-opacity', 0.3);
+                
+                eventG.append('circle')
+                    .attr('class', 'event-dot')
+                    .attr('cx', ex).attr('cy', innerH)
+                    .attr('r', 3);
+                
+                eventG.append('text')
+                    .attr('class', 'event-year')
+                    .attr('x', ex).attr('y', eventY + labelOffset - 8)
+                    .attr('text-anchor', 'middle')
+                    .text(e.year);
+                
+                eventG.append('text')
+                    .attr('class', 'event-label')
+                    .attr('x', ex).attr('y', eventY + labelOffset + 2)
+                    .attr('text-anchor', 'middle')
+                    .text(e.label);
+                
+                if (e.sublabel) {
+                    eventG.append('text')
+                        .attr('class', 'event-year')
+                        .attr('x', ex).attr('y', eventY + labelOffset + 12)
+                        .attr('text-anchor', 'middle')
+                        .text(e.sublabel);
+                }
+            });
+
+            // Crosshair line
+            mainCrosshair = g.append('line')
+                .attr('class', 'crosshair')
+                .attr('y1', 0)
+                .attr('y2', innerH)
+                .style('display', 'none');
+
+            // Crosshair dots for each series
+            mainDots = [];
+            ['na', 'wsa', 'np'].forEach(key => {
+                const dot = g.append('circle')
+                    .attr('class', 'crosshair-dot')
+                    .attr('r', 4)
+                    .attr('fill', colors[key])
+                    .style('display', 'none');
+                mainDots.push({ key, dot });
+            });
+
+            // Hover overlay
+            g.append('rect')
+                .attr('class', 'hover-overlay')
+                .attr('width', innerW)
+                .attr('height', innerH)
+                .on('mousemove', (event) => onHoverAny(event, 'main'))
+                .on('mouseleave', onLeave);
+        }
+
+        // ============ RENDER CONNECTOR ============
+        function renderConnector() {
+            connectorSvg.selectAll('*').remove();
+            
+            // Connect from main chart zoom area to UME chart (which now shares scale with SST)
+            const mainLeft = margin.left + x(2010);
+            const mainRight = margin.left + x(2025);
+            const umeLeft = umeMargin.left;
+            const umeRight = umeMargin.left + innerW;
+            
+            connectorSvg.append('line')
+                .attr('class', 'zoom-connector')
+                .attr('x1', mainLeft).attr('y1', 0)
+                .attr('x2', umeLeft).attr('y2', 20);
+            
+            connectorSvg.append('line')
+                .attr('class', 'zoom-connector')
+                .attr('x1', mainRight).attr('y1', 0)
+                .attr('x2', umeRight).attr('y2', 20);
+        }
+
+        // ============ RENDER UME ============
+        function renderUME() {
+            umeG.selectAll('*').remove();
+
+            const colors = {
+                ume: getCSSVar('--accent-red'),
+                baseline: getCSSVar('--text-muted')
+            };
+
+            // Grid
+            [15, 30].forEach(v => {
+                umeG.append('line')
+                    .attr('class', 'grid-line')
+                    .attr('x1', 0).attr('x2', innerW)
+                    .attr('y1', umeY(v)).attr('y2', umeY(v));
+            });
+
+            // Baseline reference
+            umeG.append('line')
+                .attr('x1', 0).attr('x2', innerW)
+                .attr('y1', umeY(14)).attr('y2', umeY(14))
+                .attr('stroke', colors.baseline)
+                .attr('stroke-dasharray', '4,3')
+                .attr('stroke-opacity', 0.5);
+            
+            umeG.append('text')
+                .attr('class', 'baseline-label')
+                .attr('x', innerW + 5).attr('y', umeY(14) + 3)
+                .text('baseline ≈14');
+
+            // Bars - using shared detailX scale
+            const barWidth = 2;
+            
+            umeG.selectAll('.ume-bar')
+                .data(umeData)
+                .join('rect')
+                .attr('class', 'ume-bar')
+                .attr('x', d => detailX(d.year) - barWidth/2)
+                .attr('width', barWidth)
+                .attr('y', d => umeY(d.deaths))
+                .attr('height', d => umeInnerH - umeY(d.deaths))
+                .attr('fill', colors.ume)
+                .attr('rx', 0);
+
+            // Labels on bars
+            umeG.selectAll('.ume-label')
+                .data(umeData)
+                .join('text')
+                .attr('class', 'ume-label')
+                .attr('x', d => detailX(d.year))
+                .attr('y', d => umeY(d.deaths) - 4)
+                .attr('text-anchor', 'middle')
+                .text(d => d.deaths);
+
+            // Y axis
+            umeG.append('g')
+                .attr('class', 'axis')
+                .call(d3.axisLeft(umeY)
+                    .tickValues([0, 15, 30, 45])
+                    .tickSize(3))
+                .select('.domain').attr('stroke-opacity', 0.3);
+
+            // Crosshair
+            umeCrosshair = umeG.append('line')
+                .attr('class', 'crosshair')
+                .attr('y1', 0)
+                .attr('y2', umeInnerH)
+                .style('display', 'none');
+
+            umeDot = umeG.append('circle')
+                .attr('class', 'crosshair-dot')
+                .attr('r', 4)
+                .attr('fill', colors.ume)
+                .style('display', 'none');
+
+            // Hover overlay
+            umeG.append('rect')
+                .attr('class', 'hover-overlay')
+                .attr('width', innerW)
+                .attr('height', umeInnerH)
+                .on('mousemove', (event) => onHoverAny(event, 'detail'))
+                .on('mouseleave', onLeave);
+        }
+
+        // ============ RENDER SST ============
+        function renderSST() {
+            sstG.selectAll('*').remove();
+
+            const colors = {
+                orange: getCSSVar('--accent-orange'),
+                muted: getCSSVar('--text-muted'),
+                teal: getCSSVar('--accent-teal')
+            };
+
+            // Grid
+            [0, 1, 2, 3].forEach(v => {
+                sstG.append('line')
+                    .attr('class', 'grid-line')
+                    .attr('x1', 0).attr('x2', innerW)
+                    .attr('y1', sstY(v)).attr('y2', sstY(v));
+            });
+
+            // Zero line
+            sstG.append('line')
+                .attr('x1', 0).attr('x2', innerW)
+                .attr('y1', sstY(0)).attr('y2', sstY(0))
+                .attr('stroke', colors.muted)
+                .attr('stroke-width', 1.5)
+                .attr('stroke-opacity', 0.5);
+
+            // Area under curve - using shared detailX scale
+            const areaGen = d3.area()
+                .x(d => detailX(d.year))
+                .y0(sstY(0))
+                .y1(d => sstY(Math.max(0, d.anomaly)))
+                .curve(d3.curveMonotoneX);
+
+            sstG.append('path')
+                .datum(sstData)
+                .attr('class', 'sst-area')
+                .attr('d', areaGen)
+                .attr('fill', colors.orange);
+
+            // Line - using shared detailX scale
+            const lineGen = d3.line()
+                .x(d => detailX(d.year))
+                .y(d => sstY(d.anomaly))
+                .curve(d3.curveMonotoneX);
+
+            sstG.append('path')
+                .datum(sstData)
+                .attr('class', 'sst-line')
+                .attr('d', lineGen)
+                .attr('stroke', colors.orange);
+
+            // Peak annotation
+            const peakData = sstData.find(d => d.anomaly === Math.max(...sstData.map(s => s.anomaly)));
+            sstG.append('circle')
+                .attr('cx', detailX(peakData.year))
+                .attr('cy', sstY(peakData.anomaly))
+                .attr('r', 4)
+                .attr('fill', colors.orange);
+            
+            sstG.append('text')
+                .attr('x', detailX(peakData.year) + 10)
+                .attr('y', sstY(peakData.anomaly) - 10)
+                .attr('font-size', '9px')
+                .attr('fill', colors.orange)
+                .text(`+${peakData.anomaly}°C`);
+
+            // Blob period annotation
+            sstG.append('rect')
+                .attr('x', detailX(2013.5))
+                .attr('width', detailX(2016.5) - detailX(2013.5))
+                .attr('y', 0)
+                .attr('height', sstInnerH)
+                .attr('fill', colors.orange)
+                .attr('opacity', 0.08);
+            
+            sstG.append('text')
+                .attr('x', detailX(2014))
+                .attr('y', 14)
+                .attr('text-anchor', 'start')
+                .attr('font-size', '9px')
+                .attr('font-weight', '500')
+                .attr('fill', colors.orange)
+                .text('The Blob');
+
+            // 2019 Blob 2.0
+            sstG.append('text')
+                .attr('x', detailX(2019.5))
+                .attr('y', sstY(1.8) - 8)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '8px')
+                .attr('fill', colors.muted)
+                .text('Blob 2.0');
+
+            // NP population overlay - using shared detailX scale
+            const npRecent = popData.np.filter(d => d.year >= 2010);
+            const npY = d3.scaleLinear().domain([20000, 35000]).range([sstInnerH * 0.9, sstInnerH * 0.3]);
+            
+            const npLine = d3.line()
+                .x(d => detailX(d.year))
+                .y(d => npY(d.pop))
+                .curve(d3.curveMonotoneX);
+
+            sstG.append('path')
+                .datum(npRecent)
+                .attr('d', npLine)
+                .attr('fill', 'none')
+                .attr('stroke', colors.teal)
+                .attr('stroke-width', 1.5)
+                .attr('stroke-opacity', 0.4)
+                .attr('stroke-dasharray', '4,2');
+
+            sstG.append('text')
+                .attr('x', innerW + 5)
+                .attr('y', npY(npRecent[npRecent.length - 1].pop) + 3)
+                .attr('font-size', '8px')
+                .attr('fill', colors.teal)
+                .attr('opacity', 0.6)
+                .text('NP pop');
+
+            // X axis - shared scale, same ticks for both charts
+            sstG.append('g')
+                .attr('class', 'axis')
+                .attr('transform', `translate(0,${sstInnerH})`)
+                .call(d3.axisBottom(detailX)
+                    .tickValues([2010, 2012, 2014, 2016, 2018, 2020, 2022, 2024, 2026])
+                    .tickFormat(d => d)
+                    .tickSize(3))
+                .select('.domain').attr('stroke-opacity', 0.3);
+
+            // Y axis
+            sstG.append('g')
+                .attr('class', 'axis')
+                .call(d3.axisLeft(sstY)
+                    .tickValues([0, 1, 2, 3])
+                    .tickFormat(d => d === 0 ? '0' : '+' + d + '°C')
+                    .tickSize(3))
+                .select('.domain').attr('stroke-opacity', 0.3);
+
+            // Crosshair
+            sstCrosshair = sstG.append('line')
+                .attr('class', 'crosshair')
+                .attr('y1', 0)
+                .attr('y2', sstInnerH)
+                .style('display', 'none');
+
+            sstDot = sstG.append('circle')
+                .attr('class', 'crosshair-dot')
+                .attr('r', 4)
+                .attr('fill', colors.orange)
+                .style('display', 'none');
+
+            // Hover overlay
+            sstG.append('rect')
+                .attr('class', 'hover-overlay')
+                .attr('width', innerW)
+                .attr('height', sstInnerH)
+                .on('mousemove', (event) => onHoverAny(event, 'detail'))
+                .on('mouseleave', onLeave);
+        }
+
+        // ============ SYNCHRONIZED HOVER ============
+        const tooltip = document.getElementById('tooltip');
+        const container = document.getElementById('container');
+
+        function onHoverAny(event, source) {
+            const [mx] = d3.pointer(event);
+            let year;
+
+            // Convert mouse position to year based on source chart
+            if (source === 'main') {
+                year = x.invert(mx);
+            } else if (source === 'detail') {
+                // Both UME and SST now use same detailX scale
+                year = detailX.invert(mx);
+            }
+
+            updateAllCrosshairs(year, event);
+        }
+
+        function updateAllCrosshairs(year, event) {
+            const colors = {
+                na: getCSSVar('--accent-blue'),
+                wsa: getCSSVar('--accent-gray'),
+                np: getCSSVar('--accent-teal'),
+                ume: getCSSVar('--accent-red'),
+                sst: getCSSVar('--accent-orange')
+            };
+
+            const findClosest = (data, yr, key = 'year') => 
+                data.reduce((a, b) => Math.abs(b[key] - yr) < Math.abs(a[key] - yr) ? b : a);
+
+            // Interpolate Y value along the line for a given year
+            function interpolateY(data, yr) {
+                if (yr <= data[0].year) return data[0].pop;
+                if (yr >= data[data.length - 1].year) return data[data.length - 1].pop;
+                
+                for (let i = 0; i < data.length - 1; i++) {
+                    if (yr >= data[i].year && yr <= data[i + 1].year) {
+                        const t = (yr - data[i].year) / (data[i + 1].year - data[i].year);
+                        return data[i].pop + t * (data[i + 1].pop - data[i].pop);
+                    }
+                }
+                return null;
+            }
+
+            // ===== MAIN CHART =====
+            const mainXPos = x(year);
+            if (mainXPos >= 0 && mainXPos <= innerW) {
+                mainCrosshair.attr('x1', mainXPos).attr('x2', mainXPos).style('display', null);
+                
+                mainDots.forEach(({ key, dot }) => {
+                    if (state[key]) {
+                        const data = popData[key];
+                        const minYear = data[0].year;
+                        const maxYear = data[data.length - 1].year;
+                        
+                        if (year >= minYear && year <= maxYear) {
+                            const interpY = interpolateY(data, year);
+                            dot.attr('cx', mainXPos)
+                               .attr('cy', y(interpY))
+                               .style('display', null);
+                        } else {
+                            dot.style('display', 'none');
+                        }
+                    } else {
+                        dot.style('display', 'none');
+                    }
+                });
+            } else {
+                mainCrosshair.style('display', 'none');
+                mainDots.forEach(({ dot }) => dot.style('display', 'none'));
+            }
+
+            // ===== UME CHART (using detailX) =====
+            const detailXPos = detailX(year);
+            if (detailXPos >= 0 && detailXPos <= innerW) {
+                umeCrosshair.attr('x1', detailXPos).attr('x2', detailXPos).style('display', null);
+                
+                const umePoint = umeData.find(d => Math.abs(d.year - year) < 0.6);
+                if (umePoint) {
+                    umeDot.attr('cx', detailX(umePoint.year))
+                          .attr('cy', umeY(umePoint.deaths))
+                          .style('display', null);
+                } else {
+                    umeDot.style('display', 'none');
+                }
+            } else {
+                umeCrosshair.style('display', 'none');
+                umeDot.style('display', 'none');
+            }
+
+            // ===== SST CHART (using same detailX) =====
+            if (detailXPos >= 0 && detailXPos <= innerW) {
+                sstCrosshair.attr('x1', detailXPos).attr('x2', detailXPos).style('display', null);
+                
+                // Interpolate SST anomaly value
+                function interpolateSST(data, yr) {
+                    if (yr <= data[0].year) return data[0].anomaly;
+                    if (yr >= data[data.length - 1].year) return data[data.length - 1].anomaly;
+                    
+                    for (let i = 0; i < data.length - 1; i++) {
+                        if (yr >= data[i].year && yr <= data[i + 1].year) {
+                            const t = (yr - data[i].year) / (data[i + 1].year - data[i].year);
+                            return data[i].anomaly + t * (data[i + 1].anomaly - data[i].anomaly);
+                        }
+                    }
+                    return null;
+                }
+                
+                const minSSTYear = sstData[0].year;
+                const maxSSTYear = sstData[sstData.length - 1].year;
+                
+                if (year >= minSSTYear && year <= maxSSTYear) {
+                    const interpAnomaly = interpolateSST(sstData, year);
+                    sstDot.attr('cx', detailXPos)
+                          .attr('cy', sstY(interpAnomaly))
+                          .style('display', null);
+                } else {
+                    sstDot.style('display', 'none');
+                }
+            } else {
+                sstCrosshair.style('display', 'none');
+                sstDot.style('display', 'none');
+            }
+
+            // ===== TOOLTIP =====
+            updateTooltip(year, event);
+        }
+
+        function updateTooltip(year, event) {
+            const roundYear = Math.round(year);
+            let html = `<div class="tooltip-title">${roundYear}</div>`;
+            
+            const findClosest = (data, yr) => data.reduce((a, b) => 
+                Math.abs(b.year - yr) < Math.abs(a.year - yr) ? b : a);
+
+            // Population data
+            let hasPopData = false;
+            let popHtml = '';
+            
+            if (state.na) {
+                const d = findClosest(popData.na, year);
+                if (Math.abs(d.year - year) < 15) {
+                    hasPopData = true;
+                    popHtml += `<div class="tooltip-row">
+                        <span class="tooltip-label">Сев. Атлантика:</span>
+                        <span class="tooltip-value" style="color: var(--accent-blue)">${d.pop.toLocaleString()}</span>
+                    </div>`;
+                }
+            }
+            
+            if (state.wsa) {
+                const d = findClosest(popData.wsa, year);
+                if (Math.abs(d.year - year) < 15) {
+                    hasPopData = true;
+                    popHtml += `<div class="tooltip-row">
+                        <span class="tooltip-label">Зап. Юж. Атлантика:</span>
+                        <span class="tooltip-value" style="color: var(--accent-gray)">${d.pop.toLocaleString()}</span>
+                    </div>`;
+                }
+            }
+            
+            if (state.np && year >= 1960) {
+                const d = findClosest(popData.np, year);
+                if (Math.abs(d.year - year) < 15) {
+                    hasPopData = true;
+                    popHtml += `<div class="tooltip-row">
+                        <span class="tooltip-label">Сев. Тихий океан:</span>
+                        <span class="tooltip-value" style="color: var(--accent-teal)">${d.pop.toLocaleString()}</span>
+                    </div>`;
+                }
+            }
+
+            if (hasPopData) {
+                html += popHtml;
+            }
+
+            // Catch data
+            if (state.catch) {
+                const c = catchData.find(d => Math.abs(d.year - year) < 3);
+                if (c) {
+                    html += `<div class="tooltip-row">
+                        <span class="tooltip-label">Вылов:</span>
+                        <span class="tooltip-value" style="color: var(--accent-red)">${c.catch.toLocaleString()}</span>
+                    </div>`;
+                }
+            }
+
+            // UME data
+            if (year >= 2016 && year <= 2025) {
+                const ume = umeData.find(d => Math.abs(d.year - year) < 0.6);
+                if (ume) {
+                    html += `<div class="tooltip-section">
+                        <div class="tooltip-section-title">UME Атлантика</div>
+                        <div class="tooltip-row">
+                            <span class="tooltip-label">Смертей:</span>
+                            <span class="tooltip-value" style="color: var(--accent-red)">${ume.deaths}</span>
+                        </div>
+                    </div>`;
+                }
+            }
+
+            // SST data
+            if (year >= 2010 && year <= 2025) {
+                const findClosestSST = (data, yr) => data.reduce((a, b) => 
+                    Math.abs(b.year - yr) < Math.abs(a.year - yr) ? b : a);
+                const sst = findClosestSST(sstData, year);
+                if (Math.abs(sst.year - year) < 1) {
+                    const sign = sst.anomaly >= 0 ? '+' : '';
+                    html += `<div class="tooltip-section">
+                        <div class="tooltip-section-title">SST Сев. Тихий океан</div>
+                        <div class="tooltip-row">
+                            <span class="tooltip-label">Аномалия:</span>
+                            <span class="tooltip-value" style="color: var(--accent-orange)">${sign}${sst.anomaly.toFixed(1)}°C</span>
+                        </div>
+                    </div>`;
+                }
+            }
+
+            tooltip.innerHTML = html;
+            tooltip.style.opacity = '1';
+            
+            const rect = container.getBoundingClientRect();
+            const tx = Math.min(event.clientX - rect.left + 15, rect.width - 240);
+            const ty = Math.max(event.clientY - rect.top - 10, 10);
+            tooltip.style.left = tx + 'px';
+            tooltip.style.top = ty + 'px';
+        }
+
+        function onLeave() {
+            mainCrosshair.style('display', 'none');
+            mainDots.forEach(({ dot }) => dot.style('display', 'none'));
+            umeCrosshair.style('display', 'none');
+            umeDot.style('display', 'none');
+            sstCrosshair.style('display', 'none');
+            sstDot.style('display', 'none');
+            
+            tooltip.style.opacity = '0';
+        }
+
+        function toggleSeries(s) {
+            state[s] = !state[s];
+            
+            document.querySelectorAll('.control-item').forEach(el => {
+                el.classList.toggle('inactive', !state[el.dataset.series]);
+            });
+            
+            renderMain();
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+            }
+            renderMain();
+            renderConnector();
+            renderUME();
+            renderSST();
+        }
+
+        // Initial render
+        renderMain();
+        renderConnector();
+        renderUME();
+        renderSST();
+    </script>
+</body>
+</html>
