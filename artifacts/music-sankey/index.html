@@ -29,23 +29,23 @@
         .container { padding: 15px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .title { font-size: 1.6rem; font-weight: 600; margin-bottom: 2px; letter-spacing: 0.1em; background: linear-gradient(90deg, #fff 0%, #888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .subtitle { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; font-family: 'JetBrains Mono', monospace; font-weight: 300; }
-        #chart { width: 100%; max-width: 1600px; position: relative; }
+        #chart { width: 100%; max-width: 1600px; position: relative; overflow: visible; }
 
         /* Mode toggle */
         .mode-toggle { position: absolute; top: 10px; right: 20px; display: flex; gap: 8px; z-index: 100; }
-        .mode-btn { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 6px 12px; border: 1px solid var(--card-border); border-radius: 4px; background: var(--card-bg); color: var(--text-muted); cursor: pointer; transition: all 0.2s; }
+        .mode-btn { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 6px 12px; border: 1px solid var(--card-border); border-radius: 4px; background: var(--card-bg); color: var(--text-muted); cursor: pointer; transition: all 0.15s; }
         .mode-btn:hover { border-color: var(--accent-blue); color: var(--text-primary); }
         .mode-btn.active { border-color: var(--accent-green); color: var(--accent-green); background: rgba(34, 197, 94, 0.1); }
 
         /* Genres - top row */
         .genres-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; max-width: 1400px; }
-        .genre-chip { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 4px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s; opacity: 0.7; }
+        .genre-chip { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 4px 8px; border-radius: 4px; cursor: pointer; transition: all 0.15s; opacity: 0.7; }
         .genre-chip:hover, .genre-chip.active { opacity: 1; transform: scale(1.05); }
         .genre-chip.dimmed { opacity: 0.15; }
 
         /* Traits - bottom row */
         .traits-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; max-width: 1400px; }
-        .trait-chip { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 4px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s; opacity: 0.7; border: 1px solid; }
+        .trait-chip { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 4px 8px; border-radius: 4px; cursor: pointer; transition: all 0.15s; opacity: 0.7; border: 1px solid; }
         .trait-chip:hover, .trait-chip.active { opacity: 1; }
         .trait-chip.dimmed { opacity: 0.15; }
 
@@ -69,14 +69,15 @@
         .artist-card:hover .artist-tooltip { opacity: 1; }
 
         /* Track dots */
-        .track-dot { position: absolute; width: 8px; height: 8px; border-radius: 50%; cursor: pointer; transition: all 0.2s ease; transform: translate(-50%, -50%); z-index: 5; opacity: 0.7; }
+        .track-dot { position: absolute; width: 6px; height: 6px; border-radius: 50%; cursor: pointer; transition: all 0.15s ease; transform: translate(-50%, -50%); z-index: 5; opacity: 0.25; }
         .track-dot:hover { transform: translate(-50%, -50%) scale(1.8); opacity: 1; z-index: 60; }
-        .track-dot.dimmed { opacity: 0.08; }
+        .track-dot.highlighted { opacity: 0.7; }
+        .track-dot.dimmed { opacity: 0.05; }
         .track-dot .track-tooltip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 4px; padding: 4px 8px; white-space: nowrap; font-family: 'JetBrains Mono', monospace; font-size: 9px; opacity: 0; pointer-events: none; transition: opacity 0.2s; margin-bottom: 4px; }
         .track-dot:hover .track-tooltip { opacity: 1; }
 
         /* Info panel */
-        .info-panel { position: fixed; right: 15px; top: 50%; transform: translateY(-50%); width: 280px; max-height: 70vh; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 14px; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.2s; overflow-y: auto; }
+        .info-panel { position: absolute; width: 240px; max-height: 300px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 12px; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.15s, transform 0.15s; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
         .info-panel.visible { opacity: 1; pointer-events: auto; }
         .info-panel.selected { border-color: var(--accent-green); box-shadow: 0 0 20px rgba(34, 197, 94, 0.2); }
         .panel-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--card-border); }
@@ -93,13 +94,22 @@
 
         /* SVG for Sankey links */
         #svgLayer { position: absolute; top: 0; left: 0; pointer-events: none; }
-        .sankey-link { fill: none; stroke-opacity: 0.15; transition: stroke-opacity 0.2s; }
+        .sankey-link { fill: none; stroke-opacity: 0.25; transition: stroke-opacity 0.15s; }
+
+        /* Artist to track connection lines */
+        .track-link {
+            fill: none;
+            stroke-width: 1px;
+            stroke-opacity: 0;
+            transition: stroke-opacity 0.15s;
+        }
+        .track-link.visible { stroke-opacity: 0.7; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1 class="title">МУЗЫКАЛЬНАЯ ДНК</h1>
-        <p class="subtitle" id="subtitle">таймлайн: 1968–2024 | география: мир → регионы РФ</p>
+        <p class="subtitle" id="subtitle">X: год | Y: популярность (Spotify monthly listeners)</p>
 
         <div class="genres-row" id="genresRow"></div>
         <div id="chart"></div>
@@ -109,15 +119,6 @@
     <div class="mode-toggle">
         <button class="mode-btn active" id="showAll">Все треки</button>
         <button class="mode-btn" id="showSelected">Только выбранный</button>
-    </div>
-
-    <div class="info-panel" id="infoPanel">
-        <button class="close-btn" id="closeBtn">×</button>
-        <div class="panel-header">
-            <div class="panel-image" id="panelImage"></div>
-            <div><div class="panel-title" id="panelTitle"></div><div class="panel-subtitle" id="panelSubtitle"></div></div>
-        </div>
-        <ul class="track-list" id="trackList"></ul>
     </div>
 
     <script>
@@ -138,97 +139,98 @@
             { id: 'melancholy', name: 'Меланхолия', color: '#457b9d' },
         ];
 
-        const geoRegions = [
-            { id: 'world', name: 'Мир', y: 0 },
-            { id: 'spb', name: 'СПб', y: 1 },
-            { id: 'moscow', name: 'Москва', y: 2 },
-            { id: 'regions', name: 'Регионы РФ', y: 3 },
+        // Popularity tiers for Y-axis labels
+        const popTiers = [
+            { value: 10000000, label: '10M' },
+            { value: 1000000, label: '1M' },
+            { value: 100000, label: '100K' },
+            { value: 10000, label: '10K' },
         ];
 
         const artists = [
-            { id: 'a1', name: 'КИНО', desc: 'Виктор Цой', emoji: '⭐', bgColor: '#ff6b6b', geo: 'spb',
+            { id: 'a1', name: 'КИНО', desc: 'Виктор Цой', emoji: '⭐', bgColor: '#ff6b6b', popularity: 1300000,
               image: 'kino.jpg', imagePos: 'center 15%',
               tracks: [{ title: 'Перемен', search: 'КИНО Перемен', year: 1986 },{ title: 'Группа крови', search: 'КИНО Группа крови', year: 1988 },{ title: 'Город', search: 'КИНО Город', year: 1982 },{ title: 'Муравейник', search: 'КИНО Муравейник', year: 1986 }]},
-            { id: 'a2', name: 'Высоцкий', desc: 'Бард, поэт', emoji: '🎭', bgColor: '#4ecdc4', geo: 'moscow',
+            { id: 'a2', name: 'Высоцкий', desc: 'Бард, поэт', emoji: '🎭', bgColor: '#4ecdc4', popularity: 800000,
               image: 'vysotsky.jpg', imagePos: 'center top',
               tracks: [{ title: 'Мой Гамлет', search: 'Высоцкий Мой Гамлет', year: 1972 },{ title: 'Як-истребитель', search: 'Высоцкий Як-истребитель', year: 1968 },{ title: 'Песня космических негодяев', search: 'Высоцкий Песня космических негодяев', year: 1981 }]},
-            { id: 'a3', name: 'Noize MC', desc: 'Протестный рэп', emoji: '🔥', bgColor: '#ffd93d', geo: 'moscow',
+            { id: 'a3', name: 'Noize MC', desc: 'Протестный рэп', emoji: '🔥', bgColor: '#ffd93d', popularity: 651000,
               image: 'noize-mc.jpg', imagePos: 'center 20%',
               tracks: [{ title: 'Иордан', search: 'Noize MC Иордан', year: 2018 },{ title: 'Всё как у людей', search: 'Noize MC Всё как у людей', year: 2016 },{ title: 'Столетняя война', search: 'Noize MC Столетняя война', year: 2016 },{ title: 'Вояджер-1', search: 'Noize MC Вояджер', year: 2018 },{ title: 'Почитай старших', search: 'Noize MC Почитай старших', year: 2024 }]},
-            { id: 'a4', name: 'БГ', desc: 'Аквариум', emoji: '🕉️', bgColor: '#9d4edd', geo: 'spb',
+            { id: 'a4', name: 'БГ', desc: 'Аквариум', emoji: '🕉️', bgColor: '#9d4edd', popularity: 500000,
               image: 'bg.jpg', imagePos: 'center 35%',
               tracks: [{ title: 'Om Namah Shivaya', search: 'Гребенщиков Om Namah Shivaya', year: 2012 },{ title: 'Поезд в огне', search: 'Аквариум Поезд в огне', year: 1987 },{ title: 'Вон Вавилон', search: 'Гребенщиков Вон Вавилон', year: 2017 },{ title: 'Назад в Архангельск', search: 'Аквариум Назад в Архангельск', year: 1982 },{ title: 'Молитва и пост', search: 'Аквариум Молитва и пост', year: 1999 },{ title: 'Новый Шёлковый Путь', search: 'Гребенщиков Новый Шелковый Путь', year: 2011 },{ title: 'Если Я Уйду', search: 'Гребенщиков Если Я Уйду', year: 2007 },{ title: 'Не судьба', search: 'Гребенщиков Не судьба', year: 2018 },{ title: 'Не Было Такой', search: 'Гребенщиков Не Было Такой', year: 2016 }]},
-            { id: 'a5', name: 'Василий К.', desc: 'Авторский сарказм', emoji: '😏', bgColor: '#ff85a2', geo: 'spb',
+            { id: 'a5', name: 'Василий К.', desc: 'Авторский сарказм', emoji: '😏', bgColor: '#ff85a2', popularity: 50000,
               image: 'vasiliy-k.jpg', imagePos: 'center 30%',
               tracks: [{ title: 'Не моя', search: 'Василий К Не моя', year: 2008 },{ title: 'Держава', search: 'Василий К Держава', year: 2010 },{ title: 'Ганеша', search: 'Василий К Ганеша', year: 2012 },{ title: 'Интеллигенты', search: 'Василий К Интеллигенты', year: 2006 },{ title: 'Самое худшее', search: 'Василий К Самое худшее', year: 2015 },{ title: 'Монотеизм', search: 'Василий К Монотеизм', year: 2006 },{ title: 'Манхэттен и Берлин', search: 'Василий К Манхэттен и Берлин', year: 2018 },{ title: 'Так бывает', search: 'Василий К Так бывает', year: 2015 },{ title: 'Безобразны и злы', search: 'Василий К Безобразны и злы', year: 2015 },{ title: 'Исусы Христосы', search: 'Василий К Исусы Христосы', year: 2006 },{ title: 'Игра в ящик', search: 'Василий К Игра в ящик', year: 2018 }]},
-            { id: 'a6', name: 'Heilung', desc: 'Скандинавский пейган', emoji: '🦌', bgColor: '#a0522d', geo: 'world',
+            { id: 'a6', name: 'Heilung', desc: 'Скандинавский пейган', emoji: '🦌', bgColor: '#a0522d', popularity: 560000,
               image: 'heilung.jpg', imagePos: 'center 35%',
               tracks: [{ title: 'Fylgija Ear', search: 'Heilung Fylgija Ear', year: 2019 },{ title: 'Hakkerskaldyr', search: 'Heilung Hakkerskaldyr', year: 2019 }]},
-            { id: 'a7', name: 'Hans Zimmer', desc: 'Саундтреки', emoji: '🎬', bgColor: '#7b68ee', geo: 'world',
+            { id: 'a7', name: 'Hans Zimmer', desc: 'Саундтреки', emoji: '🎬', bgColor: '#7b68ee', popularity: 5000000,
               image: 'hans-zimmer.jpg', imagePos: 'center 25%',
               tracks: [{ title: 'Interstellar Suite', search: 'Hans Zimmer Interstellar Suite', year: 2014 },{ title: 'Dust', search: 'Hans Zimmer Dust Interstellar', year: 2014 }]},
-            { id: 'a8', name: 'Rodrigo y Gabriela', desc: 'Гитарные виртуозы', emoji: '🎸', bgColor: '#ff9f1c', geo: 'world',
+            { id: 'a8', name: 'Rodrigo y Gabriela', desc: 'Гитарные виртуозы', emoji: '🎸', bgColor: '#ff9f1c', popularity: 1500000,
               image: 'rodrigo-gabriela.jpg', imagePos: 'center 20%',
               tracks: [{ title: 'Electric Soul', search: 'Rodrigo y Gabriela Electric Soul', year: 2019 },{ title: 'Ixtapa', search: 'Rodrigo y Gabriela Ixtapa', year: 2006 }]},
-            { id: 'a9', name: 'Каста', desc: 'Ростовский рэп', emoji: '🎤', bgColor: '#e63946', geo: 'regions',
+            { id: 'a9', name: 'Каста', desc: 'Ростовский рэп', emoji: '🎤', bgColor: '#e63946', popularity: 300000,
               image: '_kasta.jpg', imagePos: 'center 15%',
               tracks: [{ title: 'Самый счастливый человек', search: 'Каста Самый счастливый человек', year: 2007 },{ title: 'На порядок выше', search: 'Каста На порядок выше', year: 2009 },{ title: 'Радиосигналы', search: 'Каста Радиосигналы', year: 2017 },{ title: 'Горячее время', search: 'Каста Горячее время', year: 2006 }]},
-            { id: 'a10', name: 'Nick Cave', desc: 'Тёмная романтика', emoji: '🖤', bgColor: '#457b9d', geo: 'world',
+            { id: 'a10', name: 'Nick Cave', desc: 'Тёмная романтика', emoji: '🖤', bgColor: '#457b9d', popularity: 4300000,
               image: 'nick-cave.jpg', imagePos: 'center 25%',
               tracks: [{ title: 'Papa Won\'t Leave You, Henry', search: 'Nick Cave Papa Wont Leave You Henry', year: 1994 },{ title: 'Red Right Hand', search: 'Nick Cave Red Right Hand', year: 1994 },{ title: 'Brother, My Cup Is Empty', search: 'Nick Cave Brother My Cup Is Empty', year: 1996 }]},
-            { id: 'a11', name: 'Nine Treasures', desc: 'Монгольский фолк', emoji: '🏔️', bgColor: '#6bcb77', geo: 'world',
+            { id: 'a11', name: 'Nine Treasures', desc: 'Монгольский фолк', emoji: '🏔️', bgColor: '#6bcb77', popularity: 100000,
               image: 'nine-treasures.jpg', imagePos: 'center 40%',
               tracks: [{ title: 'The Dream About Ancient City', search: 'Nine Treasures Dream Ancient City', year: 2017 }]},
-            { id: 'a12', name: 'Jean-Michel Jarre', desc: 'Пионер электроники', emoji: '🌌', bgColor: '#00d4ff', geo: 'world',
+            { id: 'a12', name: 'Jean-Michel Jarre', desc: 'Пионер электроники', emoji: '🌌', bgColor: '#00d4ff', popularity: 1200000,
               image: 'jarre.jpg', imagePos: 'center 15%',
               tracks: [{ title: 'Equinoxe, Pt. 4', search: 'Jean Michel Jarre Equinoxe 4', year: 1978 }]},
-            { id: 'a13', name: 'Пушной', desc: 'Ироничный интеллектуал', emoji: '🤓', bgColor: '#ff85a2', geo: 'regions',
+            { id: 'a13', name: 'Пушной', desc: 'Ироничный интеллектуал', emoji: '🤓', bgColor: '#ff85a2', popularity: 150000,
               image: 'pushnoy.jpg', imagePos: 'center 15%',
               tracks: [{ title: 'Вершина', search: 'Пушной Вершина', year: 2007 },{ title: 'Город Омск', search: 'Пушной Город Омск', year: 2010 },{ title: 'Надо радоваться!', search: 'Пушной Надо радоваться', year: 2008 }]},
-            { id: 'a14', name: 'Oxxxymiron', desc: 'Литературный рэп', emoji: '📚', bgColor: '#ffd93d', geo: 'spb',
+            { id: 'a14', name: 'Oxxxymiron', desc: 'Литературный рэп', emoji: '📚', bgColor: '#ffd93d', popularity: 400000,
               image: 'oxxxymiron.jpg', imagePos: 'center 15%',
               tracks: [{ title: 'Где нас нет', search: 'Oxxxymiron Где нас нет', year: 2015 },{ title: 'Город под подошвой', search: 'Oxxxymiron Город под подошвой', year: 2015 },{ title: 'ОРГАНИЗАЦИЯ', search: 'Oxxxymiron ОРГАНИЗАЦИЯ', year: 2022 },{ title: 'Лондонград', search: 'Oxxxymiron Лондонград', year: 2015 }]},
-            { id: 'a15', name: 'Corvus Corax', desc: 'Средневековый неофолк', emoji: '🏰', bgColor: '#a0522d', geo: 'world',
+            { id: 'a15', name: 'Corvus Corax', desc: 'Средневековый неофолк', emoji: '🏰', bgColor: '#a0522d', popularity: 200000,
               image: 'corvus-corax.jpg', imagePos: 'center 25%',
               tracks: [{ title: 'In Taberna', search: 'Corvus Corax In Taberna', year: 1992 },{ title: 'Skál', search: 'Corvus Corax Skal', year: 2013 }]},
-            { id: 'a16', name: 'Krishna Das', desc: 'Киртан, мантры', emoji: '🙏', bgColor: '#9d4edd', geo: 'world',
+            { id: 'a16', name: 'Krishna Das', desc: 'Киртан, мантры', emoji: '🙏', bgColor: '#9d4edd', popularity: 300000,
               image: 'krishna-das.jpg', imagePos: 'center 20%',
               tracks: [{ title: 'Hallelujah Chalisa', search: 'Krishna Das Hallelujah Chalisa', year: 2014 }]},
-            { id: 'a17', name: 'Сплин', desc: 'Питерский рок', emoji: '🌧️', bgColor: '#457b9d', geo: 'spb',
+            { id: 'a17', name: 'Сплин', desc: 'Питерский рок', emoji: '🌧️', bgColor: '#457b9d', popularity: 600000,
               image: 'splin.jpg', imagePos: 'center 20%',
               tracks: [{ title: 'За семью печатями', search: 'Сплин За семью печатями', year: 2004 },{ title: 'Нечего делать внутри', search: 'Сплин Нечего делать внутри', year: 2001 },{ title: 'Семь восьмых', search: 'Сплин Семь восьмых', year: 1998 },{ title: 'Передайте это Гарри Поттеру', search: 'Сплин Передайте это Гарри Поттеру', year: 2001 }]},
-            { id: 'a18', name: 'Дельфин', desc: 'Электронная меланхолия', emoji: '🐬', bgColor: '#1e3a5f', geo: 'moscow',
-              image: 'delfin.jpg', imagePos: 'center 15%',
+            { id: 'a18', name: 'Дельфин', desc: 'Электронная меланхолия', emoji: '🐬', bgColor: '#1e3a5f', popularity: 400000,
+              image: 'delfin.jpg', imagePos: 'center 20%',
               tracks: [{ title: '744', search: 'Дельфин 744', year: 2014 },{ title: 'Я люблю людей', search: 'Дельфин Я люблю людей', year: 2005 }]},
-            { id: 'a19', name: 'Порнофильмы', desc: 'Социальный панк', emoji: '🔥', bgColor: '#dc2626', geo: 'moscow',
-              image: 'pornofilmy.jpg', imagePos: 'center 30%',
+            { id: 'a19', name: 'Порнофильмы', desc: 'Социальный панк', emoji: '🔥', bgColor: '#dc2626', popularity: 200000,
+              image: 'pornofilmy.jpg', imagePos: 'center 20%',
               tracks: [{ title: 'Я так соскучился', search: 'Порнофильмы Я так соскучился', year: 2017 },{ title: 'Чужое горе', search: 'Порнофильмы Чужое горе', year: 2018 },{ title: 'Россия для грустных', search: 'Порнофильмы Россия для грустных', year: 2019 }]},
-            { id: 'a20', name: 'Леона', desc: 'Тёмный авторский фолк', emoji: '🌑', bgColor: '#374151', geo: 'moscow',
+            { id: 'a20', name: 'Леона', desc: 'Тёмный авторский фолк', emoji: '🌑', bgColor: '#374151', popularity: 30000,
               image: 'leona.jpg', imagePos: 'center 20%',
               tracks: [{ title: 'Хозяйка медной горы', search: 'Леона Хозяйка медной горы', year: 2018 },{ title: 'Плохо, ничего хорошего', search: 'Леона Плохо ничего хорошего', year: 2019 },{ title: 'Пустое святое', search: 'Леона Пустое святое', year: 2019 },{ title: 'Зверь, которого не бывает', search: 'Леона Зверь которого не бывает', year: 2020 },{ title: 'Проводник', search: 'Леона Проводник', year: 2018 },{ title: 'На металлоломе', search: 'Леона На металлоломе', year: 2019 },{ title: 'Всё, что мы скажем', search: 'Леона Всё что мы скажем', year: 2020 }]},
-            { id: 'a21', name: 'Anacondaz', desc: 'Ироничный рэп-рок', emoji: '🐍', bgColor: '#65a30d', geo: 'moscow',
-              image: 'anacondaz.png', imagePos: 'center 25%',
+            { id: 'a21', name: 'Anacondaz', desc: 'Ироничный рэп-рок', emoji: '🐍', bgColor: '#65a30d', popularity: 250000,
+              image: 'anacondaz.png', imagePos: 'center 20%',
               tracks: [{ title: 'Дубак', search: 'Anacondaz Дубак', year: 2015 },{ title: 'Смертельное оружие', search: 'Anacondaz Смертельное оружие', year: 2018 }]},
-            { id: 'a22', name: 'Nautilus Pompilius', desc: 'Свердловский рок', emoji: '🐚', bgColor: '#0ea5e9', geo: 'regions',
-              image: 'nautilus.jpg', imagePos: 'center 15%',
+            { id: 'a22', name: 'Nautilus Pompilius', desc: 'Свердловский рок', emoji: '🐚', bgColor: '#0ea5e9', popularity: 500000,
+              image: 'nautilus.jpg', imagePos: 'center 20%',
               tracks: [{ title: 'Я хочу быть с тобой', search: 'Nautilus Pompilius Я хочу быть с тобой', year: 1989 },{ title: 'Хлоп-хлоп', search: 'Nautilus Pompilius Хлоп-хлоп', year: 1988 }]},
-            { id: 'a23', name: 'Гражданская оборона', desc: 'Сибирский панк', emoji: '💀', bgColor: '#1f2937', geo: 'regions',
+            { id: 'a23', name: 'Гражданская оборона', desc: 'Сибирский панк', emoji: '💀', bgColor: '#1f2937', popularity: 150000,
               image: 'grob.jpg', imagePos: 'center 20%',
               tracks: [{ title: 'После нас', search: 'Гражданская оборона После нас', year: 2004 }]},
-            { id: 'a24', name: 'Алиса', desc: 'Кинчев, рок', emoji: '⚡', bgColor: '#b91c1c', geo: 'spb',
+            { id: 'a24', name: 'Алиса', desc: 'Кинчев, рок', emoji: '⚡', bgColor: '#b91c1c', popularity: 400000,
               image: 'alisa.jpg', imagePos: 'center 20%',
               tracks: [{ title: 'Rock-N-Roll', search: 'Алиса Rock-N-Roll', year: 1988 }]},
-            { id: 'a25', name: 'Влади', desc: 'Каста соло', emoji: '🎤', bgColor: '#7c3aed', geo: 'regions',
-              image: 'vladi.jpg', imagePos: 'center 25%',
+            { id: 'a25', name: 'Влади', desc: 'Каста соло', emoji: '🎤', bgColor: '#7c3aed', popularity: 100000,
+              image: 'vladi.jpg', imagePos: 'center 20%',
               tracks: [{ title: 'Как это блядь возможно', search: 'Влади Как это возможно', year: 2022 },{ title: 'Краски не сгущайте', search: 'Влади Краски не сгущайте', year: 2022 }]},
-            { id: 'a26', name: 'Драконь', desc: 'Бардовский юмор', emoji: '🐉', bgColor: '#ea580c', geo: 'moscow',
-              image: 'drakon.jpg', imagePos: 'center center',
+            { id: 'a26', name: 'Драконь', desc: 'Бардовский юмор', emoji: '🐉', bgColor: '#ea580c', popularity: 20000,
+              image: 'drakon.jpg', imagePos: 'center 20%',
               tracks: [{ title: 'О всадниках и черепахах', search: 'Драконь О всадниках и черепахах', year: 2012 },{ title: 'Найти омелу', search: 'Драконь Найти омелу', year: 2015 },{ title: 'Песня о вашем друге', search: 'Драконь Песня о вашем друге', year: 2014 },{ title: 'Испанская романтическая баллада', search: 'Драконь Испанская романтическая баллада', year: 2016 }]},
-            { id: 'a27', name: 'Atlantida Project', desc: 'Этно-электроника', emoji: '🌊', bgColor: '#0891b2', geo: 'moscow',
-              image: 'atlantida.jpg', imagePos: 'center 30%',
+            { id: 'a27', name: 'Atlantida Project', desc: 'Этно-электроника', emoji: '🌊', bgColor: '#0891b2', popularity: 50000,
+              image: 'atlantida.jpg', imagePos: 'center 20%',
               tracks: [{ title: 'Чистое зло', search: 'Atlantida Project Чистое зло', year: 2015 },{ title: 'Сарва Мангалам', search: 'Atlantida Project Сарва Мангалам', year: 2012 },{ title: 'Красная королева', search: 'Atlantida Project Красная королева', year: 2018 }]},
-            { id: 'a28', name: 'Ольга Арефьева', desc: 'Авторская мистика', emoji: '🔮', bgColor: '#a855f7', geo: 'moscow',
-              image: 'arefieva.jpg', imagePos: 'center 15%',
+            { id: 'a28', name: 'Ольга Арефьева', desc: 'Авторская мистика', emoji: '🔮', bgColor: '#a855f7', popularity: 80000,
+              image: 'arefieva.jpg', imagePos: 'center 20%',
               tracks: [{ title: 'Сансара', search: 'Ольга Арефьева Сансара', year: 2000 },{ title: 'Вертолёт', search: 'Ольга Арефьева Вертолёт', year: 2003 }]},
         ];
 
@@ -305,12 +307,7 @@
         // Setup dimensions
         const chart = document.getElementById('chart');
         const width = Math.min(1500, window.innerWidth - 40);
-        // Dynamic height based on number of geo regions and artists per region
-        const maxArtistsPerGeo = Math.max(...Object.values(
-            artists.reduce((acc, a) => { acc[a.geo] = (acc[a.geo] || 0) + 1; return acc; }, {})
-        ));
-        const minGeoHeight = Math.max(80, maxArtistsPerGeo * 55);
-        const height = geoRegions.length * minGeoHeight + 60;
+        const height = Math.min(600, window.innerHeight - 200);
         chart.style.width = width + 'px';
         chart.style.height = height + 'px';
 
@@ -324,11 +321,17 @@
             return leftPadding + ((year - minYear) / (maxYear - minYear)) * timelineWidth;
         }
 
-        // Geo to Y position
-        const geoHeight = (height - topPadding - bottomPadding) / geoRegions.length;
-        function geoToY(geoId) {
-            const region = geoRegions.find(g => g.id === geoId);
-            return topPadding + region.y * geoHeight + geoHeight / 2;
+        // Popularity to Y position (log scale, higher popularity = higher on screen)
+        const chartHeight = height - topPadding - bottomPadding;
+        const minPop = Math.min(...artists.map(a => a.popularity));
+        const maxPop = Math.max(...artists.map(a => a.popularity));
+        const logMin = Math.log10(Math.max(1000, minPop));
+        const logMax = Math.log10(maxPop);
+
+        function popularityToY(pop) {
+            const logPop = Math.log10(Math.max(1000, pop));
+            const normalized = (logPop - logMin) / (logMax - logMin);
+            return topPadding + (1 - normalized) * chartHeight;
         }
 
         // Create SVG for Sankey links
@@ -349,14 +352,30 @@
         }
         chart.appendChild(axisDiv);
 
-        // Create geo labels
-        geoRegions.forEach(geo => {
-            const label = document.createElement('div');
-            label.className = 'geo-label';
-            label.textContent = geo.name;
-            label.style.top = `${topPadding + geo.y * geoHeight + geoHeight / 2}px`;
-            chart.appendChild(label);
+        // Create popularity labels
+        popTiers.forEach(tier => {
+            if (tier.value >= minPop && tier.value <= maxPop) {
+                const label = document.createElement('div');
+                label.className = 'geo-label';
+                label.textContent = tier.label;
+                label.style.top = `${popularityToY(tier.value)}px`;
+                chart.appendChild(label);
+            }
         });
+
+        // Create info panel inside chart
+        const infoPanel = document.createElement('div');
+        infoPanel.id = 'infoPanel';
+        infoPanel.className = 'info-panel';
+        infoPanel.innerHTML = `
+            <button class="close-btn" id="closeBtn">×</button>
+            <div class="panel-header">
+                <div class="panel-image" id="panelImage"></div>
+                <div><div class="panel-title" id="panelTitle"></div><div class="panel-subtitle" id="panelSubtitle"></div></div>
+            </div>
+            <ul class="track-list" id="trackList"></ul>
+        `;
+        chart.appendChild(infoPanel);
 
         // Render genres row
         const genresRow = document.getElementById('genresRow');
@@ -390,26 +409,14 @@
         let selectedArtistId = null;
         let showAllTracks = true;
 
-        // Group artists by geo for vertical spreading
-        const artistsByGeo = {};
-        geoRegions.forEach(g => artistsByGeo[g.id] = []);
-        artists.forEach(a => artistsByGeo[a.geo].push(a));
-
-        // Sort each geo group by median year
-        Object.values(artistsByGeo).forEach(arr => arr.sort((a, b) => a.medianYear - b.medianYear));
-
-        // Calculate positions with vertical offset within geo region
+        // Calculate positions based on year (X) and popularity (Y)
         artists.forEach(artist => {
-            const geoGroup = artistsByGeo[artist.geo];
-            const index = geoGroup.indexOf(artist);
-            const baseY = geoToY(artist.geo);
-            // Spread vertically within geo band
-            const offsetRange = geoHeight * 0.7;
-            const step = offsetRange / Math.max(1, geoGroup.length - 1);
-            const offset = geoGroup.length === 1 ? 0 : -offsetRange / 2 + index * step;
-
             artist.x = yearToX(artist.medianYear) - cardSize / 2;
-            artist.y = baseY + offset - cardSize / 2;
+            artist.y = popularityToY(artist.popularity) - cardSize / 2;
+
+            // Clamp to stay within bounds
+            artist.x = Math.max(leftPadding, Math.min(artist.x, width - cardSize - rightPadding));
+            artist.y = Math.max(topPadding, Math.min(artist.y, height - bottomPadding - cardSize));
         });
 
         // Create artist cards
@@ -430,18 +437,7 @@
                 <div class="artist-tooltip">${artist.name}</div>
             `;
 
-            card.onmouseenter = () => {
-                if (!selectedArtistId) {
-                    highlightFromArtist(artist.id, true);
-                    showInfoPanel(artist, false);
-                }
-            };
-            card.onmouseleave = () => {
-                if (!selectedArtistId) {
-                    highlightFromArtist(artist.id, false);
-                    hideInfoPanel();
-                }
-            };
+            // Click handler only - hover handlers set up after track links created
             card.onclick = (e) => {
                 e.stopPropagation();
                 if (selectedArtistId === artist.id) {
@@ -454,18 +450,40 @@
             chart.appendChild(card);
         });
 
-        // Create track dots
+        // Create track dots and connection lines
         const allTrackDots = [];
+        const trackLinks = {}; // Store SVG paths per artist
+
+        // Create a group for track connection lines
+        const linksGroup = svg.append('g').attr('class', 'track-links-group');
+
         artists.forEach(artist => {
             const baseY = artist.y + cardSize / 2;
+            const artistCenterX = artist.x + cardSize / 2;
+            const artistCenterY = artist.y + cardSize / 2;
+            trackLinks[artist.id] = [];
+
             artist.tracks.forEach((track, i) => {
+                const trackX = yearToX(track.year);
+                const yOffset = (i % 3 - 1) * 12;
+                const trackY = baseY + yOffset;
+
+                // Create curved path from artist to track
+                const path = linksGroup.append('path')
+                    .attr('class', 'track-link')
+                    .attr('stroke', artist.bgColor)
+                    .attr('d', () => {
+                        const midX = (artistCenterX + trackX) / 2;
+                        return `M${artistCenterX},${artistCenterY} C${midX},${artistCenterY} ${midX},${trackY} ${trackX},${trackY}`;
+                    });
+                trackLinks[artist.id].push(path);
+
+                // Create dot
                 const dot = document.createElement('div');
                 dot.className = 'track-dot';
                 dot.style.background = artist.bgColor;
-                dot.style.left = `${yearToX(track.year)}px`;
-                // Offset dots slightly above/below artist line
-                const yOffset = (i % 3 - 1) * 12;
-                dot.style.top = `${baseY + yOffset}px`;
+                dot.style.left = `${trackX}px`;
+                dot.style.top = `${trackY}px`;
                 dot.dataset.artistId = artist.id;
                 dot.innerHTML = `<div class="track-tooltip">${track.title} (${track.year})</div>`;
                 dot.onclick = (e) => {
@@ -475,6 +493,66 @@
                 chart.appendChild(dot);
                 allTrackDots.push({ dot, artistId: artist.id });
             });
+        });
+
+        // Show/hide track lines for an artist
+        function showTrackLines(artistId, show) {
+            // Show/hide SVG connection lines
+            if (trackLinks[artistId]) {
+                trackLinks[artistId].forEach(path => {
+                    path.classed('visible', show);
+                });
+            }
+            // Highlight track dots
+            allTrackDots.forEach(({ dot, artistId: dotArtistId }) => {
+                if (dotArtistId === artistId) {
+                    dot.classList.toggle('highlighted', show);
+                }
+            });
+        }
+
+        // Track currently hovered artist (sticky hover)
+        let hoveredArtistId = null;
+
+        function setHoveredArtist(artist) {
+            // Clear previous hover state
+            if (hoveredArtistId && hoveredArtistId !== artist?.id) {
+                highlightFromArtist(hoveredArtistId, false);
+                showTrackLines(hoveredArtistId, false);
+            }
+
+            if (artist) {
+                hoveredArtistId = artist.id;
+                highlightFromArtist(artist.id, true);
+                showInfoPanel(artist, false);
+                showTrackLines(artist.id, true);
+            } else {
+                hoveredArtistId = null;
+                updateHighlight(null, null, null);
+                hideInfoPanel();
+            }
+        }
+
+        function clearHoverState() {
+            if (hoveredArtistId) {
+                highlightFromArtist(hoveredArtistId, false);
+                showTrackLines(hoveredArtistId, false);
+                hoveredArtistId = null;
+            }
+            hideInfoPanel();
+        }
+
+        // Update card event handlers - sticky hover (no mouseleave)
+        document.querySelectorAll('.artist-card').forEach(card => {
+            const artistId = card.dataset.id;
+            const artist = artists.find(a => a.id === artistId);
+
+            card.onmouseenter = () => {
+                if (!selectedArtistId) {
+                    setHoveredArtist(artist);
+                }
+            };
+            // No onmouseleave - state persists until hover on different artist or click outside
         });
 
         // Info panel functions
@@ -501,6 +579,31 @@
                 trackList.appendChild(li);
             });
 
+            // Position panel next to artist card
+            const panelWidth = 240;
+            const panelHeight = 300;
+            const gap = 8;
+
+            // Try to position to the right of the card
+            let panelX = artist.x + cardSize + gap;
+            let panelY = artist.y;
+
+            // If panel would go off right edge, position to the left
+            if (panelX + panelWidth > width) {
+                panelX = artist.x - panelWidth - gap;
+            }
+
+            // Keep panel within vertical bounds
+            if (panelY + panelHeight > height) {
+                panelY = height - panelHeight - 10;
+            }
+            if (panelY < topPadding) {
+                panelY = topPadding;
+            }
+
+            panel.style.left = `${panelX}px`;
+            panel.style.top = `${panelY}px`;
+
             panel.classList.add('visible');
             panel.classList.toggle('selected', selected);
         }
@@ -510,19 +613,26 @@
         }
 
         function selectArtist(artist) {
+            // Clear previous selection
             if (selectedArtistId) {
                 document.querySelector(`.artist-card[data-id="${selectedArtistId}"]`)?.classList.remove('selected');
+                showTrackLines(selectedArtistId, false);
             }
+            // Clear hover state (selected takes over)
+            hoveredArtistId = null;
+
             selectedArtistId = artist.id;
             document.querySelector(`.artist-card[data-id="${artist.id}"]`)?.classList.add('selected');
             highlightFromArtist(artist.id, true);
             showInfoPanel(artist, true);
+            showTrackLines(artist.id, true);
             updateTrackVisibility();
         }
 
         function deselectArtist() {
             if (selectedArtistId) {
                 document.querySelector(`.artist-card[data-id="${selectedArtistId}"]`)?.classList.remove('selected');
+                showTrackLines(selectedArtistId, false);
             }
             selectedArtistId = null;
             updateHighlight(null, null, null);
@@ -614,10 +724,19 @@
             });
         }
 
-        // Click outside to deselect
+        // Click outside to deselect and clear hover
         document.onclick = (e) => {
-            if (selectedArtistId && !e.target.closest('.artist-card') && !e.target.closest('.info-panel') && !e.target.closest('.track-dot')) {
-                deselectArtist();
+            const isOutside = !e.target.closest('.artist-card') &&
+                             !e.target.closest('.info-panel') &&
+                             !e.target.closest('.track-dot');
+
+            if (isOutside) {
+                if (selectedArtistId) {
+                    deselectArtist();
+                }
+                if (hoveredArtistId) {
+                    clearHoverState();
+                }
             }
         };
 
