@@ -1,0 +1,1729 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Музыкальная ДНК — Modernist Information Design</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+
+    <style>
+        /* Style #128 - Modernist Information Design (Bauhaus-inspired) */
+        :root {
+            --text-primary: #212121;
+            --text-muted: #424242;
+            --text-dim: #616161;
+            --card-bg: #FFFFFF;
+            --card-border: #212121;
+            --accent-red: #B52A2A;
+            --accent-blue: #345C8C;
+            --accent-yellow: #E8C14F;
+            --accent-green: #B52A2A;
+            --bg-primary: #F5F4EF;
+            --bg-secondary: #EBE9E4;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            letter-spacing: 0.03em;
+        }
+        /* Fine paper grain texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        .container { padding: 15px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .title { font-size: 1.6rem; font-weight: 600; margin-bottom: 2px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-primary); -webkit-text-fill-color: var(--text-primary); }
+        .subtitle { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; font-weight: 400; letter-spacing: 0.1em; }
+        #chart { width: 100%; max-width: 1600px; position: relative; overflow: visible; }
+
+        /* Mode toggle */
+        .mode-toggle { position: absolute; top: 10px; right: 20px; display: flex; gap: 8px; z-index: 100; }
+        .mode-btn { font-size: 10px; padding: 6px 12px; border: 2px solid var(--text-primary); border-radius: 0; background: var(--card-bg); color: var(--text-muted); cursor: pointer; transition: all 0.15s; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; }
+        .mode-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+        .mode-btn.active { border-color: var(--accent-red); color: var(--accent-red); background: rgba(181, 42, 42, 0.05); }
+
+        /* Genres - top row */
+        .genres-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; max-width: 1400px; }
+        .genre-chip { font-size: 9px; padding: 4px 8px; border-radius: 0; cursor: pointer; transition: all 0.15s; opacity: 0.8; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; }
+        .genre-chip:hover, .genre-chip.active { opacity: 1; transform: scale(1.05); }
+        .genre-chip.dimmed { opacity: 0.15; }
+
+        /* Traits - bottom row */
+        .traits-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; max-width: 1400px; }
+        .trait-chip { font-size: 9px; padding: 4px 8px; border-radius: 0; cursor: pointer; transition: all 0.15s; opacity: 0.8; border: 2px solid; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; }
+        .trait-chip:hover, .trait-chip.active { opacity: 1; }
+        .trait-chip.dimmed { opacity: 0.15; }
+
+        /* Timeline axis */
+        .timeline-axis { position: absolute; top: 0; left: 60px; right: 20px; height: 25px; border-bottom: 2px solid var(--text-primary); }
+        .timeline-tick { position: absolute; bottom: 5px; font-size: 9px; color: var(--text-dim); transform: translateX(-50%); font-weight: 500; }
+        .timeline-tick::after { content: ''; position: absolute; bottom: -5px; left: 50%; width: 2px; height: 100%; background: var(--text-primary); }
+
+        /* Geo labels - left column */
+        .geo-label { position: absolute; left: 5px; font-size: 9px; color: var(--text-dim); writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); font-weight: 500; letter-spacing: 0.1em; }
+
+        /* Artist card */
+        .artist-card { position: absolute; width: 44px; height: 44px; background: var(--card-bg); border: 2px solid var(--text-primary); border-radius: 0; padding: 2px; cursor: pointer; transition: all 0.2s ease; z-index: 10; }
+        .artist-card:hover, .artist-card.selected { border-color: var(--accent-blue); transform: scale(1.15); z-index: 50; }
+        .artist-card.selected { border-color: var(--accent-red); border-width: 3px; }
+        .artist-card.dimmed { display: none; }
+        .artist-avatar { width: 100%; height: 100%; border-radius: 0; position: relative; overflow: hidden; background-size: cover; background-position: center top; }
+        .artist-avatar .fallback { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; font-size: 18px; }
+        .artist-avatar.no-img .fallback { display: flex; }
+        .artist-tooltip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--card-bg); border: 2px solid var(--text-primary); border-radius: 0; padding: 4px 8px; white-space: nowrap; font-size: 10px; opacity: 0; pointer-events: none; transition: opacity 0.2s; margin-bottom: 4px; z-index: 100; font-weight: 500; }
+        .artist-card:hover .artist-tooltip { opacity: 1; }
+
+        /* Track dots */
+        .track-dot { position: absolute; width: 6px; height: 6px; border-radius: 0; cursor: pointer; transition: all 0.15s ease; transform: translate(-50%, -50%); z-index: 5; opacity: 0.4; }
+        .track-dot:hover { transform: translate(-50%, -50%) scale(2); opacity: 1; z-index: 60; }
+        .track-dot.highlighted { opacity: 0.8; }
+        .track-dot.hovered { transform: translate(-50%, -50%) scale(2.5); opacity: 1; z-index: 70; }
+        .track-dot.dimmed { display: none; }
+        .track-dot .track-tooltip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--card-bg); border: 2px solid var(--text-primary); border-radius: 0; padding: 4px 8px; white-space: nowrap; font-size: 9px; opacity: 0; pointer-events: none; transition: opacity 0.2s; margin-bottom: 4px; font-weight: 500; }
+        .track-dot:hover .track-tooltip { opacity: 1; }
+
+        /* Info panel */
+        .info-panel { position: absolute; width: 240px; max-height: 300px; background: var(--card-bg); border: 2px solid var(--text-primary); border-radius: 0; padding: 12px; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.15s, transform 0.15s; overflow-y: auto; }
+        .info-panel.visible { opacity: 1; pointer-events: auto; }
+        .info-panel.selected { border-color: var(--accent-red); border-width: 3px; }
+        .panel-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 2px solid var(--text-primary); }
+        .panel-image { width: 50px; height: 50px; border-radius: 0; overflow: hidden; flex-shrink: 0; background-size: cover; background-position: center; border: 1px solid var(--text-primary); }
+        .panel-title { font-size: 13px; font-weight: 600; letter-spacing: 0.05em; }
+        .panel-subtitle { font-size: 9px; color: var(--text-dim); font-weight: 500; }
+        .close-btn { position: absolute; top: 10px; right: 10px; width: 20px; height: 20px; border: none; background: transparent; color: var(--text-primary); cursor: pointer; font-size: 16px; display: none; font-weight: 700; }
+        .info-panel.selected .close-btn { display: block; }
+        .track-list { list-style: none; }
+        .track-item { display: flex; align-items: center; gap: 6px; padding: 6px; margin: 3px 0; border-radius: 0; cursor: pointer; transition: background 0.15s; font-size: 10px; border-left: 3px solid transparent; }
+        .track-item:hover { background: rgba(52, 92, 140, 0.1); border-left-color: var(--accent-blue); }
+        .track-item .year { color: var(--text-dim); font-size: 9px; min-width: 30px; font-weight: 600; }
+        .track-item .track-name { flex: 1; color: var(--text-primary); }
+
+        /* SVG for Sankey links */
+        #svgLayer { position: absolute; top: 0; left: 0; pointer-events: none; }
+        .sankey-link { fill: none; stroke-opacity: 0.3; transition: stroke-opacity 0.15s; }
+
+        /* Artist to track connection lines - thin black lines */
+        .track-link {
+            fill: none;
+            stroke-width: 1px;
+            stroke-opacity: 0;
+            transition: stroke-opacity 0.15s;
+            stroke: var(--text-primary) !important;
+        }
+        .track-link.visible { stroke-opacity: 0.5; }
+        .track-link.dimmed { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">МУЗЫКАЛЬНАЯ ДНК</h1>
+        <p class="subtitle" id="subtitle">X: год | Y: популярность (Last.fm scrobbles)</p>
+
+        <div class="genres-row" id="genresRow"></div>
+        <div id="chart"></div>
+        <div class="traits-row" id="traitsRow"></div>
+    </div>
+
+    <div class="mode-toggle">
+        <button class="mode-btn active" id="showArtists">Исполнители</button>
+        <button class="mode-btn active" id="showTracks">Треки</button>
+    </div>
+
+    <script>
+        const imagePath = (filename) => `../images/${filename}`;
+
+        const genres = [
+            { id: 'soviet-rock', name: 'Русский рок', color: '#ff6b6b' },
+            { id: 'protest', name: 'Протест', color: '#ffd93d' },
+            { id: 'world', name: 'World', color: '#6bcb77' },
+            { id: 'spiritual', name: 'Медитатив', color: '#9d4edd' },
+            { id: 'author', name: 'Авторская', color: '#4ecdc4' },
+            { id: 'neofolk', name: 'Неофолк', color: '#a0522d' },
+            { id: 'electronic', name: 'Электроника', color: '#00d4ff' },
+            { id: 'virtuoso', name: 'Виртуозы', color: '#ff9f1c' },
+            { id: 'irony', name: 'Ирония', color: '#ff85a2' },
+            { id: 'soundtrack', name: 'Саундтреки', color: '#7b68ee' },
+            { id: 'modern-rap', name: 'Рэп', color: '#e63946' },
+            { id: 'melancholy', name: 'Меланхолия', color: '#457b9d' },
+        ];
+
+        // Popularity tiers for Y-axis labels
+        const popTiers = [
+            { value: 10000000, label: '10M' },
+            { value: 1000000, label: '1M' },
+            { value: 100000, label: '100K' },
+            { value: 10000, label: '10K' },
+        ];
+
+        const artists = [
+            { id: 'a1', name: 'Fleetwood Mac', bgColor: 'hsl(0.0, 70%, 50%)', popularity: 14279728, image: 'spotify-fleetwood-mac.jpg', tracks: [{ title: 'Go Your Own Way', year: 1976 }] },
+            { id: 'a2', name: 'David Bowie', bgColor: 'hsl(1.7733990147783252, 70%, 50%)', popularity: 11896831, image: 'spotify-david-bowie.jpg', tracks: [{ title: 'The Man Who Sold The World', year: 1970 }] },
+            { id: 'a3', name: 'Phil Collins', bgColor: 'hsl(3.5467980295566504, 70%, 50%)', popularity: 7522852, image: 'spotify-phil-collins.jpg', tracks: [{ title: 'In The Air Tonight', year: 1981 }] },
+            { id: 'a4', name: 'Bob Dylan', bgColor: 'hsl(5.320197044334975, 70%, 50%)', popularity: 7448644, image: 'spotify-bob-dylan.jpg', tracks: [{ title: 'Farewell, Angelina', year: 1991 }] },
+            { id: 'a5', name: 'Hans Zimmer', bgColor: 'hsl(7.093596059113301, 70%, 50%)', popularity: 4882773, image: 'spotify-hans-zimmer.jpg', tracks: [{ title: 'Dust', year: 2014 }] },
+            { id: 'a6', name: 'Leonard Cohen', bgColor: 'hsl(8.866995073891626, 70%, 50%)', popularity: 3738042, image: 'spotify-leonard-cohen.jpg', tracks: [{ title: 'First We Take Manhattan', year: 1988 }] },
+            { id: 'a7', name: 'КИНО', bgColor: 'hsl(10.64039408866995, 70%, 50%)', popularity: 2477761, image: 'spotify-кино.jpg', tracks: [{ title: 'Перемен', year: 1986 }, { title: 'Группа крови', year: 1988 }, { title: 'Город', year: 1985 }, { title: 'Муравейник', year: 1990 }] },
+            { id: 'a8', name: 'Sabaton', bgColor: 'hsl(12.413793103448276, 70%, 50%)', popularity: 2474154, image: 'spotify-sabaton.jpg', tracks: [{ title: 'Resist And Bite', year: 2014 }] },
+            { id: 'a9', name: 'Moby', bgColor: 'hsl(14.187192118226601, 70%, 50%)', popularity: 2097673, image: 'spotify-moby.jpg', tracks: [{ title: 'Extreme Ways', year: 2002 }] },
+            { id: 'a10', name: 'Bo Burnham', bgColor: 'hsl(15.960591133004925, 70%, 50%)', popularity: 2089700, image: 'spotify-bo-burnham.jpg', tracks: [{ title: 'Welcome to the Internet', year: 2021 }] },
+            { id: 'a11', name: 'Rainbow', bgColor: 'hsl(17.733990147783253, 70%, 50%)', popularity: 1670509, image: 'spotify-rainbow.jpg', tracks: [{ title: 'The Temple Of The King', year: 1975 }] },
+            { id: 'a12', name: 'Nick Cave', bgColor: 'hsl(19.507389162561577, 70%, 50%)', popularity: 1581496, image: 'spotify-nick-cave.jpg', tracks: [{ title: 'Papa Won\'t Leave You, Henry', year: 1992 }, { title: 'Red Right Hand', year: 1994 }, { title: 'Brother, My Cup Is Empty', year: 1992 }] },
+            { id: 'a13', name: 'Tom Waits', bgColor: 'hsl(21.2807881773399, 70%, 50%)', popularity: 1471736, image: 'spotify-tom-waits.jpg', tracks: [{ title: 'Goin\' Out West', year: 1992 }] },
+            { id: 'a14', name: 'Монеточка', bgColor: 'hsl(23.054187192118228, 70%, 50%)', popularity: 1406078, image: 'spotify-монеточка.jpg', tracks: [{ title: 'Переживу', year: 2020 }] },
+            { id: 'a15', name: 'King Crimson', bgColor: 'hsl(24.82758620689655, 70%, 50%)', popularity: 1329253, image: 'spotify-king-crimson.jpg', tracks: [{ title: 'Epitaph', year: 1969 }] },
+            { id: 'a16', name: 'Би-2', bgColor: 'hsl(26.600985221674875, 70%, 50%)', popularity: 1081179, image: 'spotify-би-2.jpg', tracks: [{ title: 'Революция', year: 2004 }] },
+            { id: 'a17', name: 'Heilung', bgColor: 'hsl(28.374384236453203, 70%, 50%)', popularity: 806275, image: 'spotify-heilung.jpg', tracks: [{ title: 'Fylgija Ear', year: 2015 }, { title: 'Hakkerskaldyr', year: 2015 }] },
+            { id: 'a18', name: 'Vitamin String Quartet', bgColor: 'hsl(30.147783251231527, 70%, 50%)', popularity: 780394, image: 'spotify-vitamin-string-quartet.jpg', tracks: [{ title: 'The Imperial March', year: 2010 }] },
+            { id: 'a19', name: 'Ramin Djawadi', bgColor: 'hsl(31.92118226600985, 70%, 50%)', popularity: 726220, image: 'spotify-ramin-djawadi.jpg', tracks: [{ title: 'Main Title (Game of Thrones - Season 3)', year: 2013 }] },
+            { id: 'a20', name: 'Mike Oldfield', bgColor: 'hsl(33.69458128078818, 70%, 50%)', popularity: 698865, image: 'spotify-mike-oldfield.jpg', tracks: [{ title: 'Outcast', year: 1998 }] },
+            { id: 'a21', name: 'Noize MC', bgColor: 'hsl(35.467980295566505, 70%, 50%)', popularity: 689016, image: 'spotify-noize-mc.jpg', tracks: [{ title: 'Иордан', year: 2015 }, { title: 'Всё как у людей', year: 2019 }, { title: 'Столетняя война', year: 2021 }, { title: 'Вояджер-1', year: 2020 }, { title: 'Почитай старших', year: 2019 }] },
+            { id: 'a22', name: 'Jean-Michel Jarre', bgColor: 'hsl(37.241379310344826, 70%, 50%)', popularity: 664047, image: 'spotify-jean-michel-jarre.jpg', tracks: [{ title: 'Equinoxe, Pt. 4', year: 1978 }] },
+            { id: 'a23', name: 'Oxxxymiron', bgColor: 'hsl(39.01477832512315, 70%, 50%)', popularity: 648359, image: 'spotify-oxxxymiron.jpg', tracks: [{ title: 'Где нас нет', year: 2015 }, { title: 'ОРГАНИЗАЦИЯ', year: 2021 }, { title: 'Лондонград', year: 2015 }, { title: 'Город под подошвой', year: 2015 }] },
+            { id: 'a24', name: 'Порнофильмы', bgColor: 'hsl(40.78817733990148, 70%, 50%)', popularity: 643944, image: 'spotify-порнофильмы.jpg', tracks: [{ title: 'Я так соскучился', year: 2017 }, { title: 'Чужое горе', year: 2020 }, { title: 'Россия для грустных', year: 2017 }] },
+            { id: 'a25', name: 'Celtic Woman', bgColor: 'hsl(42.5615763546798, 70%, 50%)', popularity: 567847, image: 'spotify-celtic-woman.jpg', tracks: [{ title: 'Teir Abhaile Riu', year: 2011 }] },
+            { id: 'a26', name: 'Сплин', bgColor: 'hsl(44.33497536945813, 70%, 50%)', popularity: 553394, image: 'spotify-сплин.jpg', tracks: [{ title: 'За семью печатями', year: 2020 }, { title: 'Нечего делать внутри', year: 1996 }, { title: 'Передайте это Гарри Поттеру, если вдруг его встретите', year: 2020 }, { title: 'Семь восьмых', year: 2004 }] },
+            { id: 'a27', name: 'Nautilus Pompilius', bgColor: 'hsl(46.108374384236456, 70%, 50%)', popularity: 508516, image: 'spotify-nautilus-pompilius.jpg', tracks: [{ title: 'Я хочу быть с тобой', year: 1988 }, { title: 'Хлоп-хлоп', year: 1986 }] },
+            { id: 'a28', name: 'Rodrigo y Gabriela', bgColor: 'hsl(47.881773399014776, 70%, 50%)', popularity: 464880, image: 'spotify-rodrigo-y-gabriela.jpg', tracks: [{ title: 'Electric Soul', year: 2019 }, { title: 'Ixtapa', year: 2006 }] },
+            { id: 'a29', name: 'Krishna Das', bgColor: 'hsl(49.6551724137931, 70%, 50%)', popularity: 416678, image: 'spotify-krishna-das.jpg', tracks: [{ title: 'Hallelujah Chalisa', year: 2007 }] },
+            { id: 'a30', name: 'Oliver Koletzki', bgColor: 'hsl(51.42857142857143, 70%, 50%)', popularity: 369092, image: 'spotify-oliver-koletzki.jpg', tracks: [{ title: 'Copal', year: 2021 }] },
+            { id: 'a31', name: 'Saez', bgColor: 'hsl(53.20197044334975, 70%, 50%)', popularity: 334636, image: 'spotify-saez.jpg', tracks: [{ title: 'Mon Européenne', year: 2017 }, { title: 'Bonnie', year: 2017 }] },
+            { id: 'a32', name: 'Eivør', bgColor: 'hsl(54.97536945812808, 70%, 50%)', popularity: 329620, image: 'spotify-eivør.jpg', tracks: [{ title: 'Into the Mist', year: 2017 }] },
+            { id: 'a33', name: 'Ляпис Трубецкой', bgColor: 'hsl(56.748768472906406, 70%, 50%)', popularity: 326045, image: 'spotify-ляпис-трубецкой.jpg', tracks: [{ title: 'Железный', year: 2012 }] },
+            { id: 'a34', name: 'Anoushka Shankar', bgColor: 'hsl(58.522167487684726, 70%, 50%)', popularity: 288846, image: 'spotify-anoushka-shankar.jpg', tracks: [{ title: 'Dissolving Boundaries', year: 2016 }] },
+            { id: 'a35', name: 'Django Django', bgColor: 'hsl(60.29556650246305, 70%, 50%)', popularity: 248870, image: 'spotify-django-django.jpg', tracks: [{ title: 'WOR', year: 2010 }] },
+            { id: 'a36', name: 'Seasick Steve', bgColor: 'hsl(62.06896551724138, 70%, 50%)', popularity: 223857, image: 'spotify-seasick-steve.jpg', tracks: [{ title: 'Roy\'s Gang', year: 2015 }] },
+            { id: 'a37', name: 'Anacondaz', bgColor: 'hsl(63.8423645320197, 70%, 50%)', popularity: 214734, image: 'spotify-anacondaz.jpg', tracks: [{ title: 'Дубак', year: 2018 }, { title: 'Смертельное оружие', year: 2013 }, { title: 'Дубак', year: 2018 }] },
+            { id: 'a38', name: 'Tommy Emmanuel', bgColor: 'hsl(65.61576354679804, 70%, 50%)', popularity: 213580, image: 'spotify-tommy-emmanuel.jpg', tracks: [{ title: 'Windy and Warm', year: 2006 }] },
+            { id: 'a39', name: 'Найк Борзов', bgColor: 'hsl(67.38916256157636, 70%, 50%)', popularity: 207900, image: 'manual-borzov.jpg', tracks: [{ title: 'Лошадка', year: 1996 }] },
+            { id: 'a40', name: 'Max Cooper', bgColor: 'hsl(69.16256157635468, 70%, 50%)', popularity: 207714, image: 'spotify-max-cooper.jpg', tracks: [{ title: 'Order from Chaos', year: 2016 }] },
+            { id: 'a41', name: 'Simply Three', bgColor: 'hsl(70.93596059113301, 70%, 50%)', popularity: 204154, image: 'spotify-simply-three.jpg', tracks: [{ title: 'Believer', year: 2018 }] },
+            { id: 'a42', name: 'АлоэВера', bgColor: 'hsl(72.70935960591133, 70%, 50%)', popularity: 198700, image: 'manual-aloevera.jpg', tracks: [{ title: 'Легче', year: 2014 }, { title: 'Ты что такой?', year: 2016 }, { title: 'Несуразная', year: 2012 }, { title: 'Не было', year: 2012 }] },
+            { id: 'a43', name: 'Nolwenn Leroy', bgColor: 'hsl(74.48275862068965, 70%, 50%)', popularity: 198287, image: 'spotify-nolwenn-leroy.jpg', tracks: [{ title: 'La jument de Michao', year: 2010 }] },
+            { id: 'a44', name: 'Blackmore\'s Night', bgColor: 'hsl(76.25615763546799, 70%, 50%)', popularity: 192900, image: 'spotify-blackmores-night.jpg', tracks: [{ title: 'Minstrel Hall', year: 1997 }] },
+            { id: 'a45', name: 'Steve \'n\' Seagulls', bgColor: 'hsl(78.0295566502463, 70%, 50%)', popularity: 185400, image: 'spotify-steve-n-seagulls.jpg', tracks: [{ title: 'Thunderstruck', year: 2015 }] },
+            { id: 'a46', name: 'Пикник', bgColor: 'hsl(79.80295566502463, 70%, 50%)', popularity: 177953, image: 'spotify-пикник.jpg', tracks: [{ title: 'Азбука Морзе', year: 2013 }, { title: 'Азбука Морзе', year: 2013 }] },
+            { id: 'a47', name: 'Seatbelts', bgColor: 'hsl(81.57635467980296, 70%, 50%)', popularity: 174228, image: 'spotify-seatbelts.jpg', tracks: [{ title: 'Too Good Too Bad', year: 1998 }] },
+            { id: 'a48', name: 'Schiller', bgColor: 'hsl(83.34975369458128, 70%, 50%)', popularity: 161791, image: 'spotify-schiller.jpg', tracks: [{ title: 'Zenit', year: 2008 }] },
+            { id: 'a49', name: 'James Last', bgColor: 'hsl(85.1231527093596, 70%, 50%)', popularity: 149835, image: 'spotify-james-last.jpg', tracks: [{ title: 'Easy Living / Coming Closer / Popcorn', year: 1972 }] },
+            { id: 'a50', name: 'Каста', bgColor: 'hsl(86.89655172413794, 70%, 50%)', popularity: 148029, image: 'spotify-каста.jpg', tracks: [{ title: 'Самый счастливый человек', year: 2010 }, { title: 'На порядок выше', year: 2001 }, { title: 'Радиосигналы', year: 2008 }, { title: 'Горячее время', year: 2002 }] },
+            { id: 'a51', name: 'The Dreadnoughts', bgColor: 'hsl(88.66995073891626, 70%, 50%)', popularity: 145110, image: 'spotify-the-dreadnoughts.jpg', tracks: [{ title: 'The Skrigjaargen Polka', year: 2009 }] },
+            { id: 'a52', name: 'Yodelice', bgColor: 'hsl(90.44334975369458, 70%, 50%)', popularity: 137908, image: 'spotify-yodelice.jpg', tracks: [{ title: 'Breathe In', year: 2010 }] },
+            { id: 'a53', name: 'Corvus Corax', bgColor: 'hsl(92.21674876847291, 70%, 50%)', popularity: 135852, image: 'spotify-corvus-corax.jpg', tracks: [{ title: 'In Taberna', year: 2000 }, { title: 'Skál', year: 2018 }] },
+            { id: 'a54', name: 'René Aubry', bgColor: 'hsl(93.99014778325123, 70%, 50%)', popularity: 133424, image: 'spotify-rené-aubry.jpg', tracks: [{ title: 'Noël aux Balkans', year: 2001 }, { title: 'Frénésie', year: 2001 }, { title: 'Replay', year: 2015 }] },
+            { id: 'a55', name: 'Heidevolk', bgColor: 'hsl(95.76354679802955, 70%, 50%)', popularity: 125758, image: 'spotify-heidevolk.jpg', tracks: [{ title: 'Yngwaz´ Zonen', year: 2018 }] },
+            { id: 'a56', name: 'Rokia Traoré', bgColor: 'hsl(97.53694581280789, 70%, 50%)', popularity: 124550, image: 'spotify-rokia-traoré.jpg', tracks: [{ title: 'Dounia', year: 2008 }] },
+            { id: 'a57', name: 'Владимир Высоцкий', bgColor: 'hsl(99.3103448275862, 70%, 50%)', popularity: 119650, image: 'spotify-владимир-высоцкий.jpg', tracks: [{ title: 'Мой Гамлет', year: 1978 }, { title: 'Як-истребитель', year: 1968 }, { title: 'Песня космических негодяев', year: 1966 }] },
+            { id: 'a58', name: 'Klaus Schulze', bgColor: 'hsl(101.08374384236453, 70%, 50%)', popularity: 104114, image: 'spotify-klaus-schulze.jpg', tracks: [{ title: 'Peg Leg Dance No. 4', year: 1982 }] },
+            { id: 'a59', name: 'Дельфин', bgColor: 'hsl(102.85714285714286, 70%, 50%)', popularity: 103278, image: 'spotify-дельфин.jpg', tracks: [{ title: '744', year: 2018 }, { title: 'Я люблю людей', year: 1997 }] },
+            { id: 'a60', name: 'Juno Reactor', bgColor: 'hsl(104.63054187192118, 70%, 50%)', popularity: 94846, image: 'spotify-juno-reactor.jpg', tracks: [{ title: 'Immaculate Crucifixion', year: 2008 }] },
+            { id: 'a61', name: 'Angelo Branduardi', bgColor: 'hsl(106.4039408866995, 70%, 50%)', popularity: 90164, image: 'spotify-angelo-branduardi.jpg', tracks: [{ title: 'Sti Giorti Tis Avgi', year: 2012 }] },
+            { id: 'a62', name: 'Die Apokalyptischen Reiter', bgColor: 'hsl(108.17733990147784, 70%, 50%)', popularity: 78898, image: 'spotify-die-apokalyptischen-reiter.jpg', tracks: [{ title: 'Ghostriders In The Sky', year: 2006 }] },
+            { id: 'a63', name: 'Hannes Wader', bgColor: 'hsl(109.95073891625616, 70%, 50%)', popularity: 76296, image: 'spotify-hannes-wader.jpg', tracks: [{ title: 'Die Moorsoldaten', year: 1972 }] },
+            { id: 'a64', name: 'LOUNA', bgColor: 'hsl(111.72413793103448, 70%, 50%)', popularity: 74936, image: 'spotify-louna.jpg', tracks: [{ title: 'Моя оборона', year: 2013 }] },
+            { id: 'a65', name: 'Мельница', bgColor: 'hsl(113.49753694581281, 70%, 50%)', popularity: 70575, image: 'spotify-мельница.jpg', tracks: [{ title: 'Мертвец', year: 2005 }] },
+            { id: 'a66', name: 'Steeleye Span', bgColor: 'hsl(115.27093596059113, 70%, 50%)', popularity: 61336, image: 'spotify-steeleye-span.jpg', tracks: [{ title: 'Cam Ye O\'er Frae France', year: 1973 }] },
+            { id: 'a67', name: 'Joachim Witt', bgColor: 'hsl(117.04433497536945, 70%, 50%)', popularity: 57328, image: 'spotify-joachim-witt.jpg', tracks: [{ title: 'Dämon', year: 2018 }] },
+            { id: 'a68', name: 'Cruachan', bgColor: 'hsl(118.81773399014779, 70%, 50%)', popularity: 49340, image: 'spotify-cruachan.jpg', tracks: [{ title: 'Is Fuair an Chroí', year: 2000 }] },
+            { id: 'a69', name: 'The Tossers', bgColor: 'hsl(120.5911330049261, 70%, 50%)', popularity: 47479, image: 'spotify-the-tossers.jpg', tracks: [{ title: 'The Pub', year: 1997 }] },
+            { id: 'a70', name: 'Nine Treasures', bgColor: 'hsl(122.36453201970443, 70%, 50%)', popularity: 47479, image: 'spotify-nine-treasures.jpg', tracks: [{ title: 'The Dream About Ancient City (Re-Recorded)', year: 2021 }] },
+            { id: 'a71', name: 'MOZART HEROES', bgColor: 'hsl(124.13793103448276, 70%, 50%)', popularity: 47239, image: 'spotify-mozart-heroes.jpg', tracks: [{ title: 'The Unforgiven', year: 2020 }, { title: 'I Was Made For Loving You', year: 2020 }] },
+            { id: 'a72', name: 'Александр Пушной', bgColor: 'hsl(125.91133004926108, 70%, 50%)', popularity: 44247, image: 'spotify-александр-пушной.jpg', tracks: [{ title: 'Вершина', year: 2023 }, { title: 'Город Омск', year: 2024 }, { title: 'Надо радоваться!', year: 2008 }] },
+            { id: 'a73', name: 'ST1M', bgColor: 'hsl(127.6847290640394, 70%, 50%)', popularity: 43683, image: 'spotify-st1m.jpg', tracks: [{ title: 'Ветер перемен', year: 2019 }] },
+            { id: 'a74', name: 'Żywiołak', bgColor: 'hsl(129.45812807881774, 70%, 50%)', popularity: 42487, image: 'spotify-żywiołak.jpg', tracks: [{ title: 'Sol Invictus', year: 2018 }, { title: 'Bóstwa', year: 2017 }] },
+            { id: 'a75', name: 'Mark the Hammer', bgColor: 'hsl(131.23152709359607, 70%, 50%)', popularity: 40837, image: 'spotify-mark-the-hammer.jpg', tracks: [{ title: 'Back to the Future (Metal)', year: 2015 }] },
+            { id: 'a76', name: 'HORUS', bgColor: 'hsl(133.00492610837438, 70%, 50%)', popularity: 40565, image: 'spotify-horus.jpg', tracks: [{ title: 'Марс наш', year: 2022 }] },
+            { id: 'a77', name: 'Neil Zaza', bgColor: 'hsl(134.7783251231527, 70%, 50%)', popularity: 31135, image: 'spotify-neil-zaza.jpg', tracks: [{ title: 'Palladio', year: 2018 }] },
+            { id: 'a78', name: 'Sabo', bgColor: 'hsl(136.55172413793105, 70%, 50%)', popularity: 29604, image: 'spotify-sabo.jpg', tracks: [{ title: 'Rise', year: 2019 }] },
+            { id: 'a79', name: 'Xploding Plastix', bgColor: 'hsl(138.32512315270935, 70%, 50%)', popularity: 26446, image: 'spotify-xploding-plastix.jpg', tracks: [{ title: 'Joy Comes in the Morning', year: 2003 }] },
+            { id: 'a80', name: 'Byron Metcalf', bgColor: 'hsl(140.0985221674877, 70%, 50%)', popularity: 25938, image: 'spotify-byron-metcalf.jpg', tracks: [{ title: 'Burundi Dreams', year: 2022 }, { title: 'Arrival Of The Elves', year: 2022 }] },
+            { id: 'a81', name: 'Ундервуд', bgColor: 'hsl(141.87192118226602, 70%, 50%)', popularity: 25512, image: 'spotify-ундервуд.jpg', tracks: [{ title: 'Разведка с мудаками', year: 2015 }] },
+            { id: 'a82', name: 'Лигалайз', bgColor: 'hsl(143.64532019704433, 70%, 50%)', popularity: 25466, image: 'spotify-лигалайз.jpg', tracks: [{ title: 'Я такой же как ты', year: 2021 }] },
+            { id: 'a83', name: 'Mathias Duplessy', bgColor: 'hsl(145.41871921182266, 70%, 50%)', popularity: 25006, image: 'spotify-mathias-duplessy.jpg', tracks: [{ title: 'The Road with You', year: 2024 }, { title: 'The Good, the Bad, the Ugly', year: 2019 }, { title: 'Speed Mongolia', year: 2016 }] },
+            { id: 'a84', name: 'Brazzaville', bgColor: 'hsl(147.192118226601, 70%, 50%)', popularity: 24276, image: 'spotify-brazzaville.jpg', tracks: [{ title: 'Star Called Sun', year: 2006 }] },
+            { id: 'a85', name: 'DEEP-EX-SENSE', bgColor: 'hsl(148.9655172413793, 70%, 50%)', popularity: 22759, image: 'spotify-deep-ex-sense.jpg', tracks: [{ title: 'Ветер перемен', year: 2019 }] },
+            { id: 'a86', name: 'PALC', bgColor: 'hsl(150.73891625615764, 70%, 50%)', popularity: 21951, image: 'spotify-palc.jpg', tracks: [{ title: 'Страшно', year: 2024 }, { title: 'Совпадения', year: 2022 }, { title: 'Инфоповод', year: 2025 }, { title: 'День', year: 2019 }] },
+            { id: 'a87', name: 'Ekseption', bgColor: 'hsl(152.51231527093597, 70%, 50%)', popularity: 21862, image: 'spotify-ekseption.jpg', tracks: [{ title: 'Dance Macabre Opus 40', year: 1969 }] },
+            { id: 'a88', name: 'Эдуард Артемьев', bgColor: 'hsl(154.28571428571428, 70%, 50%)', popularity: 20396, image: 'spotify-эдуард-артемьев.jpg', tracks: [{ title: 'Сибириада', year: 1979 }] },
+            { id: 'a89', name: 'musica nuda', bgColor: 'hsl(156.0591133004926, 70%, 50%)', popularity: 17271, image: 'spotify-musica-nuda.jpg', tracks: [{ title: 'Il calabron', year: 2023 }] },
+            { id: 'a90', name: 'Artem Uzunov', bgColor: 'hsl(157.83251231527095, 70%, 50%)', popularity: 17150, image: 'spotify-artem-uzunov.jpg', tracks: [{ title: 'Solo Darbuka', year: 2013 }, { title: 'Davai', year: 2020 }, { title: 'Melody of Heartbeat', year: 2013 }] },
+            { id: 'a91', name: 'Екатерина Яшникова', bgColor: 'hsl(159.60591133004925, 70%, 50%)', popularity: 15371, image: 'spotify-екатерина-яшникова.jpg', tracks: [{ title: 'Родная Тишина', year: 2021 }, { title: 'Пуля', year: 2020 }] },
+            { id: 'a92', name: 'Atlantida Project', bgColor: 'hsl(161.3793103448276, 70%, 50%)', popularity: 13846, image: 'spotify-atlantida-project.jpg', tracks: [{ title: 'Чистое зло', year: 2016 }, { title: 'Иордан', year: 2015 }, { title: 'Сарва Мангалам', year: 2010 }, { title: 'Красная королева', year: 2016 }] },
+            { id: 'a93', name: 'Зоя Ященко', bgColor: 'hsl(163.15270935960592, 70%, 50%)', popularity: 12535, image: 'spotify-зоя-ященко.jpg', tracks: [{ title: 'Голубая стрела', year: 1994 }] },
+            { id: 'a94', name: 'London Festival Orchestra', bgColor: 'hsl(164.92610837438423, 70%, 50%)', popularity: 12360, image: 'spotify-london-festival-orchestra.jpg', tracks: [{ title: 'Shema - Hava Nagila', year: 1965 }] },
+            { id: 'a95', name: 'Немного нервно', bgColor: 'hsl(166.69950738916256, 70%, 50%)', popularity: 11791, image: 'spotify-немного-нервно.jpg', tracks: [{ title: 'Любить мудаков', year: 2021 }, { title: 'Светлей', year: 2019 }] },
+            { id: 'a96', name: 'Gabriel Saban', bgColor: 'hsl(168.4729064039409, 70%, 50%)', popularity: 11468, image: 'spotify-gabriel-saban.jpg', tracks: [{ title: 'Hollywood Madness', year: 2021 }] },
+            { id: 'a97', name: 'Hugo Strasser', bgColor: 'hsl(170.2463054187192, 70%, 50%)', popularity: 10490, image: 'spotify-hugo-strasser.jpg', tracks: [{ title: 'Letkiss (Letkiss)', year: 1963 }, { title: 'Nah Neh Nah', year: 1995 }] },
+            { id: 'a98', name: 'Янка Дягилева', bgColor: 'hsl(172.01970443349754, 70%, 50%)', popularity: 9763, image: 'spotify-янка-дягилева.jpg', tracks: [{ title: 'На чёрный день', year: 1989 }] },
+            { id: 'a99', name: 'ICHI', bgColor: 'hsl(173.79310344827587, 70%, 50%)', popularity: 9227, image: 'spotify-ichi.jpg', tracks: [{ title: 'Vargan', year: 2020 }] },
+            { id: 'a100', name: 'Hot Butter', bgColor: 'hsl(175.56650246305418, 70%, 50%)', popularity: 8575, image: 'spotify-hot-butter.jpg', tracks: [{ title: 'Palomitas de Maíz', year: 1972 }] },
+            { id: 'a101', name: 'Ольга Арефьева и Ковчег', bgColor: 'hsl(177.3399014778325, 70%, 50%)', popularity: 7362, image: 'spotify-ольга-арефьева-и-ковчег.jpg', tracks: [{ title: 'Сансара', year: 2010 }, { title: 'Вертолёт', year: 2012 }] },
+            { id: 'a102', name: 'Dobranotch', bgColor: 'hsl(179.11330049261085, 70%, 50%)', popularity: 6697, image: 'spotify-dobranotch.jpg', tracks: [{ title: 'Du Host', year: 2018 }] },
+            { id: 'a103', name: 'Joker James', bgColor: 'hsl(180.88669950738915, 70%, 50%)', popularity: 6181, image: 'spotify-joker-james.jpg', tracks: [{ title: 'Герои', year: 2017 }, { title: 'Ничего смешного', year: 2016 }, { title: 'Страна, которой нет', year: 2017 }] },
+            { id: 'a104', name: 'Нейро Дюбель', bgColor: 'hsl(182.6600985221675, 70%, 50%)', popularity: 5700, image: 'spotify-нейро-дюбель.jpg', tracks: [{ title: 'Погоня', year: 2017 }, { title: 'Вестерн', year: 2017 }] },
+            { id: 'a105', name: 'Faraualla', bgColor: 'hsl(184.43349753694582, 70%, 50%)', popularity: 5012, image: 'spotify-faraualla.jpg', tracks: [{ title: 'Un Due Tre Amen!', year: 2024 }, { title: 'Sind\'', year: 2002 }] },
+            { id: 'a106', name: 'Markscheider Kunst', bgColor: 'hsl(186.20689655172413, 70%, 50%)', popularity: 4689, image: 'spotify-markscheider-kunst.jpg', tracks: [{ title: 'Kvasa-Kvasa', year: 2012 }] },
+            { id: 'a107', name: 'Карелия', bgColor: 'hsl(187.98029556650246, 70%, 50%)', popularity: 4521, image: 'spotify-карелия.jpg', tracks: [{ title: 'Место для шага вперёд', year: 2017 }] },
+            { id: 'a108', name: 'Евгений Крылатов', bgColor: 'hsl(189.7536945812808, 70%, 50%)', popularity: 3873, image: 'spotify-евгений-крылатов.jpg', tracks: [{ title: 'Пираты', year: 1985 }] },
+            { id: 'a109', name: 'Умка и Броневик', bgColor: 'hsl(191.5270935960591, 70%, 50%)', popularity: 3855, image: 'spotify-умка-и-броневик.jpg', tracks: [{ title: 'Сибирь', year: 2007 }, { title: 'Нет никакой другой', year: 2011 }] },
+            { id: 'a110', name: 'Gae Bolg', bgColor: 'hsl(193.30049261083744, 70%, 50%)', popularity: 3741, image: 'spotify-gae-bolg.jpg', tracks: [{ title: 'Totentanz', year: 2006 }] },
+            { id: 'a111', name: 'Дышать', bgColor: 'hsl(195.07389162561577, 70%, 50%)', popularity: 3690, image: 'spotify-дышать.jpg', tracks: [{ title: 'Тыпырдатып', year: 2024 }] },
+            { id: 'a112', name: 'Stoner Train', bgColor: 'hsl(196.84729064039408, 70%, 50%)', popularity: 3682, image: 'spotify-stoner-train.jpg', tracks: [{ title: 'Gandalf Took the Drug', year: 2014 }] },
+            { id: 'a113', name: 'Thorr', bgColor: 'hsl(198.6206896551724, 70%, 50%)', popularity: 3602, image: 'spotify-thorr.jpg', tracks: [{ title: 'Overlord', year: 2021 }] },
+            { id: 'a114', name: 'Василий К.', bgColor: 'hsl(200.39408866995075, 70%, 50%)', popularity: 2908, image: 'spotify-василий-к.jpg', tracks: [{ title: 'Не моя', year: 2017 }, { title: 'Самое худшее', year: 2018 }, { title: 'Держава', year: 2020 }, { title: 'Ганеша', year: 2018 }, { title: 'Монотеизм', year: 2003 }, { title: 'Манхэттен и Берлин', year: 2002 }, { title: 'Так бывает', year: 2022 }, { title: 'Безобразны и злы', year: 2005 }, { title: 'Держава', year: 2020 }, { title: 'Если б моя милая...', year: 2003 }, { title: 'Игра в ящик', year: 2007 }, { title: 'Интеллигенты', year: 2007 }, { title: 'Исусы Христосы', year: 2019 }] },
+            { id: 'a115', name: 'GREEN CROW', bgColor: 'hsl(202.16748768472905, 70%, 50%)', popularity: 2883, image: 'spotify-green-crow.jpg', tracks: [{ title: 'Джонни не узнаю я', year: 2017 }, { title: 'Элвис за нас', year: 2014 }, { title: 'Кот пришёл назад', year: 2009 }, { title: 'Дьявола нет', year: 2009 }] },
+            { id: 'a116', name: 'Бахыт Компот', bgColor: 'hsl(203.9408866995074, 70%, 50%)', popularity: 2273, image: 'spotify-бахыт-компот.jpg', tracks: [{ title: 'Бухгалтер Иванов', year: 1996 }] },
+            { id: 'a117', name: 'Teufelstanz', bgColor: 'hsl(205.71428571428572, 70%, 50%)', popularity: 2225, image: 'spotify-teufelstanz.jpg', tracks: [{ title: 'Skudrinka', year: 2010 }] },
+            { id: 'a118', name: 'Александр Ф. Скляр', bgColor: 'hsl(207.48768472906403, 70%, 50%)', popularity: 2199, image: 'spotify-александр-ф-скляр.jpg', tracks: [{ title: 'Скарабей', year: 2022 }] },
+            { id: 'a119', name: 'Stephan Sechi', bgColor: 'hsl(209.26108374384236, 70%, 50%)', popularity: 1972, image: 'spotify-stephan-sechi.jpg', tracks: [{ title: 'Lone Rider', year: 2012 }] },
+            { id: 'a120', name: 'Вера Полозкова', bgColor: 'hsl(211.0344827586207, 70%, 50%)', popularity: 1903, image: 'manual-polozkova.jpg', tracks: [{ title: 'Текст, который напугал маму', year: 2012 }, { title: 'Край у нас широк', year: 2020 }] },
+            { id: 'a121', name: 'Дмитрий Ревякин', bgColor: 'hsl(212.807881773399, 70%, 50%)', popularity: 1859, image: 'spotify-дмитрий-ревякин.jpg', tracks: [{ title: 'И так, и сяк', year: 2023 }] },
+            { id: 'a122', name: 'Jody Gwin', bgColor: 'hsl(214.58128078817734, 70%, 50%)', popularity: 1815,  tracks: [{ title: 'Smooth Criminal', year: 2018 }, { title: 'The Trooper', year: 2018 }] },
+            { id: 'a123', name: 'Spiritual Seasons', bgColor: 'hsl(216.35467980295567, 70%, 50%)', popularity: 1615, image: 'spotify-spiritual-seasons.jpg', tracks: [{ title: 'Villeman', year: 2020 }] },
+            { id: 'a124', name: 'Аукцыон', bgColor: 'hsl(218.12807881773398, 70%, 50%)', popularity: 1384, image: 'spotify-аукцыон.jpg', tracks: [{ title: 'Дорога', year: 1993 }, { title: 'Птица', year: 1993 }] },
+            { id: 'a125', name: 'Аквариум', bgColor: 'hsl(219.9014778325123, 70%, 50%)', popularity: 1366, image: 'spotify-аквариум.jpg', tracks: [{ title: 'Поезд в огне', year: 1988 }, { title: 'Молитва и пост', year: 2001 }, { title: 'Назад в Архангельск', year: 2011 }] },
+            { id: 'a126', name: 'Joanna Stingray', bgColor: 'hsl(221.67487684729065, 70%, 50%)', popularity: 1014, image: 'spotify-joanna-stingray.jpg', tracks: [{ title: 'Love is no joke', year: 1987 }, { title: 'Rock \'n\' Roll\'s Dead', year: 1985 }, { title: 'My generation', year: 2022 }] },
+            { id: 'a127', name: 'Brand X Music', bgColor: 'hsl(223.44827586206895, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Succession', year: 2021 }] },
+            { id: 'a128', name: 'grande1899', bgColor: 'hsl(225.2216748768473, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Rush E', year: 2022 }] },
+            { id: 'a129', name: 'Сергей Фантом', bgColor: 'hsl(226.99507389162562, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Бросай филфак', year: 2021 }] },
+            { id: 'a130', name: 'Самое Большое Простое Число', bgColor: 'hsl(228.76847290640393, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Ты – человек (Cover)', year: 2020 }] },
+            { id: 'a131', name: 'Barbatuques', bgColor: 'hsl(230.54187192118226, 70%, 50%)', popularity: 176266,  tracks: [{ title: 'Andando Pela Africa', year: 2002 }] },
+            { id: 'a132', name: 'Drum Ecstasy', bgColor: 'hsl(232.3152709359606, 70%, 50%)', popularity: 287,  tracks: [{ title: 'Весна', year: 2004 }] },
+            { id: 'a133', name: 'ОН ЮН', bgColor: 'hsl(234.0886699507389, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Сообщество друзей, оставленных судьбой', year: 2018 }] },
+            { id: 'a134', name: 'FreshmanSound', bgColor: 'hsl(235.86206896551724, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Pulse', year: 2021 }, { title: 'Killer Game', year: 2021 }] },
+            { id: 'a135', name: 'Борис Гребенщиков', bgColor: 'hsl(237.63546798029557, 70%, 50%)', popularity: 1000, image: 'spotify-борис-гребенщиков.jpg', tracks: [{ title: 'Om Namah Shivaya', year: 2023 }, { title: 'Новый Шелковый Путь', year: 2024 }, { title: 'Вон Вавилон', year: 2020 }, { title: 'Если Я Уйду', year: 2014 }, { title: 'Не судьба', year: 2020 }, { title: 'Не Было Такой', year: 2014 }] },
+            { id: 'a136', name: 'Марк Рейзен', bgColor: 'hsl(239.40886699507388, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Песня о Щорсе', year: 1938 }] },
+            { id: 'a137', name: 'Моя дорогая', bgColor: 'hsl(241.1822660098522, 70%, 50%)', popularity: 200,  tracks: [{ title: 'Илья', year: 2014 }, { title: 'Дура', year: 2018 }] },
+            { id: 'a138', name: 'Удмуртская тоска', bgColor: 'hsl(242.95566502463055, 70%, 50%)', popularity: 677, image: 'spotify-удмуртская-тоска.jpg', tracks: [{ title: 'Чёрный ворон', year: 2023 }, { title: 'Как будто я', year: 2023 }] },
+            { id: 'a139', name: 'José Larralde', bgColor: 'hsl(244.72906403940885, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Patagonia', year: 1999 }] },
+            { id: 'a140', name: 'Civil War', bgColor: 'hsl(246.5024630541872, 70%, 50%)', popularity: 20000,  tracks: [{ title: 'Colours on My Shield', year: 2015 }] },
+            { id: 'a141', name: 'Martina Camargo', bgColor: 'hsl(248.27586206896552, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Guataquí (Berroche)', year: 2009 }] },
+            { id: 'a142', name: 'Larkin Poe', bgColor: 'hsl(250.04926108374383, 70%, 50%)', popularity: 260000,  tracks: [{ title: 'Sometimes', year: 2021 }] },
+            { id: 'a143', name: 'Klayton', bgColor: 'hsl(251.82266009852216, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'FUBAR', year: 2018 }] },
+            { id: 'a144', name: 'Love', bgColor: 'hsl(253.5960591133005, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Old Man', year: 1967 }] },
+            { id: 'a145', name: 'Ryan Taubert', bgColor: 'hsl(255.3694581280788, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'The Rebellion', year: 2018 }] },
+            { id: 'a146', name: 'Fanfare Vagabontu', bgColor: 'hsl(257.14285714285717, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Bubamara', year: 2009 }] },
+            { id: 'a147', name: 'Jelonek', bgColor: 'hsl(258.9162561576355, 70%, 50%)', popularity: 30364,  tracks: [{ title: 'G.Rossini / F.Suppe - Wilhelm Tell - Lekka Kawaleria', year: 2019 }] },
+            { id: 'a148', name: 'Yuma', bgColor: 'hsl(260.6896551724138, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Hleli', year: 2017 }] },
+            { id: 'a149', name: 'Karolina Cicha', bgColor: 'hsl(262.46305418719214, 70%, 50%)', popularity: 10000,  tracks: [{ title: 'Tipir', year: 2017 }] },
+            { id: 'a150', name: 'Ринат Каримов', bgColor: 'hsl(264.23645320197045, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Allahumma salli ala Muhammad', year: 2022 }] },
+            { id: 'a151', name: 'Влади', bgColor: 'hsl(266.00985221674875, 70%, 50%)', popularity: 1000, image: 'manual-vladi.jpg', tracks: [{ title: 'Как это блядь возможно', year: 2022 }, { title: 'Краски не сгущайте', year: 2022 }] },
+            { id: 'a152', name: 'Василий Уриевский', bgColor: 'hsl(267.7832512315271, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Стих про стих', year: 2019 }] },
+            { id: 'a153', name: 'Эрнесто Заткнитесь', bgColor: 'hsl(269.5566502463054, 70%, 50%)', popularity: 50,  tracks: [{ title: 'Стамбул', year: 2022 }] },
+            { id: 'a154', name: 'The OM', bgColor: 'hsl(271.33004926108373, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Стиль (Skit Ч. Буковски)', year: 2019 }] },
+            { id: 'a155', name: 'Danish National Symphony Orchestra', bgColor: 'hsl(273.1034482758621, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Interstellar Suite (From "Interstellar")', year: 2019 }] },
+            { id: 'a156', name: 'Заточка', bgColor: 'hsl(274.8768472906404, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Пол – это лава', year: 2023 }] },
+            { id: 'a157', name: 'Тим Скоренко', bgColor: 'hsl(276.6502463054187, 70%, 50%)', popularity: 1000, image: 'spotify-тим-скоренко.jpg', tracks: [{ title: 'Добро пожаловать в Сайлент Хилл', year: 2012 }, { title: 'Павшим за Третий Рим', year: 2014 }] },
+            { id: 'a158', name: 'Сергей Никитин', bgColor: 'hsl(278.42364532019707, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Раб, который стал царём', year: 1985 }] },
+            { id: 'a159', name: 'Vivaldi String Orchestra', bgColor: 'hsl(280.1970443349754, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'The Four Seasons, Concerto for Violin... Winter', year: 1725 }] },
+            { id: 'a160', name: 'Be Svendsen', bgColor: 'hsl(281.9704433497537, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Nabia', year: 2017 }, { title: 'Drifter', year: 2017 }] },
+            { id: 'a161', name: 'Sly5thAve', bgColor: 'hsl(283.74384236453204, 70%, 50%)', popularity: 36273,  tracks: [{ title: 'Still D.R.E.', year: 2017 }] },
+            { id: 'a162', name: 'Владимир Федосеев', bgColor: 'hsl(285.51724137931035, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'The Snowstorm: VIII. Echoes of waltz', year: 1975 }] },
+            { id: 'a163', name: 'Opal Ocean', bgColor: 'hsl(287.29064039408865, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Micro Rave', year: 2020 }] },
+            { id: 'a164', name: 'Bel Suono', bgColor: 'hsl(289.064039408867, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Симфония № 40 Соль минор, K.550 / Турецкий Марш', year: 2019 }] },
+            { id: 'a165', name: 'Geek Music', bgColor: 'hsl(290.8374384236453, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'The Last Of Us- Main Theme', year: 2023 }] },
+            { id: 'a166', name: 'Suidakra', bgColor: 'hsl(292.61083743842363, 70%, 50%)', popularity: 46900,  tracks: [{ title: 'Serenade To A Dream', year: 2000 }] },
+            { id: 'a167', name: 'Zodiac', bgColor: 'hsl(294.384236453202, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Zodiac', year: 1980 }] },
+            { id: 'a168', name: 'Сурганова и Оркестр', bgColor: 'hsl(296.1576354679803, 70%, 50%)', popularity: 2200, image: 'manual-surganova.webp', tracks: [{ title: 'Нас единицы (2015)', year: 2015 }] },
+            { id: 'a169', name: 'Золотое Перо', bgColor: 'hsl(297.9310344827586, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Ладакх', year: 2020 }] },
+            { id: 'a170', name: 'Julius Frederick Rinaldi', bgColor: 'hsl(299.70443349753697, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'The Four Seasons... Winter', year: 2014 }] },
+            { id: 'a171', name: 'Два Рима', bgColor: 'hsl(301.4778325123153, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Пирамида', year: 2019 }] },
+            { id: 'a172', name: 'Драконь', bgColor: 'hsl(303.2512315270936, 70%, 50%)', popularity: 50, image: 'spotify-драконь.jpg', tracks: [{ title: 'О всадниках и черепахах', year: 2016 }, { title: 'Найти омелу', year: 2016 }, { title: 'Песня о вашем друге', year: 2011 }, { title: 'Испанская романтическая баллада об отважном Диего Вальдесе', year: 2008 }] },
+            { id: 'a173', name: 'Леона', bgColor: 'hsl(305.02463054187194, 70%, 50%)', popularity: 90, image: 'manual-leona.jpg', tracks: [{ title: 'Хозяйка медной горы', year: 2013 }, { title: 'Проводник', year: 2020 }, { title: 'Плохо, ничего хорошего', year: 2022 }, { title: 'Пустое святое', year: 2013 }, { title: 'Зверь, которого не бывает', year: 2016 }, { title: 'На металлоломе', year: 2007 }, { title: 'Всё, что мы скажем', year: 2012 }] },
+            { id: 'a174', name: 'Евгений Женевьев', bgColor: 'hsl(306.79802955665025, 70%, 50%)', popularity: 1000, image: 'spotify-евгений-женевьев.jpg', tracks: [{ title: 'Офис сокровищ', year: 2022 }, { title: 'Идущие', year: 2022 }] },
+            { id: 'a175', name: 'Евгений Алексеев', bgColor: 'hsl(308.57142857142856, 70%, 50%)', popularity: 1000, image: 'spotify-евгений-алексеев.jpg', tracks: [{ title: 'Аделаида', year: 2019 }] },
+            { id: 'a176', name: 'Геннадий Гладков', bgColor: 'hsl(310.3448275862069, 70%, 50%)', popularity: 1000, image: 'spotify-геннадий-гладков.jpg', tracks: [{ title: 'Проезд цистерны', year: 1971 }] },
+            { id: 'a177', name: 'Михаил Башаков', bgColor: 'hsl(312.1182266009852, 70%, 50%)', popularity: 100, image: 'spotify-михаил-башаков.jpg', tracks: [{ title: 'Блюз о Блюзе', year: 2011 }] },
+            { id: 'a178', name: 'Железный Занавес', bgColor: 'hsl(313.89162561576353, 70%, 50%)', popularity: 10, image: 'spotify-железный-занавес.jpg', tracks: [{ title: 'Так закалялась сталь', year: 2021 }] },
+            { id: 'a179', name: 'The New Synthesizer Experience', bgColor: 'hsl(315.6650246305419, 70%, 50%)', popularity: 500, image: 'spotify-the-new-synthesizer-experience.jpg', tracks: [{ title: 'Rockit', year: 2009 }] },
+            { id: 'a180', name: 'Skrömta', bgColor: 'hsl(317.4384236453202, 70%, 50%)', popularity: 1000, image: 'spotify-skrömta.jpg', tracks: [{ title: 'Egotrippen', year: 2011 }, { title: 'Skrömta-Rappen', year: 2011 }] },
+            { id: 'a181', name: 'Lama Tenzin Sangpo', bgColor: 'hsl(319.2118226600985, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Kurukulle', year: 2011 }] },
+            { id: 'a182', name: 'The Brass Knuckle Steampunk Sinfonia', bgColor: 'hsl(320.98522167487687, 70%, 50%)', popularity: 1000, image: 'spotify-the-brass-knuckle-steampunk-sinfonia.jpg', tracks: [{ title: 'The Watchmakers\' apprentice', year: 2023 }, { title: 'The Bowcommoner Gang', year: 2023 }, { title: 'God Rest Ye Merry Gentlepunks', year: 2023 }] },
+            { id: 'a183', name: 'SuNA Mantra', bgColor: 'hsl(322.7586206896552, 70%, 50%)', popularity: 1000, image: 'spotify-suna-mantra.jpg', tracks: [{ title: 'Jaya Mata Kali', year: 2016 }] },
+            { id: 'a184', name: 'Jambey', bgColor: 'hsl(324.5320197044335, 70%, 50%)', popularity: 1000, image: 'spotify-jambey.jpg', tracks: [{ title: 'Pumputu', year: 2022 }] },
+            { id: 'a185', name: 'Муха', bgColor: 'hsl(326.30541871921184, 70%, 50%)', popularity: 1000, image: 'spotify-муха.jpg', tracks: [{ title: 'Микрофон', year: 2008 }] },
+            { id: 'a186', name: 'Настежь', bgColor: 'hsl(328.07881773399015, 70%, 50%)', popularity: 1000, image: 'spotify-настежь.jpg', tracks: [{ title: 'Маршрутка', year: 2023 }] },
+            { id: 'a187', name: 'Гражданская оборона', bgColor: 'hsl(329.85221674876846, 70%, 50%)', popularity: 1000, image: 'manual-grob.png', tracks: [{ title: 'После нас', year: 2005 }] },
+            { id: 'a188', name: 'The Charades', bgColor: 'hsl(331.6256157635468, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'The Pink Panther Theme', year: 1964 }] },
+            { id: 'a189', name: 'IP Orchestra', bgColor: 'hsl(333.3990147783251, 70%, 50%)', popularity: 1000, image: 'spotify-ip-orchestra.jpg', tracks: [{ title: 'Два капитана: Увертюра', year: 2020 }] },
+            { id: 'a190', name: 'Владимир Вавилов', bgColor: 'hsl(335.17241379310343, 70%, 50%)', popularity: 1000, image: 'spotify-владимир-вавилов.jpg', tracks: [{ title: 'Сюита для лютни: канцона и танец', year: 1970 }] },
+            { id: 'a191', name: 'Дореволюціонный совѣтчикъ', bgColor: 'hsl(336.9458128078818, 70%, 50%)', popularity: 1000, image: 'spotify-дореволюціонный-совѣтчикъ.jpg', tracks: [{ title: 'Метаморфоз!', year: 2022 }] },
+            { id: 'a192', name: 'Ÿuma', bgColor: 'hsl(338.7192118226601, 70%, 50%)', popularity: 1000, image: 'spotify-ÿuma.jpg', tracks: [{ title: 'Smek l-den by MoM Remix', year: 2019 }] },
+            { id: 'a193', name: 'Алиса', bgColor: 'hsl(340.4926108374384, 70%, 50%)', popularity: 1000, image: 'spotify-алиса.jpg', tracks: [{ title: 'Rock-N-Roll', year: 2005 }] },
+            { id: 'a194', name: 'Василий Васильев', bgColor: 'hsl(342.26600985221677, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Песня Яшки-цыгана', year: 1968 }] },
+            { id: 'a195', name: 'MarimbaMix', bgColor: 'hsl(344.0394088669951, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Неуловимые мстители', year: 2020 }] },
+            { id: 'a196', name: 'Ростислав Чебыкин', bgColor: 'hsl(345.8128078817734, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Воины пафоса', year: 2014 }] },
+            { id: 'a197', name: 'Shedda', bgColor: 'hsl(347.58620689655174, 70%, 50%)', popularity: 615, image: 'spotify-shedda.jpg', tracks: [{ title: 'Rolling Up, Rolling Down', year: 2020 }] },
+            { id: 'a198', name: 'Кирилл Комаров', bgColor: 'hsl(349.35960591133005, 70%, 50%)', popularity: 1000,  tracks: [{ title: 'Мой доктор', year: 2019 }] },
+            { id: 'a199', name: 'Тропы не врут', bgColor: 'hsl(351.13300492610836, 70%, 50%)', popularity: 1000, image: 'spotify-тропы-не-врут.jpg', tracks: [{ title: 'Пессимизм', year: 2016 }] },
+            { id: 'a200', name: 'Ноль', bgColor: 'hsl(352.9064039408867, 70%, 50%)', popularity: 1000, image: 'spotify-ноль.jpg', tracks: [{ title: 'Буги-вуги каждый день', year: 1990 }] },
+            { id: 'a201', name: 'Живица', bgColor: 'hsl(354.679802955665, 70%, 50%)', popularity: 50, image: 'spotify-живица.jpg', tracks: [{ title: 'Во горнице', year: 2016 }] },
+            { id: 'a202', name: 'Элечка', bgColor: 'hsl(356.45320197044333, 70%, 50%)', popularity: 1000, image: 'spotify-элечка.jpg', tracks: [{ title: 'Хава нагила', year: 2018 }] },
+            { id: 'a203', name: 'Крыс', bgColor: 'hsl(358.2266009852217, 70%, 50%)', popularity: 1000, image: 'spotify-крыс.jpg', tracks: [{ title: 'Himno de la armada de barlovento de las islas', year: 2018 }] }
+        ];
+
+        const traits = [
+            { id: 't1', name: 'Открытость', color: '#22c55e' },
+            { id: 't2', name: 'Антиавторитарность', color: '#eab308' },
+            { id: 't3', name: 'Космополитизм', color: '#3b82f6' },
+            { id: 't4', name: 'Меланхолия', color: '#8b5cf6' },
+            { id: 't5', name: 'Созерцательность', color: '#ec4899' },
+            { id: 't6', name: 'Ирония', color: '#f97316' },
+            { id: 't7', name: 'Аутентичность', color: '#14b8a6' },
+            { id: 't8', name: 'Интеллигенция', color: '#ef4444' },
+        ];
+
+        const genreToArtist = [{ source: 'soviet-rock', target: 'a1' },
+            { source: 'protest', target: 'a3' },{ source: 'protest', target: 'a14' },
+            { source: 'world', target: 'a11' },{ source: 'world', target: 'a8' },
+            { source: 'spiritual', target: 'a4' },{ source: 'spiritual', target: 'a16' },
+            { source: 'author', target: 'a5' },{ source: 'author', target: 'a2' },
+            { source: 'neofolk', target: 'a6' },{ source: 'neofolk', target: 'a15' },
+            { source: 'electronic', target: 'a12' },{ source: 'electronic', target: 'a7' },
+            { source: 'virtuoso', target: 'a8' },{ source: 'virtuoso', target: 'a7' },
+            { source: 'irony', target: 'a13' },{ source: 'irony', target: 'a5' },
+            { source: 'soundtrack', target: 'a7' },
+            { source: 'modern-rap', target: 'a3' },{ source: 'modern-rap', target: 'a9' },{ source: 'modern-rap', target: 'a14' },{ source: 'modern-rap', target: 'a21' },{ source: 'modern-rap', target: 'a25' },
+            { source: 'melancholy', target: 'a10' },{ source: 'melancholy', target: 'a1' },{ source: 'melancholy', target: 'a17' },{ source: 'melancholy', target: 'a18' },{ source: 'melancholy', target: 'a20' },
+            { source: 'soviet-rock', target: 'a17' },{ source: 'soviet-rock', target: 'a22' },{ source: 'soviet-rock', target: 'a24' },
+            { source: 'protest', target: 'a19' },{ source: 'protest', target: 'a23' },{ source: 'protest', target: 'a25' },
+            { source: 'electronic', target: 'a18' },
+            { source: 'author', target: 'a20' },{ source: 'author', target: 'a26' },{ source: 'author', target: 'a28' },
+            { source: 'irony', target: 'a21' },{ source: 'irony', target: 'a26' },
+            { source: 'world', target: 'a27' },
+            { source: 'spiritual', target: 'a27' },{ source: 'spiritual', target: 'a28' },
+            { source: 'world', target: 'a29' },
+            { source: 'spiritual', target: 'a29' },
+            { source: 'electronic', target: 'a30' },
+            { source: 'author', target: 'a31' },
+            { source: 'melancholy', target: 'a31' },
+            { source: 'world', target: 'a32' },
+            { source: 'neofolk', target: 'a32' },
+            { source: 'melancholy', target: 'a32' },
+            { source: 'soviet-rock', target: 'a33' },
+            { source: 'protest', target: 'a33' },
+            { source: 'world', target: 'a34' },
+            { source: 'irony', target: 'a35' },
+            { source: 'virtuoso', target: 'a36' },
+            { source: 'modern-rap', target: 'a37' },
+            { source: 'irony', target: 'a37' },
+            { source: 'virtuoso', target: 'a38' },
+            { source: 'soviet-rock', target: 'a39' },
+            { source: 'electronic', target: 'a40' },
+            { source: 'virtuoso', target: 'a41' },
+            { source: 'world', target: 'a42' },
+            { source: 'world', target: 'a43' },
+            { source: 'world', target: 'a44' },
+            { source: 'neofolk', target: 'a44' },
+            { source: 'world', target: 'a45' },
+            { source: 'soviet-rock', target: 'a46' },
+            { source: 'soundtrack', target: 'a47' },
+            { source: 'electronic', target: 'a48' },
+            { source: 'soundtrack', target: 'a49' },
+            { source: 'modern-rap', target: 'a50' },
+            { source: 'neofolk', target: 'a51' },
+            { source: 'world', target: 'a52' },
+            { source: 'world', target: 'a53' },
+            { source: 'neofolk', target: 'a53' },
+            { source: 'world', target: 'a54' },
+            { source: 'world', target: 'a55' },
+            { source: 'neofolk', target: 'a55' },
+            { source: 'world', target: 'a56' },
+            { source: 'author', target: 'a57' },
+            { source: 'modern-rap', target: 'a57' },
+            { source: 'protest', target: 'a57' },
+            { source: 'electronic', target: 'a58' },
+            { source: 'soviet-rock', target: 'a59' },
+            { source: 'melancholy', target: 'a59' },
+            { source: 'electronic', target: 'a60' },
+            { source: 'world', target: 'a61' },
+            { source: 'neofolk', target: 'a62' },
+            { source: 'world', target: 'a63' },
+            { source: 'soviet-rock', target: 'a64' },
+            { source: 'protest', target: 'a64' },
+            { source: 'world', target: 'a65' },
+            { source: 'world', target: 'a66' },
+            { source: 'author', target: 'a67' },
+            { source: 'world', target: 'a68' },
+            { source: 'neofolk', target: 'a68' },
+            { source: 'neofolk', target: 'a69' },
+            { source: 'world', target: 'a70' },
+            { source: 'virtuoso', target: 'a71' },
+            { source: 'irony', target: 'a72' },
+            { source: 'modern-rap', target: 'a73' },
+            { source: 'world', target: 'a74' },
+            { source: 'virtuoso', target: 'a75' },
+            { source: 'modern-rap', target: 'a76' },
+            { source: 'virtuoso', target: 'a77' },
+            { source: 'electronic', target: 'a78' },
+            { source: 'electronic', target: 'a79' },
+            { source: 'spiritual', target: 'a80' },
+            { source: 'soviet-rock', target: 'a81' },
+            { source: 'modern-rap', target: 'a82' },
+            { source: 'world', target: 'a83' },
+            { source: 'world', target: 'a84' },
+            { source: 'modern-rap', target: 'a85' },
+            { source: 'modern-rap', target: 'a86' },
+            { source: 'electronic', target: 'a87' },
+            { source: 'electronic', target: 'a88' },
+            { source: 'soundtrack', target: 'a88' },
+            { source: 'virtuoso', target: 'a89' },
+            { source: 'virtuoso', target: 'a90' },
+            { source: 'author', target: 'a91' },
+            { source: 'spiritual', target: 'a92' },
+            { source: 'author', target: 'a93' },
+            { source: 'virtuoso', target: 'a94' },
+            { source: 'soviet-rock', target: 'a95' },
+            { source: 'soundtrack', target: 'a96' },
+            { source: 'world', target: 'a97' },
+            { source: 'soviet-rock', target: 'a98' },
+            { source: 'protest', target: 'a98' },
+            { source: 'melancholy', target: 'a98' },
+            { source: 'virtuoso', target: 'a99' },
+            { source: 'electronic', target: 'a100' },
+            { source: 'author', target: 'a101' },
+            { source: 'world', target: 'a102' },
+            { source: 'world', target: 'a103' },
+            { source: 'soviet-rock', target: 'a104' },
+            { source: 'world', target: 'a105' },
+            { source: 'irony', target: 'a106' },
+            { source: 'world', target: 'a107' },
+            { source: 'soundtrack', target: 'a108' },
+            { source: 'author', target: 'a109' },
+            { source: 'neofolk', target: 'a110' },
+            { source: 'world', target: 'a111' },
+            { source: 'world', target: 'a112' },
+            { source: 'world', target: 'a113' },
+            { source: 'author', target: 'a114' },
+            { source: 'modern-rap', target: 'a115' },
+            { source: 'irony', target: 'a116' },
+            { source: 'world', target: 'a117' },
+            { source: 'neofolk', target: 'a117' },
+            { source: 'world', target: 'a118' },
+            { source: 'world', target: 'a119' },
+            { source: 'author', target: 'a120' },
+            { source: 'world', target: 'a121' },
+            { source: 'world', target: 'a122' },
+            { source: 'neofolk', target: 'a123' },
+            { source: 'soviet-rock', target: 'a124' },
+            { source: 'soviet-rock', target: 'a125' },
+            { source: 'spiritual', target: 'a125' },
+            { source: 'world', target: 'a126' },
+            { source: 'soundtrack', target: 'a127' },
+            { source: 'world', target: 'a128' },
+            { source: 'world', target: 'a129' },
+            { source: 'world', target: 'a130' },
+            { source: 'world', target: 'a131' },
+            { source: 'world', target: 'a132' },
+            { source: 'world', target: 'a133' },
+            { source: 'world', target: 'a134' },
+            { source: 'soviet-rock', target: 'a135' },
+            { source: 'spiritual', target: 'a135' },
+            { source: 'world', target: 'a136' },
+            { source: 'world', target: 'a137' },
+            { source: 'world', target: 'a138' },
+            { source: 'world', target: 'a139' },
+            { source: 'neofolk', target: 'a140' },
+            { source: 'world', target: 'a141' },
+            { source: 'virtuoso', target: 'a142' },
+            { source: 'world', target: 'a143' },
+            { source: 'world', target: 'a144' },
+            { source: 'soundtrack', target: 'a145' },
+            { source: 'world', target: 'a146' },
+            { source: 'virtuoso', target: 'a147' },
+            { source: 'world', target: 'a148' },
+            { source: 'world', target: 'a149' },
+            { source: 'world', target: 'a150' },
+            { source: 'modern-rap', target: 'a151' },
+            { source: 'protest', target: 'a151' },
+            { source: 'world', target: 'a152' },
+            { source: 'modern-rap', target: 'a153' },
+            { source: 'world', target: 'a154' },
+            { source: 'soundtrack', target: 'a155' },
+            { source: 'world', target: 'a156' },
+            { source: 'author', target: 'a157' },
+            { source: 'author', target: 'a158' },
+            { source: 'soundtrack', target: 'a159' },
+            { source: 'electronic', target: 'a160' },
+            { source: 'world', target: 'a161' },
+            { source: 'modern-rap', target: 'a162' },
+            { source: 'protest', target: 'a162' },
+            { source: 'world', target: 'a163' },
+            { source: 'world', target: 'a164' },
+            { source: 'world', target: 'a165' },
+            { source: 'neofolk', target: 'a166' },
+            { source: 'electronic', target: 'a167' },
+            { source: 'soviet-rock', target: 'a168' },
+            { source: 'world', target: 'a169' },
+            { source: 'world', target: 'a170' },
+            { source: 'world', target: 'a171' },
+            { source: 'author', target: 'a172' },
+            { source: 'author', target: 'a173' },
+            { source: 'melancholy', target: 'a173' },
+            { source: 'author', target: 'a174' },
+            { source: 'author', target: 'a175' },
+            { source: 'soundtrack', target: 'a176' },
+            { source: 'author', target: 'a177' },
+            { source: 'protest', target: 'a178' },
+            { source: 'electronic', target: 'a179' },
+            { source: 'world', target: 'a180' },
+            { source: 'world', target: 'a181' },
+            { source: 'spiritual', target: 'a181' },
+            { source: 'world', target: 'a182' },
+            { source: 'spiritual', target: 'a183' },
+            { source: 'spiritual', target: 'a184' },
+            { source: 'world', target: 'a185' },
+            { source: 'soviet-rock', target: 'a186' },
+            { source: 'soviet-rock', target: 'a187' },
+            { source: 'protest', target: 'a187' },
+            { source: 'world', target: 'a188' },
+            { source: 'soundtrack', target: 'a189' },
+            { source: 'modern-rap', target: 'a190' },
+            { source: 'protest', target: 'a190' },
+            { source: 'irony', target: 'a191' },
+            { source: 'world', target: 'a192' },
+            { source: 'soviet-rock', target: 'a193' },
+            { source: 'protest', target: 'a193' },
+            { source: 'world', target: 'a194' },
+            { source: 'world', target: 'a195' },
+            { source: 'world', target: 'a196' },
+            { source: 'world', target: 'a197' },
+            { source: 'author', target: 'a198' },
+            { source: 'world', target: 'a199' },
+            { source: 'soviet-rock', target: 'a200' },
+            { source: 'melancholy', target: 'a200' },
+            { source: 'world', target: 'a201' },
+            { source: 'irony', target: 'a202' },
+            { source: 'modern-rap', target: 'a203' }
+        ];
+
+        const artistToTrait = [{ source: 'a1', target: 't8' },{ source: 'a1', target: 't4' },
+            { source: 'a2', target: 't7' },{ source: 'a2', target: 't8' },
+            { source: 'a3', target: 't2' },
+            { source: 'a4', target: 't5' },{ source: 'a4', target: 't1' },
+            { source: 'a5', target: 't6' },{ source: 'a5', target: 't7' },
+            { source: 'a6', target: 't1' },{ source: 'a6', target: 't3' },
+            { source: 'a7', target: 't1' },
+            { source: 'a8', target: 't7' },{ source: 'a8', target: 't3' },
+            { source: 'a9', target: 't2' },
+            { source: 'a10', target: 't4' },
+            { source: 'a11', target: 't3' },{ source: 'a11', target: 't1' },
+            { source: 'a12', target: 't1' },
+            { source: 'a13', target: 't6' },
+            { source: 'a14', target: 't2' },{ source: 'a14', target: 't8' },
+            { source: 'a15', target: 't1' },
+            { source: 'a16', target: 't5' },
+            { source: 'a17', target: 't4' },{ source: 'a17', target: 't8' },
+            { source: 'a18', target: 't4' },{ source: 'a18', target: 't1' },
+            { source: 'a19', target: 't2' },
+            { source: 'a20', target: 't4' },{ source: 'a20', target: 't7' },
+            { source: 'a21', target: 't6' },{ source: 'a21', target: 't2' },
+            { source: 'a22', target: 't4' },{ source: 'a22', target: 't8' },
+            { source: 'a23', target: 't2' },{ source: 'a23', target: 't7' },
+            { source: 'a24', target: 't7' },
+            { source: 'a25', target: 't2' },
+            { source: 'a26', target: 't6' },{ source: 'a26', target: 't7' },
+            { source: 'a27', target: 't1' },{ source: 'a27', target: 't5' },
+            { source: 'a28', target: 't5' },{ source: 'a28', target: 't7' },
+            { source: 'a29', target: 't1' },
+            { source: 'a29', target: 't3' },
+            { source: 'a29', target: 't5' },
+            { source: 'a30', target: 't1' },
+            { source: 'a30', target: 't5' },
+            { source: 'a31', target: 't4' },
+            { source: 'a31', target: 't7' },
+            { source: 'a31', target: 't8' },
+            { source: 'a32', target: 't1' },
+            { source: 'a32', target: 't3' },
+            { source: 'a32', target: 't4' },
+            { source: 'a32', target: 't7' },
+            { source: 'a33', target: 't2' },
+            { source: 'a33', target: 't7' },
+            { source: 'a33', target: 't8' },
+            { source: 'a34', target: 't1' },
+            { source: 'a34', target: 't3' },
+            { source: 'a35', target: 't6' },
+            { source: 'a36', target: 't3' },
+            { source: 'a37', target: 't2' },
+            { source: 'a37', target: 't6' },
+            { source: 'a38', target: 't3' },
+            { source: 'a39', target: 't7' },
+            { source: 'a39', target: 't8' },
+            { source: 'a40', target: 't1' },
+            { source: 'a40', target: 't5' },
+            { source: 'a41', target: 't3' },
+            { source: 'a42', target: 't1' },
+            { source: 'a43', target: 't1' },
+            { source: 'a43', target: 't3' },
+            { source: 'a44', target: 't1' },
+            { source: 'a44', target: 't3' },
+            { source: 'a44', target: 't7' },
+            { source: 'a45', target: 't1' },
+            { source: 'a46', target: 't7' },
+            { source: 'a46', target: 't8' },
+            { source: 'a47', target: 't1' },
+            { source: 'a48', target: 't1' },
+            { source: 'a48', target: 't5' },
+            { source: 'a49', target: 't1' },
+            { source: 'a50', target: 't2' },
+            { source: 'a51', target: 't1' },
+            { source: 'a51', target: 't7' },
+            { source: 'a52', target: 't1' },
+            { source: 'a52', target: 't3' },
+            { source: 'a53', target: 't1' },
+            { source: 'a53', target: 't3' },
+            { source: 'a53', target: 't7' },
+            { source: 'a54', target: 't1' },
+            { source: 'a55', target: 't1' },
+            { source: 'a55', target: 't3' },
+            { source: 'a55', target: 't7' },
+            { source: 'a56', target: 't1' },
+            { source: 'a56', target: 't3' },
+            { source: 'a57', target: 't2' },
+            { source: 'a57', target: 't4' },
+            { source: 'a57', target: 't7' },
+            { source: 'a57', target: 't8' },
+            { source: 'a58', target: 't1' },
+            { source: 'a58', target: 't5' },
+            { source: 'a59', target: 't4' },
+            { source: 'a59', target: 't7' },
+            { source: 'a59', target: 't8' },
+            { source: 'a60', target: 't1' },
+            { source: 'a60', target: 't5' },
+            { source: 'a61', target: 't1' },
+            { source: 'a61', target: 't3' },
+            { source: 'a62', target: 't1' },
+            { source: 'a62', target: 't7' },
+            { source: 'a63', target: 't1' },
+            { source: 'a63', target: 't3' },
+            { source: 'a64', target: 't2' },
+            { source: 'a64', target: 't7' },
+            { source: 'a64', target: 't8' },
+            { source: 'a65', target: 't1' },
+            { source: 'a65', target: 't3' },
+            { source: 'a66', target: 't1' },
+            { source: 'a66', target: 't3' },
+            { source: 'a67', target: 't4' },
+            { source: 'a67', target: 't7' },
+            { source: 'a67', target: 't8' },
+            { source: 'a68', target: 't1' },
+            { source: 'a68', target: 't3' },
+            { source: 'a68', target: 't7' },
+            { source: 'a69', target: 't1' },
+            { source: 'a69', target: 't7' },
+            { source: 'a70', target: 't1' },
+            { source: 'a70', target: 't3' },
+            { source: 'a71', target: 't3' },
+            { source: 'a72', target: 't6' },
+            { source: 'a73', target: 't2' },
+            { source: 'a74', target: 't1' },
+            { source: 'a74', target: 't3' },
+            { source: 'a75', target: 't3' },
+            { source: 'a76', target: 't2' },
+            { source: 'a77', target: 't3' },
+            { source: 'a78', target: 't1' },
+            { source: 'a78', target: 't5' },
+            { source: 'a79', target: 't1' },
+            { source: 'a79', target: 't5' },
+            { source: 'a80', target: 't1' },
+            { source: 'a80', target: 't5' },
+            { source: 'a81', target: 't7' },
+            { source: 'a81', target: 't8' },
+            { source: 'a82', target: 't2' },
+            { source: 'a83', target: 't1' },
+            { source: 'a83', target: 't3' },
+            { source: 'a84', target: 't1' },
+            { source: 'a84', target: 't3' },
+            { source: 'a85', target: 't2' },
+            { source: 'a86', target: 't2' },
+            { source: 'a87', target: 't1' },
+            { source: 'a87', target: 't5' },
+            { source: 'a88', target: 't1' },
+            { source: 'a88', target: 't5' },
+            { source: 'a89', target: 't3' },
+            { source: 'a90', target: 't3' },
+            { source: 'a91', target: 't4' },
+            { source: 'a91', target: 't7' },
+            { source: 'a91', target: 't8' },
+            { source: 'a92', target: 't1' },
+            { source: 'a92', target: 't5' },
+            { source: 'a93', target: 't4' },
+            { source: 'a93', target: 't7' },
+            { source: 'a93', target: 't8' },
+            { source: 'a94', target: 't3' },
+            { source: 'a95', target: 't7' },
+            { source: 'a95', target: 't8' },
+            { source: 'a96', target: 't1' },
+            { source: 'a97', target: 't1' },
+            { source: 'a98', target: 't2' },
+            { source: 'a98', target: 't4' },
+            { source: 'a98', target: 't7' },
+            { source: 'a98', target: 't8' },
+            { source: 'a99', target: 't3' },
+            { source: 'a100', target: 't1' },
+            { source: 'a100', target: 't5' },
+            { source: 'a101', target: 't4' },
+            { source: 'a101', target: 't7' },
+            { source: 'a101', target: 't8' },
+            { source: 'a102', target: 't1' },
+            { source: 'a102', target: 't3' },
+            { source: 'a103', target: 't1' },
+            { source: 'a104', target: 't7' },
+            { source: 'a104', target: 't8' },
+            { source: 'a105', target: 't1' },
+            { source: 'a105', target: 't3' },
+            { source: 'a106', target: 't6' },
+            { source: 'a107', target: 't1' },
+            { source: 'a108', target: 't1' },
+            { source: 'a109', target: 't4' },
+            { source: 'a109', target: 't7' },
+            { source: 'a109', target: 't8' },
+            { source: 'a110', target: 't1' },
+            { source: 'a110', target: 't7' },
+            { source: 'a111', target: 't1' },
+            { source: 'a112', target: 't1' },
+            { source: 'a113', target: 't1' },
+            { source: 'a114', target: 't4' },
+            { source: 'a114', target: 't7' },
+            { source: 'a114', target: 't8' },
+            { source: 'a115', target: 't2' },
+            { source: 'a116', target: 't6' },
+            { source: 'a117', target: 't1' },
+            { source: 'a117', target: 't3' },
+            { source: 'a117', target: 't7' },
+            { source: 'a118', target: 't1' },
+            { source: 'a119', target: 't1' },
+            { source: 'a120', target: 't4' },
+            { source: 'a120', target: 't7' },
+            { source: 'a120', target: 't8' },
+            { source: 'a121', target: 't1' },
+            { source: 'a122', target: 't1' },
+            { source: 'a123', target: 't1' },
+            { source: 'a123', target: 't7' },
+            { source: 'a124', target: 't7' },
+            { source: 'a124', target: 't8' },
+            { source: 'a125', target: 't1' },
+            { source: 'a125', target: 't5' },
+            { source: 'a125', target: 't7' },
+            { source: 'a125', target: 't8' },
+            { source: 'a126', target: 't1' },
+            { source: 'a126', target: 't3' },
+            { source: 'a127', target: 't1' },
+            { source: 'a128', target: 't1' },
+            { source: 'a129', target: 't1' },
+            { source: 'a130', target: 't1' },
+            { source: 'a131', target: 't1' },
+            { source: 'a131', target: 't3' },
+            { source: 'a132', target: 't1' },
+            { source: 'a133', target: 't1' },
+            { source: 'a134', target: 't1' },
+            { source: 'a135', target: 't1' },
+            { source: 'a135', target: 't5' },
+            { source: 'a135', target: 't7' },
+            { source: 'a135', target: 't8' },
+            { source: 'a136', target: 't1' },
+            { source: 'a137', target: 't1' },
+            { source: 'a138', target: 't1' },
+            { source: 'a139', target: 't1' },
+            { source: 'a139', target: 't3' },
+            { source: 'a140', target: 't1' },
+            { source: 'a140', target: 't7' },
+            { source: 'a141', target: 't1' },
+            { source: 'a142', target: 't3' },
+            { source: 'a143', target: 't1' },
+            { source: 'a144', target: 't1' },
+            { source: 'a145', target: 't1' },
+            { source: 'a146', target: 't1' },
+            { source: 'a147', target: 't3' },
+            { source: 'a148', target: 't1' },
+            { source: 'a149', target: 't1' },
+            { source: 'a150', target: 't1' },
+            { source: 'a151', target: 't2' },
+            { source: 'a152', target: 't1' },
+            { source: 'a153', target: 't2' },
+            { source: 'a154', target: 't1' },
+            { source: 'a155', target: 't1' },
+            { source: 'a156', target: 't1' },
+            { source: 'a157', target: 't4' },
+            { source: 'a157', target: 't7' },
+            { source: 'a157', target: 't8' },
+            { source: 'a158', target: 't4' },
+            { source: 'a158', target: 't7' },
+            { source: 'a158', target: 't8' },
+            { source: 'a159', target: 't1' },
+            { source: 'a160', target: 't1' },
+            { source: 'a160', target: 't5' },
+            { source: 'a161', target: 't1' },
+            { source: 'a162', target: 't2' },
+            { source: 'a163', target: 't1' },
+            { source: 'a164', target: 't1' },
+            { source: 'a165', target: 't1' },
+            { source: 'a166', target: 't1' },
+            { source: 'a166', target: 't7' },
+            { source: 'a167', target: 't1' },
+            { source: 'a167', target: 't5' },
+            { source: 'a168', target: 't7' },
+            { source: 'a168', target: 't8' },
+            { source: 'a169', target: 't1' },
+            { source: 'a170', target: 't1' },
+            { source: 'a171', target: 't1' },
+            { source: 'a172', target: 't4' },
+            { source: 'a172', target: 't7' },
+            { source: 'a172', target: 't8' },
+            { source: 'a173', target: 't4' },
+            { source: 'a173', target: 't7' },
+            { source: 'a173', target: 't8' },
+            { source: 'a174', target: 't4' },
+            { source: 'a174', target: 't7' },
+            { source: 'a174', target: 't8' },
+            { source: 'a175', target: 't4' },
+            { source: 'a175', target: 't7' },
+            { source: 'a175', target: 't8' },
+            { source: 'a176', target: 't1' },
+            { source: 'a177', target: 't4' },
+            { source: 'a177', target: 't7' },
+            { source: 'a177', target: 't8' },
+            { source: 'a178', target: 't2' },
+            { source: 'a179', target: 't1' },
+            { source: 'a179', target: 't5' },
+            { source: 'a180', target: 't1' },
+            { source: 'a180', target: 't3' },
+            { source: 'a181', target: 't1' },
+            { source: 'a181', target: 't3' },
+            { source: 'a181', target: 't5' },
+            { source: 'a182', target: 't1' },
+            { source: 'a183', target: 't1' },
+            { source: 'a183', target: 't5' },
+            { source: 'a184', target: 't1' },
+            { source: 'a184', target: 't5' },
+            { source: 'a185', target: 't1' },
+            { source: 'a186', target: 't7' },
+            { source: 'a186', target: 't8' },
+            { source: 'a187', target: 't2' },
+            { source: 'a187', target: 't7' },
+            { source: 'a187', target: 't8' },
+            { source: 'a188', target: 't1' },
+            { source: 'a189', target: 't1' },
+            { source: 'a190', target: 't2' },
+            { source: 'a191', target: 't6' },
+            { source: 'a192', target: 't1' },
+            { source: 'a193', target: 't2' },
+            { source: 'a193', target: 't7' },
+            { source: 'a193', target: 't8' },
+            { source: 'a194', target: 't1' },
+            { source: 'a195', target: 't1' },
+            { source: 'a196', target: 't1' },
+            { source: 'a197', target: 't1' },
+            { source: 'a198', target: 't4' },
+            { source: 'a198', target: 't7' },
+            { source: 'a198', target: 't8' },
+            { source: 'a199', target: 't1' },
+            { source: 'a200', target: 't4' },
+            { source: 'a200', target: 't7' },
+            { source: 'a200', target: 't8' },
+            { source: 'a201', target: 't1' },
+            { source: 'a201', target: 't3' },
+            { source: 'a202', target: 't6' },
+            { source: 'a203', target: 't2' }
+        ];
+
+        // Track scrobbles lookup (key: "Artist|Title")
+        const trackScrobbles = {
+            "Phil Collins|In The Air Tonight": 4700000,
+            "David Bowie|The Man Who Sold The World": 2700000,
+            "Fleetwood Mac|Go Your Own Way": 6300000,
+            "Hans Zimmer|Dust": 922600,
+            "Bob Dylan|Farewell, Angelina": 81500,
+            "Leonard Cohen|First We Take Manhattan": 968100,
+            "Moby|Extreme Ways": 4900000,
+            "Nick Cave|Papa Won't Leave You, Henry": 11100,
+            "Nick Cave|Red Right Hand": 101800,
+            "Nick Cave|Brother, My Cup Is Empty": 9159,
+            "Ramin Djawadi|Main Title (Game of Thrones - Season 3)": 82900,
+            "Tom Waits|Goin' Out West": 960500,
+            "Sabaton|Resist And Bite": 1200000,
+            "Bo Burnham|Welcome to the Internet": 4300000,
+            "King Crimson|Epitaph": 1700000,
+            "Rainbow|The Temple Of The King": 1700000,
+            "Монеточка|Переживу": 137400,
+            "Mike Oldfield|Outcast": 153100,
+            "КИНО|Перемен": 193000,
+            "КИНО|Группа крови": 969800,
+            "КИНО|Город": 88800,
+            "КИНО|Муравейник": 225000,
+            "Django Django|WOR": 533900,
+            "Би-2|Революция": 121000,
+            "Steve 'n' Seagulls|Thunderstruck": 7864,
+            "Jean-Michel Jarre|Equinoxe, Pt. 4": 38000,
+            "Celtic Woman|Teir Abhaile Riu": 283200,
+            "Noize MC|Иордан": 210500,
+            "Noize MC|Всё как у людей": 247800,
+            "Noize MC|Столетняя война": 109800,
+            "Noize MC|Вояджер-1": 227300,
+            "Oliver Koletzki|Copal": 67200,
+            "Krishna Das|Hallelujah Chalisa": 28400,
+            "Heilung|Fylgija Ear": 121700,
+            "Heilung|Hakkerskaldyr": 424600,
+            "Nolwenn Leroy|La jument de Michao": 132200,
+            "Anoushka Shankar|Dissolving Boundaries": 35900,
+            "Oxxxymiron|Где нас нет": 485200,
+            "Oxxxymiron|ОРГАНИЗАЦИЯ": 194200,
+            "Oxxxymiron|Лондонград": 85900,
+            "Oxxxymiron|Город под подошвой": 647400,
+            "Eivør|Into the Mist": 92100,
+            "Ляпис Трубецкой|Железный": 280500,
+            "Tommy Emmanuel|Windy and Warm": 23000,
+            "Rodrigo y Gabriela|Electric Soul": 77700,
+            "Rodrigo y Gabriela|Ixtapa": 618300,
+            "Сплин|За семью печатями": 38900,
+            "Сплин|Нечего делать внутри": 106600,
+            "Сплин|Передайте это Гарри Поттеру, если вдруг его встретите": 87300,
+            "Сплин|Семь восьмых": 0,
+            "Juno Reactor|Immaculate Crucifixion": 81600,
+            "Nautilus Pompilius|Я хочу быть с тобой": 299200,
+            "Nautilus Pompilius|Хлоп-хлоп": 108500,
+            "Blackmore's Night|Minstrel Hall": 208600,
+            "ST1M|Ветер перемен": 12300,
+            "Max Cooper|Order from Chaos": 123200,
+            "Klaus Schulze|Peg Leg Dance No. 4": 429,
+            "Пикник|Азбука Морзе": 107700,
+            "Каста|Самый счастливый человек": 71200,
+            "Каста|На порядок выше": 0,
+            "Каста|Радиосигналы": 352500,
+            "Каста|Горячее время": 64700,
+            "Порнофильмы|Я так соскучился": 360700,
+            "Порнофильмы|Чужое горе": 99100,
+            "Порнофильмы|Россия для грустных": 211500,
+            "Corvus Corax|In Taberna": 88100,
+            "Corvus Corax|Skál": 42400,
+            "Seatbelts|Too Good Too Bad": 93400,
+            "Лигалайз|Я такой же как ты": 1751,
+            "Die Apokalyptischen Reiter|Ghostriders In The Sky": 281700,
+            "Steeleye Span|Cam Ye O'er Frae France": 55300,
+            "LOUNA|Моя оборона": 95500,
+            "Anacondaz|Дубак": 244300,
+            "Anacondaz|Смертельное оружие": 155300,
+            "HORUS|Марс наш": 50500,
+            "The Dreadnoughts|The Skrigjaargen Polka": 1843,
+            "Найк Борзов|Лошадка": 207900,
+            "Heidevolk|Yngwaz´ Zonen": 47800,
+            "Мельница|Мертвец": 129500,
+            "Дельфин|744": 41800,
+            "Дельфин|Я люблю людей": 157600,
+            "Сурганова и Оркестр|Нас единицы (2015)": 682,
+            "Yodelice|Breathe In": 44300,
+            "Noize MC|Почитай старших": 79200,
+            "Byron Metcalf|Burundi Dreams": 1302,
+            "The Brass Knuckle Steampunk Sinfonia|The Watchmakers' apprentice": 1450,
+            "Аквариум|Молитва и пост": 19400,
+            "Skrömta|Skrömta-Rappen": 270,
+            "Немного нервно|Светлей": 9731,
+            "Ekseption|Dance Macabre Opus 40": 11500,
+            "Дышать|Тыпырдатып": 16000,
+            "The Brass Knuckle Steampunk Sinfonia|The Bowcommoner Gang": 972,
+            "SuNA Mantra|Jaya Mata Kali": 2840,
+            "Jambey|Pumputu": 693,
+            "Byron Metcalf|Arrival Of The Elves": 859,
+            "Леона|Проводник": 71,
+            "Леона|Плохо, ничего хорошего": 59,
+            "Леона|Пустое святое": 103,
+            "Леона|Зверь, которого не бывает": 92,
+            "PALC|Страшно": 13300,
+            "Hot Butter|Palomitas de Maíz": 4663,
+            "The Brass Knuckle Steampunk Sinfonia|God Rest Ye Merry Gentlepunks": 1083,
+            "Вера Полозкова|Край у нас широк": 1803,
+            "Леона|На металлоломе": 0,
+            "Муха|Микрофон": 15900,
+            "Борис Гребенщиков|Если Я Уйду": 20000,
+            "Atlantida Project|Иордан": 39100,
+            "АлоэВера|Ты что такой?": 30900,
+            "Dobranotch|Du Host": 914,
+            "Леона|Всё, что мы скажем": 172,
+            "Jody Gwin|Smooth Criminal": 565,
+            "Xploding Plastix|Joy Comes in the Morning": 50500,
+            "Faraualla|Un Due Tre Amen!": 904,
+            "Mathias Duplessy|The Road with You": 1563,
+            "musica nuda|Il calabron": 1332,
+            "Faraualla|Sind'": 1382,
+            "Настежь|Маршрутка": 1602,
+            "Василий К.|Держава": 53700,
+            "Brazzaville|Star Called Sun": 253000,
+            "Эдуард Артемьев|Сибириада": 1477,
+            "PALC|Совпадения": 31700,
+            "Joanna Stingray|Rock 'n' Roll's Dead": 355,
+            "Борис Гребенщиков|Не судьба": 14600,
+            "Neil Zaza|Palladio": 308,
+            "Борис Гребенщиков|Не Было Такой": 47400,
+            "London Festival Orchestra|Shema - Hava Nagila": 4250,
+            "PALC|Инфоповод": 2891,
+            "Markscheider Kunst|Kvasa-Kvasa": 52200,
+            "Гражданская оборона|После нас": 0,
+            "Карелия|Место для шага вперёд": 41400,
+            "Thorr|Overlord": 39000,
+            "Дмитрий Ревякин|И так, и сяк": 1694,
+            "The Charades|The Pink Panther Theme": 229,
+            "IP Orchestra|Два капитана: Увертюра": 2725,
+            "Удмуртская тоска|Как будто я": 3100,
+            "Драконь|Испанская романтическая баллада об отважном Диего Вальдесе": 604,
+            "АлоэВера|Несуразная": 64700,
+            "Владимир Вавилов|Сюита для лютни: канцона и танец": 0,
+            "Дореволюціонный совѣтчикъ|Метаморфоз!": 2865,
+            "Нейро Дюбель|Вестерн": 9025,
+            "Stoner Train|Gandalf Took the Drug": 14300,
+            "Seasick Steve|Roy's Gang": 78700,
+            "Cruachan|Is Fuair an Chroí": 19700,
+            "ICHI|Vargan": 7293,
+            "HELVEGEN|Top": 0,
+            "Василий К.|Ганеша": 0,
+            "The Tossers|The Pub": 11200,
+            "James Last|Easy Living / Coming Closer / Popcorn": 0,
+            "Ÿuma|Smek l-den by MoM Remix": 0,
+            "Nine Treasures|The Dream About Ancient City (Re-Recorded)": 0,
+            "Mathias Duplessy|The Good, the Bad, the Ugly": 915,
+            "Artem Uzunov|Solo Darbuka": 9285,
+            "Алиса|Rock-N-Roll": 67800,
+            "Александр Ф. Скляр|Скарабей": 0,
+            "Владимир Высоцкий|Мой Гамлет": 5694,
+            "Владимир Высоцкий|Як-истребитель": 5447,
+            "Влади|Как это блядь возможно": 0,
+            "Влади|Краски не сгущайте": 0,
+            "АлоэВера|Легче": 28200,
+            "АлоэВера|Не было": 74900,
+            "Борис Гребенщиков|Om Namah Shivaya": 5424,
+            "Борис Гребенщиков|Новый Шелковый Путь": 3200,
+            "Борис Гребенщиков|Вон Вавилон": 0,
+            "Аквариум|Поезд в огне": 146900,
+            "Аквариум|Назад в Архангельск": 0,
+            "Ундервуд|Разведка с мудаками": 18000,
+            "Аукцыон|Дорога": 426300,
+            "Аукцыон|Птица": 198800,
+            "Янка Дягилева|На чёрный день": 77200,
+            "GREEN CROW|Элвис за нас": 14800,
+            "GREEN CROW|Кот пришёл назад": 36300,
+            "GREEN CROW|Дьявола нет": 27300,
+            "Atlantida Project|Сарва Мангалам": 0,
+            "Василий К.|Если б моя милая...": 2902,
+            "Аквариум|Назад в Архангельск": 0,
+            "Joker James|Ничего смешного": 73800,
+            "Joker James|Страна, которой нет": 23900,
+            "Тропы не врут|Пессимизм": 2596,
+            "Ноль|Буги-вуги каждый день": 7504,
+            "Ундервуд|Разведка с мудаками": 18000,
+            "Atlantida Project|Красная королева": 28700,
+            "Rokia Traoré|Dounia": 56000,
+            "Anacondaz|Дубак": 244300,
+            "DEEP-EX-SENSE|Ветер перемен": 23900,
+            "Екатерина Яшникова|Пуля": 105700,
+            "Владимир Высоцкий|Песня космических негодяев": 0,
+            "Василий К.|Игра в ящик": 2156,
+            "Тим Скоренко|Павшим за Третий Рим": 5604,
+            "Mathias Duplessy|Speed Mongolia": 1334,
+            "Пикник|Азбука Морзе": 107700,
+            "Saez|Mon Européenne": 78900,
+            "АлоэВера|Не было": 74900,
+            "Живица|Во горнице": 97,
+            "Schiller|Zenit": 11700,
+            "PALC|День": 25400,
+            "Зоя Ященко|Голубая стрела": 17100,
+            "Василий К.|Интеллигенты": 2645,
+            "Янка Дягилева|На чёрный день": 77200,
+            "Ольга Арефьева и Ковчег|Вертолёт": 0,
+            "MOZART HEROES|I Was Made For Loving You": 2360,
+            "Аукцыон|Птица": 198800,
+            "Элечка|Хава нагила": 1407,
+            "Joachim Witt|Dämon": 30800,
+            "Александр Пушной|Надо радоваться!": 20100,
+            "Spiritual Seasons|Villeman": 7875,
+            "Sabo|Rise": 4979,
+            "Jody Gwin|The Trooper": 1250,
+            "Joanna Stingray|My generation": 3331,
+            "Василий К.|Исусы Христосы": 0,
+            "Крыс|Himno de la armada de barlovento de las islas": 725,
+            "Artem Uzunov|Davai": 3103,
+            "René Aubry|Replay": 18900,
+            "Shedda|Hungarian": 938,
+            "СолоИНК|Еврейской казачество востало": 175,
+            "Simply Three|Believer": 10900,
+            "Gabriel Saban|Hollywood Madness": 3764,
+            "Żywiołak|Bóstwa": 38300,
+            "Artem Uzunov|Melody of Heartbeat": 5149,
+            "Gae Bolg|Totentanz": 23000,
+            "Евгений Алексеев|Аделаида": 462,
+            "Владимир Высоцкий|Як-истребитель": 5447,
+            "Аквариум|Поезд в огне": 146900,
+            "Евгений Женевьев|Идущие": 6233,
+            "Умка и Броневик|Нет никакой другой": 567,
+            "Mark the Hammer|Back to the Future (Metal)": 5328,
+            "Hugo Strasser|Nah Neh Nah": 687,
+            "Геннадий Гладков|Проезд цистерны": 0,
+            "Евгений Крылатов|Пираты": 2473,
+            "Stephan Sechi|Lone Rider": 28500,
+            "Михаил Башаков|Блюз о Блюзе": 0,
+            "Михаил Башаков|Еще один кирпич в Стену Плача": 1111,
+            "АлоэВера|Легче": 28200,
+            "Железный Занавес|Так закалялась сталь": 610,
+            "Екатерина Яшникова|Родная Тишина": 25000,
+            "Немного нервно|Любить мудаков": 7101,
+            "Драконь|Найти омелу": 89,
+            "Драконь|Песня о вашем друге": 0,
+            "Vitamin String Quartet|The Imperial March": 577,
+            "Ольга Арефьева и Ковчег|Сансара": 0,
+            "Аукцыон|Дорога": 426300,
+            "The New Synthesizer Experience|Rockit": 1651,
+            "Skrömta|Egotrippen": 513,
+            "Teufelstanz|Skudrinka": 5875,
+            "Lama Tenzin Sangpo|Kurukulle": 205
+        };
+
+        // Get scrobbles for a track (returns artist's scrobbles or 1000 as default)
+        function getTrackScrobbles(artistName, trackTitle) {
+            const key = `${artistName}|${trackTitle}`;
+            if (trackScrobbles[key] !== undefined) {
+                return Math.max(50, trackScrobbles[key]); // Min 50 for log scale
+            }
+            return 1000; // Default for unknown tracks
+        }
+
+        // Calculate median year for each artist
+        artists.forEach(a => {
+            const years = a.tracks.map(t => t.year).sort((x, y) => x - y);
+            a.medianYear = years[Math.floor(years.length / 2)];
+        });
+
+        // Setup dimensions
+        const chart = document.getElementById('chart');
+        const width = Math.min(1500, window.innerWidth - 40);
+        const height = Math.min(600, window.innerHeight - 200);
+        chart.style.width = width + 'px';
+        chart.style.height = height + 'px';
+
+        const minYear = 1968, maxYear = 2025;
+        const leftPadding = 60, rightPadding = 20, topPadding = 30, bottomPadding = 10;
+        const timelineWidth = width - leftPadding - rightPadding;
+        const cardSize = 44;
+
+        // Year to X position
+        function yearToX(year) {
+            return leftPadding + ((year - minYear) / (maxYear - minYear)) * timelineWidth;
+        }
+
+        // Popularity to Y position (log scale, higher popularity = higher on screen)
+        const chartHeight = height - topPadding - bottomPadding;
+        const minPop = Math.min(...artists.map(a => a.popularity));
+        const maxPop = Math.max(...artists.map(a => a.popularity));
+        const logMin = Math.log10(Math.max(1000, minPop));
+        const logMax = Math.log10(maxPop);
+
+        function popularityToY(pop) {
+            const logPop = Math.log10(Math.max(1000, pop));
+            const normalized = (logPop - logMin) / (logMax - logMin);
+            return topPadding + (1 - normalized) * chartHeight;
+        }
+
+        // Create SVG for Sankey links
+        const svg = d3.select('#chart').append('svg')
+            .attr('id', 'svgLayer')
+            .attr('width', width)
+            .attr('height', height);
+
+        // Create timeline axis
+        const axisDiv = document.createElement('div');
+        axisDiv.className = 'timeline-axis';
+        for (let year = 1970; year <= 2020; year += 10) {
+            const tick = document.createElement('div');
+            tick.className = 'timeline-tick';
+            tick.textContent = year;
+            tick.style.left = `${((year - minYear) / (maxYear - minYear)) * 100}%`;
+            axisDiv.appendChild(tick);
+        }
+        chart.appendChild(axisDiv);
+
+        // Create popularity labels
+        popTiers.forEach(tier => {
+            if (tier.value >= minPop && tier.value <= maxPop) {
+                const label = document.createElement('div');
+                label.className = 'geo-label';
+                label.textContent = tier.label;
+                label.style.top = `${popularityToY(tier.value)}px`;
+                chart.appendChild(label);
+            }
+        });
+
+        // Create info panel inside chart
+        const infoPanel = document.createElement('div');
+        infoPanel.id = 'infoPanel';
+        infoPanel.className = 'info-panel';
+        infoPanel.innerHTML = `
+            <button class="close-btn" id="closeBtn">×</button>
+            <div class="panel-header">
+                <div class="panel-image" id="panelImage"></div>
+                <div><div class="panel-title" id="panelTitle"></div><div class="panel-subtitle" id="panelSubtitle"></div></div>
+            </div>
+            <ul class="track-list" id="trackList"></ul>
+        `;
+        chart.appendChild(infoPanel);
+
+        // Track active navbar filter (sticky)
+        let activeNavbarFilter = null; // { type: 'genre'|'trait', id: string }
+
+        function setNavbarFilter(type, id) {
+            // If same filter, do nothing
+            if (activeNavbarFilter && activeNavbarFilter.type === type && activeNavbarFilter.id === id) return;
+
+            activeNavbarFilter = { type, id };
+            if (type === 'genre') {
+                highlightFromGenre(id, true);
+            } else {
+                highlightFromTrait(id, true);
+            }
+        }
+
+        function clearNavbarFilter() {
+            if (activeNavbarFilter) {
+                updateHighlight(null, null, null);
+                activeNavbarFilter = null;
+            }
+        }
+
+        // Render genres row
+        const genresRow = document.getElementById('genresRow');
+        genres.forEach(genre => {
+            const chip = document.createElement('div');
+            chip.className = 'genre-chip';
+            chip.textContent = genre.name;
+            chip.style.background = genre.color + '30';
+            chip.style.color = genre.color;
+            chip.dataset.id = genre.id;
+            chip.onmouseenter = () => setNavbarFilter('genre', genre.id);
+            // No onmouseleave - sticky behavior
+            genresRow.appendChild(chip);
+        });
+
+        // Render traits row
+        const traitsRow = document.getElementById('traitsRow');
+        traits.forEach(trait => {
+            const chip = document.createElement('div');
+            chip.className = 'trait-chip';
+            chip.textContent = trait.name;
+            chip.style.borderColor = trait.color;
+            chip.style.color = trait.color;
+            chip.dataset.id = trait.id;
+            chip.onmouseenter = () => setNavbarFilter('trait', trait.id);
+            // No onmouseleave - sticky behavior
+            traitsRow.appendChild(chip);
+        });
+
+        // Position artists and create cards
+        let selectedArtistId = null;
+        let showArtists = true;
+        let showTracks = true;
+
+        // Calculate positions based on year (X) and popularity (Y)
+        artists.forEach(artist => {
+            artist.x = yearToX(artist.medianYear) - cardSize / 2;
+            artist.y = popularityToY(artist.popularity) - cardSize / 2;
+
+            // Clamp to stay within bounds
+            artist.x = Math.max(leftPadding, Math.min(artist.x, width - cardSize - rightPadding));
+            artist.y = Math.max(topPadding, Math.min(artist.y, height - bottomPadding - cardSize));
+        });
+
+        // Create artist cards
+        artists.forEach(artist => {
+            const card = document.createElement('div');
+            card.className = 'artist-card';
+            card.style.cssText = `left: ${artist.x}px; top: ${artist.y}px;`;
+            card.dataset.id = artist.id;
+
+            const hasImg = artist.image && artist.image.length > 0;
+            const imgUrl = hasImg ? imagePath(artist.image) : '';
+            const imgPos = artist.imagePos || 'center top';
+
+            card.innerHTML = `
+                <div class="artist-avatar ${hasImg ? '' : 'no-img'}" style="background: ${hasImg ? `url('${imgUrl}') ${imgPos}/cover no-repeat` : `linear-gradient(135deg, ${artist.bgColor}60, ${artist.bgColor}25)`}">
+                    <div class="fallback" style="background: linear-gradient(135deg, ${artist.bgColor}60, ${artist.bgColor}25);">${artist.emoji || '🎵'}</div>
+                </div>
+                <div class="artist-tooltip">${artist.name}</div>
+            `;
+
+            // Click handler only - hover handlers set up after track links created
+            card.onclick = (e) => {
+                e.stopPropagation();
+                if (selectedArtistId === artist.id) {
+                    deselectArtist();
+                } else {
+                    selectArtist(artist);
+                }
+            };
+
+            chart.appendChild(card);
+        });
+
+        // Create track dots and connection lines
+        const allTrackDots = [];
+        const trackLinks = {}; // Store SVG paths per artist
+
+        // Create a group for track connection lines
+        const linksGroup = svg.append('g').attr('class', 'track-links-group');
+
+        // Scrobbles scale for tracks (log scale)
+        const minScrobbles = 50; // Min for log scale
+        const maxScrobbles = 1000000; // 1M scrobbles as max
+        const logMinScr = Math.log10(minScrobbles);
+        const logMaxScr = Math.log10(maxScrobbles);
+
+        function scrobblesToY(scrobbles) {
+            const logScr = Math.log10(Math.max(minScrobbles, scrobbles));
+            const normalized = (logScr - logMinScr) / (logMaxScr - logMinScr);
+            return topPadding + (1 - normalized) * chartHeight;
+        }
+
+        artists.forEach(artist => {
+            const artistCenterX = artist.x + cardSize / 2;
+            const artistCenterY = artist.y + cardSize / 2;
+            trackLinks[artist.id] = [];
+
+            artist.tracks.forEach((track, i) => {
+                const trackX = yearToX(track.year);
+                // Position track by its scrobbles on Y-axis
+                const trackScr = getTrackScrobbles(artist.name, track.title);
+                const trackY = scrobblesToY(trackScr);
+
+                // Create curved path from artist to track
+                const path = linksGroup.append('path')
+                    .attr('class', 'track-link')
+                    .attr('stroke', artist.bgColor)
+                    .attr('d', `M${artistCenterX},${artistCenterY} L${trackX},${trackY}`);
+                trackLinks[artist.id].push(path);
+
+                // Create dot
+                const dot = document.createElement('div');
+                dot.className = 'track-dot';
+                dot.style.background = artist.bgColor;
+                dot.style.left = `${trackX}px`;
+                dot.style.top = `${trackY}px`;
+                dot.dataset.artistId = artist.id;
+                dot.dataset.trackTitle = track.title; // For highlighting from popup
+                dot.innerHTML = `<div class="track-tooltip">${track.title} (${track.year})</div>`;
+                dot.onclick = (e) => {
+                    e.stopPropagation();
+                    window.open(`https://open.spotify.com/search/${encodeURIComponent(track.search)}`, '_blank');
+                };
+                chart.appendChild(dot);
+                allTrackDots.push({ dot, artistId: artist.id, trackTitle: track.title });
+            });
+        });
+
+        // Show/hide track lines for an artist
+        function showTrackLines(artistId, show) {
+            // Show/hide SVG connection lines
+            if (trackLinks[artistId]) {
+                trackLinks[artistId].forEach(path => {
+                    path.classed('visible', show);
+                });
+            }
+            // Highlight track dots
+            allTrackDots.forEach(({ dot, artistId: dotArtistId }) => {
+                if (dotArtistId === artistId) {
+                    dot.classList.toggle('highlighted', show);
+                }
+            });
+        }
+
+        // Highlight a specific track dot from popup hover
+        function highlightTrackDot(artistId, trackTitle, highlight) {
+            allTrackDots.forEach(({ dot, artistId: dotArtistId, trackTitle: dotTitle }) => {
+                if (dotArtistId === artistId && dotTitle === trackTitle) {
+                    dot.classList.toggle('hovered', highlight);
+                }
+            });
+        }
+
+        // Track currently hovered artist (sticky hover)
+        let hoveredArtistId = null;
+
+        // Highlight chips for artist WITHOUT hiding other artists
+        function highlightChipsForArtist(artistId, on) {
+            const g = new Set(), t = new Set();
+            if (on) {
+                genreToArtist.forEach(l => { if (l.target === artistId) g.add(l.source); });
+                artistToTrait.forEach(l => { if (l.source === artistId) t.add(l.target); });
+            }
+
+            // Only add/remove 'active' class, don't dim anything
+            document.querySelectorAll('.genre-chip').forEach(el => {
+                if (!activeNavbarFilter) {
+                    el.classList.toggle('active', on && g.has(el.dataset.id));
+                }
+            });
+            document.querySelectorAll('.trait-chip').forEach(el => {
+                if (!activeNavbarFilter) {
+                    el.classList.toggle('active', on && t.has(el.dataset.id));
+                }
+            });
+        }
+
+        function setHoveredArtist(artist) {
+            // Clear previous hover state
+            if (hoveredArtistId && hoveredArtistId !== artist?.id) {
+                highlightChipsForArtist(hoveredArtistId, false);
+                showTrackLines(hoveredArtistId, false);
+            }
+
+            if (artist) {
+                hoveredArtistId = artist.id;
+                highlightChipsForArtist(artist.id, true);
+                showInfoPanel(artist, false);
+                showTrackLines(artist.id, true);
+            } else {
+                hoveredArtistId = null;
+                if (!activeNavbarFilter) {
+                    // Clear chip highlights only if no navbar filter
+                    document.querySelectorAll('.genre-chip').forEach(el => el.classList.remove('active'));
+                    document.querySelectorAll('.trait-chip').forEach(el => el.classList.remove('active'));
+                }
+                hideInfoPanel();
+            }
+        }
+
+        function clearHoverState() {
+            if (hoveredArtistId) {
+                highlightChipsForArtist(hoveredArtistId, false);
+                showTrackLines(hoveredArtistId, false);
+                hoveredArtistId = null;
+            }
+            hideInfoPanel();
+        }
+
+        // Update card event handlers - sticky hover (no mouseleave)
+        document.querySelectorAll('.artist-card').forEach(card => {
+            const artistId = card.dataset.id;
+            const artist = artists.find(a => a.id === artistId);
+
+            card.onmouseenter = () => {
+                if (!selectedArtistId) {
+                    setHoveredArtist(artist);
+                }
+            };
+            // No onmouseleave - state persists until hover on different artist or click outside
+        });
+
+        // Info panel functions
+        function showInfoPanel(artist, selected) {
+            const panel = document.getElementById('infoPanel');
+            const panelImg = document.getElementById('panelImage');
+            const hasImg = artist.image && artist.image.length > 0;
+            panelImg.style.background = hasImg ? `url('${imagePath(artist.image)}') center/cover` : `linear-gradient(135deg, ${artist.bgColor}60, ${artist.bgColor}20)`;
+            panelImg.innerHTML = hasImg ? '' : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:24px;">${artist.emoji}</div>`;
+
+            document.getElementById('panelTitle').textContent = artist.name;
+            document.getElementById('panelSubtitle').textContent = `${artist.desc} • ${artist.tracks.length} треков`;
+
+            const trackList = document.getElementById('trackList');
+            trackList.innerHTML = '';
+            artist.tracks.sort((a, b) => a.year - b.year).forEach(track => {
+                const li = document.createElement('li');
+                li.className = 'track-item';
+                li.innerHTML = `<span class="year">${track.year}</span><span class="track-name">${track.title}</span>`;
+                li.onclick = (e) => {
+                    e.stopPropagation();
+                    window.open(`https://open.spotify.com/search/${encodeURIComponent(track.search)}`, '_blank');
+                };
+                // Highlight corresponding dot on hover
+                li.onmouseenter = () => highlightTrackDot(artist.id, track.title, true);
+                li.onmouseleave = () => highlightTrackDot(artist.id, track.title, false);
+                trackList.appendChild(li);
+            });
+
+            // Position panel next to artist card
+            const panelWidth = 240;
+            const panelHeight = 300;
+            const gap = 8;
+
+            // Try to position to the right of the card
+            let panelX = artist.x + cardSize + gap;
+            let panelY = artist.y;
+
+            // If panel would go off right edge, position to the left
+            if (panelX + panelWidth > width) {
+                panelX = artist.x - panelWidth - gap;
+            }
+
+            // Keep panel within vertical bounds
+            if (panelY + panelHeight > height) {
+                panelY = height - panelHeight - 10;
+            }
+            if (panelY < topPadding) {
+                panelY = topPadding;
+            }
+
+            panel.style.left = `${panelX}px`;
+            panel.style.top = `${panelY}px`;
+
+            panel.classList.add('visible');
+            panel.classList.toggle('selected', selected);
+        }
+
+        function hideInfoPanel() {
+            document.getElementById('infoPanel').classList.remove('visible');
+        }
+
+        function selectArtist(artist) {
+            // Clear previous selection
+            if (selectedArtistId) {
+                document.querySelector(`.artist-card[data-id="${selectedArtistId}"]`)?.classList.remove('selected');
+                showTrackLines(selectedArtistId, false);
+            }
+            // Clear hover state (selected takes over)
+            hoveredArtistId = null;
+
+            selectedArtistId = artist.id;
+            document.querySelector(`.artist-card[data-id="${artist.id}"]`)?.classList.add('selected');
+            highlightFromArtist(artist.id, true);
+            showInfoPanel(artist, true);
+            showTrackLines(artist.id, true);
+            updateTrackVisibility();
+        }
+
+        function deselectArtist() {
+            if (selectedArtistId) {
+                document.querySelector(`.artist-card[data-id="${selectedArtistId}"]`)?.classList.remove('selected');
+                showTrackLines(selectedArtistId, false);
+            }
+            selectedArtistId = null;
+            updateHighlight(null, null, null);
+            hideInfoPanel();
+            updateTrackVisibility();
+        }
+
+        document.getElementById('closeBtn').onclick = deselectArtist;
+
+        // Track visibility mode
+        function updateTrackVisibility() {
+            allTrackDots.forEach(({ dot, artistId }) => {
+                if (showTracks) {
+                    dot.classList.toggle('dimmed', selectedArtistId && artistId !== selectedArtistId);
+                } else {
+                    dot.style.display = 'none';
+                }
+            });
+        }
+
+        document.getElementById('showArtists').onclick = () => {
+            showArtists = !showArtists;
+            document.getElementById('showArtists').classList.toggle('active', showArtists);
+            document.querySelectorAll('.artist-card').forEach(el => {
+                el.style.display = showArtists ? '' : 'none';
+            });
+        };
+
+        document.getElementById('showTracks').onclick = () => {
+            showTracks = !showTracks;
+            document.getElementById('showTracks').classList.toggle('active', showTracks);
+            document.querySelectorAll('.track-dot').forEach(el => {
+                el.style.display = showTracks ? '' : 'none';
+            });
+            document.querySelectorAll('.track-link').forEach(el => {
+                el.style.display = showTracks ? '' : 'none';
+            });
+        };
+
+        // Highlighting functions
+        function highlightFromGenre(id, on) {
+            const a = new Set(), t = new Set();
+            if (on) {
+                genreToArtist.forEach(l => { if (l.source === id) a.add(l.target); });
+                artistToTrait.forEach(l => { if (a.has(l.source)) t.add(l.target); });
+            }
+            updateHighlight(on ? new Set([id]) : null, on ? a : null, on ? t : null);
+        }
+
+        function highlightFromArtist(id, on) {
+            const g = new Set(), t = new Set();
+            if (on) {
+                genreToArtist.forEach(l => { if (l.target === id) g.add(l.source); });
+                artistToTrait.forEach(l => { if (l.source === id) t.add(l.target); });
+            }
+            updateHighlight(on ? g : null, on ? new Set([id]) : null, on ? t : null);
+        }
+
+        function highlightFromTrait(id, on) {
+            const a = new Set(), g = new Set();
+            if (on) {
+                artistToTrait.forEach(l => { if (l.target === id) a.add(l.source); });
+                genreToArtist.forEach(l => { if (a.has(l.target)) g.add(l.source); });
+            }
+            updateHighlight(on ? g : null, on ? a : null, on ? new Set([id]) : null);
+        }
+
+        function updateHighlight(aG, aA, aT) {
+            const on = aG !== null;
+
+            document.querySelectorAll('.genre-chip').forEach(el => {
+                el.classList.toggle('dimmed', on && !aG.has(el.dataset.id));
+                el.classList.toggle('active', on && aG.has(el.dataset.id));
+            });
+
+            document.querySelectorAll('.artist-card').forEach(el => {
+                if (on) {
+                    el.classList.toggle('dimmed', !aA.has(el.dataset.id));
+                } else {
+                    el.classList.remove('dimmed');
+                }
+            });
+
+            document.querySelectorAll('.trait-chip').forEach(el => {
+                el.classList.toggle('dimmed', on && !aT.has(el.dataset.id));
+                el.classList.toggle('active', on && aT.has(el.dataset.id));
+            });
+
+            // Update track dots and links
+            if (!showTracks) return;
+            allTrackDots.forEach(({ dot, artistId }) => {
+                dot.classList.toggle('dimmed', on && !aA.has(artistId));
+            });
+
+            // Update track links
+            Object.keys(trackLinks).forEach(artistId => {
+                trackLinks[artistId].forEach(path => {
+                    path.classed('dimmed', on && !aA.has(artistId));
+                });
+            });
+        }
+
+        // Click outside to deselect, clear hover, and clear navbar filter
+        document.onclick = (e) => {
+            const isOutside = !e.target.closest('.artist-card') &&
+                             !e.target.closest('.info-panel') &&
+                             !e.target.closest('.track-dot') &&
+                             !e.target.closest('.genre-chip') &&
+                             !e.target.closest('.trait-chip');
+
+            if (isOutside) {
+                if (selectedArtistId) {
+                    deselectArtist();
+                }
+                if (hoveredArtistId) {
+                    clearHoverState();
+                }
+                clearNavbarFilter();
+            }
+        };
+
+        // Initial track visibility
+        updateTrackVisibility();
+    </script>
+</body>
+</html>

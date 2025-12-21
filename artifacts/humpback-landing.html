@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Возвращение гигантов — История горбатых китов</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --deep-ocean: #0a1628;
+            --surface-blue: #1a2d4a;
+            --whale-teal: #2dd4bf;
+            --whale-blue: #60a5fa;
+            --danger-red: #ef4444;
+            --warm-orange: #fb923c;
+            --text-primary: #f0f9ff;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--deep-ocean);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ========== HERO SECTION ========== */
+        .hero {
+            height: 100vh;
+            min-height: 700px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 0 0 80px 0;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(to bottom,
+                    transparent 0%,
+                    rgba(10, 22, 40, 0.3) 50%,
+                    rgba(10, 22, 40, 0.95) 100%),
+                url('whale-bg.jpg') center/cover no-repeat,
+                radial-gradient(ellipse at 70% 40%, rgba(45, 212, 191, 0.08) 0%, transparent 60%),
+                linear-gradient(135deg, #0a1628 0%, #1a2d4a 50%, #0a1628 100%);
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 40px;
+            text-align: center;
+        }
+
+        .hero-eyebrow {
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--whale-teal);
+            margin-bottom: 24px;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.5s forwards;
+        }
+
+        .hero-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(48px, 8vw, 96px);
+            font-weight: 400;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.7s forwards;
+        }
+
+        .hero-title em {
+            font-style: italic;
+            color: var(--whale-teal);
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.9s forwards;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            animation: fadeInUp 1s ease 1.2s forwards;
+        }
+
+        .scroll-indicator span {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--whale-teal), transparent);
+            animation: scrollPulse 2s ease infinite;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scrollPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* ========== STORY SECTIONS (SCROLLYTELLING) ========== */
+        .story-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 40px;
+            position: relative;
+        }
+
+        .story-content {
+            max-width: 700px;
+            text-align: center;
+        }
+
+        .story-number {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 120px;
+            font-weight: 400;
+            color: var(--surface-blue);
+            line-height: 1;
+            margin-bottom: -20px;
+        }
+
+        .story-year {
+            font-size: 13px;
+            letter-spacing: 4px;
+            color: var(--whale-teal);
+            margin-bottom: 20px;
+        }
+
+        .story-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 400;
+            margin-bottom: 24px;
+            line-height: 1.2;
+        }
+
+        .story-text {
+            font-size: 17px;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        .story-text strong {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .story-stat {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 8px;
+            margin: 32px 0;
+            padding: 20px 40px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+        }
+
+        .story-stat-number {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 56px;
+            font-weight: 500;
+            line-height: 1;
+        }
+
+        .story-stat-number.danger { color: var(--danger-red); }
+        .story-stat-number.success { color: var(--whale-teal); }
+        .story-stat-number.warning { color: var(--warm-orange); }
+
+        .story-stat-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-align: left;
+            max-width: 150px;
+        }
+
+        /* ========== WHALE COUNTER (METAPHORIC VISUALIZATION) ========== */
+        .whale-counter-section {
+            padding: 100px 40px;
+            background: linear-gradient(to bottom, var(--deep-ocean), var(--surface-blue), var(--deep-ocean));
+        }
+
+        .whale-counter-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 60px;
+        }
+
+        .whale-counter-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 36px;
+            margin-bottom: 16px;
+        }
+
+        .whale-counter-subtitle {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        .whale-grid {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 4px;
+            padding: 40px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+        }
+
+        .whale-icon {
+            width: 12px;
+            height: 12px;
+            background: var(--whale-teal);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+        }
+
+        .whale-icon.lost {
+            background: var(--danger-red);
+            opacity: 0.15;
+        }
+
+        .whale-icon:hover {
+            opacity: 1;
+            transform: scale(1.5);
+        }
+
+        .whale-legend {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .whale-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .whale-legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        /* ========== INTERACTIVE CHART SECTION ========== */
+        .chart-section {
+            padding: 80px 20px;
+            background: var(--deep-ocean);
+        }
+
+        .chart-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 40px;
+        }
+
+        .chart-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .chart-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .chart-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 30px;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 24px;
+            margin-bottom: 24px;
+            justify-content: center;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 16px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+        }
+
+        .control-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--text-muted);
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .control-item:hover { color: var(--text-primary); }
+        .control-item.inactive { opacity: 0.25; }
+
+        .control-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+        }
+
+        .section-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            margin: 24px 0 8px 60px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .region-tag {
+            font-size: 9px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.06);
+            letter-spacing: 0;
+            text-transform: none;
+        }
+
+        /* SVG Styles */
+        .axis text {
+            font-size: 10px;
+            fill: var(--text-dim);
+        }
+
+        .axis line, .axis path {
+            stroke: rgba(255,255,255,0.1);
+        }
+
+        .grid-line {
+            stroke: rgba(255,255,255,0.05);
+        }
+
+        .data-line {
+            fill: none;
+            stroke-width: 2.5;
+            stroke-opacity: 0.8;
+        }
+
+        .ci-area {
+            opacity: 0.15;
+        }
+
+        .k-line {
+            stroke-dasharray: 6,4;
+            stroke-width: 1.5;
+            stroke-opacity: 0.4;
+        }
+
+        .k-label {
+            font-size: 9px;
+            fill: var(--text-dim);
+        }
+
+        .catch-bar {
+            opacity: 0.7;
+        }
+
+        .ume-bar {
+            opacity: 0.8;
+        }
+
+        .sst-line {
+            fill: none;
+            stroke-width: 2.5;
+        }
+
+        .sst-area {
+            opacity: 0.25;
+        }
+
+        .zoom-rect {
+            fill: var(--danger-red);
+            opacity: 0.06;
+            stroke: var(--danger-red);
+            stroke-width: 1;
+            stroke-opacity: 0.2;
+        }
+
+        .zoom-connector {
+            fill: none;
+            stroke: var(--danger-red);
+            stroke-width: 1;
+            stroke-opacity: 0.2;
+            stroke-dasharray: 4,3;
+        }
+
+        .crosshair {
+            stroke: var(--text-primary);
+            stroke-width: 1;
+            stroke-opacity: 0.3;
+        }
+
+        .event-line {
+            stroke: var(--text-dim);
+            stroke-width: 1;
+            stroke-opacity: 0.2;
+            stroke-dasharray: 2,2;
+        }
+
+        .event-dot {
+            fill: var(--deep-ocean);
+            stroke: var(--text-dim);
+            stroke-width: 1.5;
+        }
+
+        .event-label, .event-year {
+            font-size: 9px;
+            fill: var(--text-dim);
+        }
+
+        .tooltip {
+            position: fixed;
+            padding: 14px 18px;
+            background: var(--surface-blue);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            font-size: 12px;
+            color: var(--text-primary);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s;
+            z-index: 1000;
+            max-width: 280px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+
+        .tooltip-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .tooltip-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 3px 0;
+        }
+
+        .tooltip-label { color: var(--text-muted); }
+        .tooltip-value { font-weight: 500; }
+
+        .tooltip-section {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .tooltip-section-title {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            margin-bottom: 6px;
+        }
+
+        /* ========== STATS GRID ========== */
+        .stats-section {
+            padding: 80px 40px;
+            background: linear-gradient(to bottom, var(--deep-ocean), var(--surface-blue));
+        }
+
+        .stats-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .stats-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            padding: 28px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            background: rgba(255,255,255,0.05);
+            transform: translateY(-4px);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .stat-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 42px;
+            font-weight: 500;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .stat-detail {
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-top: 8px;
+        }
+
+        /* ========== FOOTER ========== */
+        .footer {
+            padding: 60px 40px;
+            text-align: center;
+            background: var(--surface-blue);
+        }
+
+        .footer-sources {
+            font-size: 11px;
+            color: var(--text-dim);
+            max-width: 700px;
+            margin: 0 auto 20px;
+            line-height: 1.8;
+        }
+
+        .footer-credit {
+            font-size: 10px;
+            color: var(--text-dim);
+            opacity: 0.5;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .hero { padding-bottom: 60px; }
+            .hero-content { padding: 0 24px; }
+            .story-section { padding: 60px 24px; }
+            .story-number { font-size: 80px; }
+            .whale-grid { padding: 20px; gap: 3px; }
+            .whale-icon { width: 8px; height: 8px; }
+            .chart-container { padding: 16px; }
+            .controls { gap: 8px; }
+            .control-group { padding: 6px 10px; gap: 10px; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <p class="hero-eyebrow">Визуализация данных</p>
+            <h1 class="hero-title">Возвращение <em>гигантов</em></h1>
+            <p class="hero-subtitle">История о том, как горбатые киты вернулись с края вымирания — рассказанная через данные 200 лет наблюдений</p>
+        </div>
+        <div class="scroll-indicator">
+            <span>Листайте</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- STORY: THE BEGINNING -->
+    <section class="story-section">
+        <div class="story-content">
+            <div class="story-number">I</div>
+            <p class="story-year">1830 — НАЧАЛО</p>
+            <h2 class="story-title">В океанах пели тысячи голосов</h2>
+            <p class="story-text">
+                Горбатые киты заполняли моря от Арктики до Антарктики.
+                <strong>Около 27 000 особей</strong> только в западной части Южной Атлантики.
+                Их песни — сложные композиции, которые могут длиться часами —
+                разносились на сотни километров под водой.
+            </p>
+            <div class="story-stat">
+                <span class="story-stat-number success">27k</span>
+                <span class="story-stat-label">китов в Южной Атлантике</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- STORY: THE HUNT -->
+    <section class="story-section">
+        <div class="story-content">
+            <div class="story-number">II</div>
+            <p class="story-year">1904 — КАТАСТРОФА</p>
+            <h2 class="story-title">Промышленный китобойный промысел</h2>
+            <p class="story-text">
+                Начало XX века принесло паровые суда и гарпунные пушки.
+                <strong>Южная Георгия</strong> стала центром бойни.
+                За несколько десятилетий популяция была уничтожена на <strong>98%</strong>.
+                К 1958 году в Южной Атлантике осталось всего 440 особей.
+            </p>
+            <div class="story-stat">
+                <span class="story-stat-number danger">440</span>
+                <span class="story-stat-label">особей осталось к 1958 году</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- STORY: THE BAN -->
+    <section class="story-section">
+        <div class="story-content">
+            <div class="story-number">III</div>
+            <p class="story-year">1966 — ПЕРЕЛОМ</p>
+            <h2 class="story-title">Международный запрет IWC</h2>
+            <p class="story-text">
+                Международная китобойная комиссия ввела запрет на промысел горбатых китов.
+                В 1986 году последовал полный мораторий на коммерческий китобойный промысел.
+                <strong>Началось медленное восстановление</strong> — по 10-12% в год для некоторых популяций.
+            </p>
+        </div>
+    </section>
+
+    <!-- WHALE COUNTER -->
+    <section class="whale-counter-section">
+        <div class="whale-counter-header">
+            <h2 class="whale-counter-title">Каждый кит — история</h2>
+            <p class="whale-counter-subtitle">
+                Из 27 000 китов Южной Атлантики к 1958 году выжило менее 2%.
+                Каждая точка — это 100 жизней.
+            </p>
+        </div>
+        <div class="whale-grid" id="whaleGrid"></div>
+        <div class="whale-legend">
+            <div class="whale-legend-item">
+                <div class="whale-legend-dot" style="background: var(--whale-teal);"></div>
+                <span>Выжившие к 1958</span>
+            </div>
+            <div class="whale-legend-item">
+                <div class="whale-legend-dot" style="background: var(--danger-red); opacity: 0.3;"></div>
+                <span>Погибшие от промысла</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- STORY: RECOVERY -->
+    <section class="story-section">
+        <div class="story-content">
+            <div class="story-number">IV</div>
+            <p class="story-year">2024 — ВОЗВРАЩЕНИЕ</p>
+            <h2 class="story-title">Гиганты вернулись</h2>
+            <p class="story-text">
+                Сегодня популяция Западной Южной Атлантики полностью восстановилась до
+                <strong>27 800 особей</strong> — 100% от исторического уровня.
+                Северная Атлантика насчитывает <strong>35 000 китов</strong>.
+                Это одна из величайших историй успеха в охране природы.
+            </p>
+            <div class="story-stat">
+                <span class="story-stat-number success">100%</span>
+                <span class="story-stat-label">восстановление популяции</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- STORY: NEW THREATS -->
+    <section class="story-section">
+        <div class="story-content">
+            <div class="story-number">V</div>
+            <p class="story-year">2014–2021 — НОВЫЕ УГРОЗЫ</p>
+            <h2 class="story-title">The Blob и климатический кризис</h2>
+            <p class="story-text">
+                Но история не закончилась. В 2014 году аномальная тепловая волна <strong>"The Blob"</strong>
+                в Тихом океане нарушила пищевые цепи. Популяция Северного Тихого океана
+                сократилась на <strong>20%</strong> — с 33 000 до 27 000 особей.
+                Атлантика фиксирует рекордную смертность от столкновений с судами.
+            </p>
+            <div class="story-stat">
+                <span class="story-stat-number warning">−20%</span>
+                <span class="story-stat-label">Сев. Тихий океан после The Blob</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- INTERACTIVE CHART -->
+    <section class="chart-section">
+        <div class="chart-header">
+            <h2 class="chart-title">Исследуйте данные</h2>
+            <p class="chart-subtitle">Интерактивная визуализация 200 лет истории популяций</p>
+        </div>
+
+        <div class="chart-container">
+            <div class="controls">
+                <div class="control-group">
+                    <div class="control-item" data-series="na" onclick="toggleSeries('na')">
+                        <span class="control-dot" style="background: var(--whale-blue)"></span>
+                        <span>Сев. Атлантика</span>
+                    </div>
+                    <div class="control-item" data-series="wsa" onclick="toggleSeries('wsa')">
+                        <span class="control-dot" style="background: var(--text-muted)"></span>
+                        <span>Зап. Юж. Атлантика</span>
+                    </div>
+                    <div class="control-item" data-series="np" onclick="toggleSeries('np')">
+                        <span class="control-dot" style="background: var(--whale-teal)"></span>
+                        <span>Сев. Тихий океан</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="control-item" data-series="ci" onclick="toggleSeries('ci')">
+                        <span class="control-dot" style="background: var(--text-muted); opacity: 0.3"></span>
+                        <span>95% CI</span>
+                    </div>
+                    <div class="control-item" data-series="k" onclick="toggleSeries('k')">
+                        <span class="control-dot" style="background: #a855f7; opacity: 0.5"></span>
+                        <span>Ёмкость среды (K)</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="control-item" data-series="catch" onclick="toggleSeries('catch')">
+                        <span class="control-dot" style="background: var(--danger-red)"></span>
+                        <span>Вылов</span>
+                    </div>
+                </div>
+            </div>
+
+            <svg id="mainChart"></svg>
+            <svg id="connectorSvg" style="width: 100%; height: 20px;"></svg>
+
+            <div class="section-label">
+                Unusual Mortality Event — смертей/год
+                <span class="region-tag">Атлантика, вост. побережье США</span>
+            </div>
+            <svg id="umeChart"></svg>
+
+            <div class="section-label" style="margin-top: 16px;">
+                Аномалия температуры океана (SST) — The Blob
+                <span class="region-tag">Сев. Тихий океан</span>
+            </div>
+            <svg id="sstChart"></svg>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats-section">
+        <div class="stats-header">
+            <h2 class="stats-title">Ключевые цифры</h2>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="control-dot" style="background: var(--whale-blue); width:8px; height:8px; border-radius:2px;"></span>
+                    Северная Атлантика
+                </div>
+                <div class="stat-value" style="color: var(--whale-blue);">35,000</div>
+                <div class="stat-detail">мин. 700 (1932) · K ≈ 15–20k</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="control-dot" style="background: var(--text-muted); width:8px; height:8px; border-radius:2px;"></span>
+                    Зап. Юж. Атлантика
+                </div>
+                <div class="stat-value">27,800</div>
+                <div class="stat-detail">мин. 440 (1958) · K = 27k · 100% восст.</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="control-dot" style="background: var(--whale-teal); width:8px; height:8px; border-radius:2px;"></span>
+                    Сев. Тихий океан
+                </div>
+                <div class="stat-value" style="color: var(--whale-teal);">26,662</div>
+                <div class="stat-detail">пик 33,488 (2012) · −20% после Blob</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="control-dot" style="background: var(--danger-red); width:8px; height:8px; border-radius:2px;"></span>
+                    UME 2016–2025
+                </div>
+                <div class="stat-value" style="color: var(--danger-red);">262</div>
+                <div class="stat-detail">смертей · 45% столкновения с судами</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p class="footer-sources">
+            Источники: IWC, NOAA, Zerbini et al. 2019, Cheeseman et al. 2024<br>
+            Данные охватывают период 1830–2024 гг.
+        </p>
+        <p class="footer-credit">
+            Визуализация создана с применением принципов Information is Beautiful Awards
+        </p>
+    </footer>
+
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        // ============ WHALE GRID (Metaphoric Visualization) ============
+        function renderWhaleGrid() {
+            const grid = document.getElementById('whaleGrid');
+            const total = 270; // Each icon = 100 whales (27,000 total)
+            const survivors = 5; // ~440 survived = ~5 icons
+
+            for (let i = 0; i < total; i++) {
+                const whale = document.createElement('div');
+                whale.className = i < survivors ? 'whale-icon' : 'whale-icon lost';
+                whale.title = i < survivors
+                    ? `Выжившие: ~${(i + 1) * 100} особей`
+                    : `Погибшие от промысла`;
+                grid.appendChild(whale);
+            }
+        }
+        renderWhaleGrid();
+
+        // ============ DATA ============
+        const popData = {
+            wsa: [
+                { year: 1830, pop: 27000, ci_low: 22800, ci_high: 33000 },
+                { year: 1870, pop: 22000, ci_low: 18000, ci_high: 27000 },
+                { year: 1890, pop: 18000, ci_low: 14000, ci_high: 23000 },
+                { year: 1904, pop: 24700, ci_low: 20000, ci_high: 30000 },
+                { year: 1910, pop: 15000, ci_low: 10000, ci_high: 20000 },
+                { year: 1916, pop: 4000, ci_low: 2000, ci_high: 7000 },
+                { year: 1920, pop: 2000, ci_low: 800, ci_high: 4000 },
+                { year: 1926, pop: 700, ci_low: 400, ci_high: 1200 },
+                { year: 1940, pop: 550, ci_low: 250, ci_high: 1000 },
+                { year: 1950, pop: 480, ci_low: 200, ci_high: 900 },
+                { year: 1958, pop: 440, ci_low: 198, ci_high: 1400 },
+                { year: 1966, pop: 500, ci_low: 250, ci_high: 1000 },
+                { year: 1975, pop: 800, ci_low: 500, ci_high: 1300 },
+                { year: 1985, pop: 1800, ci_low: 1200, ci_high: 2800 },
+                { year: 1995, pop: 3500, ci_low: 2500, ci_high: 5000 },
+                { year: 2005, pop: 6400, ci_low: 5084, ci_high: 8068 },
+                { year: 2008, pop: 16410, ci_low: 10563, ci_high: 25495 },
+                { year: 2012, pop: 19429, ci_low: 15958, ci_high: 23654 },
+                { year: 2015, pop: 12123, ci_low: 10811, ci_high: 13531 },
+                { year: 2019, pop: 14552, ci_low: 7282, ci_high: 19874 },
+                { year: 2024, pop: 27800, ci_low: 23000, ci_high: 33000 }
+            ],
+            na: [
+                { year: 1870, pop: 15000, ci_low: 12000, ci_high: 18000 },
+                { year: 1890, pop: 12000, ci_low: 9000, ci_high: 15000 },
+                { year: 1904, pop: 10000, ci_low: 7000, ci_high: 13000 },
+                { year: 1915, pop: 5000, ci_low: 3000, ci_high: 8000 },
+                { year: 1925, pop: 2500, ci_low: 1500, ci_high: 4000 },
+                { year: 1932, pop: 700, ci_low: 500, ci_high: 1000 },
+                { year: 1940, pop: 800, ci_low: 500, ci_high: 1200 },
+                { year: 1950, pop: 900, ci_low: 600, ci_high: 1400 },
+                { year: 1958, pop: 700, ci_low: 400, ci_high: 1100 },
+                { year: 1966, pop: 900, ci_low: 600, ci_high: 1400 },
+                { year: 1975, pop: 2000, ci_low: 1400, ci_high: 3000 },
+                { year: 1979, pop: 5930, ci_low: 4800, ci_high: 7200 },
+                { year: 1985, pop: 7500, ci_low: 6000, ci_high: 9500 },
+                { year: 1992, pop: 10752, ci_low: 9800, ci_high: 11800 },
+                { year: 2000, pop: 11500, ci_low: 10000, ci_high: 13500 },
+                { year: 2006, pop: 14500, ci_low: 12500, ci_high: 17000 },
+                { year: 2015, pop: 22000, ci_low: 18000, ci_high: 27000 },
+                { year: 2024, pop: 35000, ci_low: 30000, ci_high: 42000 }
+            ],
+            np: [
+                { year: 1966, pop: 1400, ci_low: 1000, ci_high: 2000 },
+                { year: 1976, pop: 2500, ci_low: 1800, ci_high: 3500 },
+                { year: 1991, pop: 9819, ci_low: 7000, ci_high: 13000 },
+                { year: 2002, pop: 16875, ci_low: 10920, ci_high: 22830 },
+                { year: 2005, pop: 18302, ci_low: 15000, ci_high: 22000 },
+                { year: 2008, pop: 26000, ci_low: 22400, ci_high: 29600 },
+                { year: 2012, pop: 33488, ci_low: 28578, ci_high: 38398 },
+                { year: 2014, pop: 32000, ci_low: 27400, ci_high: 36600 },
+                { year: 2016, pop: 30000, ci_low: 25800, ci_high: 34200 },
+                { year: 2019, pop: 27500, ci_low: 23300, ci_high: 31700 },
+                { year: 2021, pop: 26662, ci_low: 22470, ci_high: 30854 }
+            ]
+        };
+
+        const catchData = [
+            { year: 1904, catch: 500 },
+            { year: 1908, catch: 5000 },
+            { year: 1910, catch: 12000 },
+            { year: 1912, catch: 11000 },
+            { year: 1914, catch: 8000 },
+            { year: 1916, catch: 1000 },
+            { year: 1920, catch: 1500 },
+            { year: 1925, catch: 2000 },
+            { year: 1930, catch: 3500 },
+            { year: 1935, catch: 4000 },
+            { year: 1940, catch: 2500 },
+            { year: 1950, catch: 6000 },
+            { year: 1955, catch: 8000 },
+            { year: 1958, catch: 5500 },
+            { year: 1962, catch: 3500 },
+            { year: 1966, catch: 1500 },
+            { year: 1970, catch: 200 },
+            { year: 1973, catch: 50 }
+        ];
+
+        const umeData = [
+            { year: 2016, deaths: 26 },
+            { year: 2017, deaths: 34 },
+            { year: 2018, deaths: 26 },
+            { year: 2019, deaths: 27 },
+            { year: 2020, deaths: 33 },
+            { year: 2021, deaths: 10 },
+            { year: 2022, deaths: 19 },
+            { year: 2023, deaths: 37 },
+            { year: 2024, deaths: 31 },
+            { year: 2025, deaths: 19 }
+        ];
+
+        const sstData = [
+            { year: 2010.0, anomaly: 0.1 },
+            { year: 2010.5, anomaly: 0.0 },
+            { year: 2011.0, anomaly: -0.2 },
+            { year: 2011.5, anomaly: 0.1 },
+            { year: 2012.0, anomaly: 0.2 },
+            { year: 2012.5, anomaly: 0.3 },
+            { year: 2013.0, anomaly: 0.4 },
+            { year: 2013.5, anomaly: 1.0 },
+            { year: 2014.0, anomaly: 1.8 },
+            { year: 2014.5, anomaly: 2.5 },
+            { year: 2015.0, anomaly: 2.8 },
+            { year: 2015.5, anomaly: 2.6 },
+            { year: 2016.0, anomaly: 2.2 },
+            { year: 2016.5, anomaly: 1.5 },
+            { year: 2017.0, anomaly: 0.8 },
+            { year: 2017.5, anomaly: 0.4 },
+            { year: 2018.0, anomaly: 0.3 },
+            { year: 2018.5, anomaly: 0.5 },
+            { year: 2019.0, anomaly: 1.2 },
+            { year: 2019.5, anomaly: 1.8 },
+            { year: 2020.0, anomaly: 1.5 },
+            { year: 2020.5, anomaly: 0.9 },
+            { year: 2021.0, anomaly: 0.6 },
+            { year: 2021.5, anomaly: 0.4 },
+            { year: 2022.0, anomaly: 0.5 },
+            { year: 2022.5, anomaly: 0.7 },
+            { year: 2023.0, anomaly: 1.0 },
+            { year: 2023.5, anomaly: 1.3 },
+            { year: 2024.0, anomaly: 1.1 },
+            { year: 2024.5, anomaly: 0.9 }
+        ];
+
+        const events = [
+            { year: 1904, label: 'Начало промысла', sublabel: 'South Georgia' },
+            { year: 1946, label: 'IWC основана', sublabel: '' },
+            { year: 1966, label: 'Запрет IWC', sublabel: 'на горбачей' },
+            { year: 1986, label: 'Мораторий', sublabel: '' }
+        ];
+
+        const carryingCapacity = {
+            wsa: { k: 27000, low: 22800, high: 33000 },
+            na: { k: 17500, low: 15000, high: 20000 },
+            np: { k: 33500, low: 30000, high: 37000 }
+        };
+
+        // ============ STATE ============
+        const state = { na: true, wsa: true, np: true, ci: true, k: true, catch: true };
+
+        // ============ COLORS ============
+        const colors = {
+            na: '#60a5fa',
+            wsa: '#94a3b8',
+            np: '#2dd4bf',
+            catch: '#ef4444',
+            k: '#a855f7',
+            ume: '#ef4444',
+            sst: '#fb923c'
+        };
+
+        // ============ DIMENSIONS ============
+        const margin = { top: 20, right: 50, bottom: 70, left: 55 };
+        const width = 1000;
+        const height = 380;
+        const innerW = width - margin.left - margin.right;
+        const innerH = height - margin.top - margin.bottom;
+
+        const x = d3.scaleLinear().domain([1830, 2025]).range([0, innerW]);
+        const detailX = d3.scaleLinear().domain([2010, 2026]).range([0, innerW]);
+
+        // ============ MAIN CHART ============
+        const svg = d3.select('#mainChart').attr('viewBox', `0 0 ${width} ${height}`);
+        const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+        const y = d3.scaleLinear().domain([0, 45000]).range([innerH, 0]);
+
+        // ============ UME CHART ============
+        const umeMargin = { top: 10, right: 50, bottom: 20, left: 55 };
+        const umeHeight = 100;
+        const umeInnerH = umeHeight - umeMargin.top - umeMargin.bottom;
+        const umeSvg = d3.select('#umeChart').attr('viewBox', `0 0 ${width} ${umeHeight}`);
+        const umeG = umeSvg.append('g').attr('transform', `translate(${umeMargin.left},${umeMargin.top})`);
+        const umeY = d3.scaleLinear().domain([0, 45]).range([umeInnerH, 0]);
+
+        // ============ SST CHART ============
+        const sstMargin = { top: 10, right: 50, bottom: 25, left: 55 };
+        const sstHeight = 120;
+        const sstInnerH = sstHeight - sstMargin.top - sstMargin.bottom;
+        const sstSvg = d3.select('#sstChart').attr('viewBox', `0 0 ${width} ${sstHeight}`);
+        const sstG = sstSvg.append('g').attr('transform', `translate(${sstMargin.left},${sstMargin.top})`);
+        const sstY = d3.scaleLinear().domain([-0.5, 3.5]).range([sstInnerH, 0]);
+
+        // ============ CONNECTOR ============
+        const connectorSvg = d3.select('#connectorSvg').attr('viewBox', `0 0 ${width} 20`);
+
+        let mainCrosshair, umeCrosshair, sstCrosshair;
+        let mainDots = [], umeDot, sstDot;
+
+        // ============ RENDER MAIN ============
+        function renderMain() {
+            g.selectAll('*').remove();
+
+            // Grid
+            [10000, 20000, 30000, 40000].forEach(v => {
+                g.append('line').attr('class', 'grid-line')
+                    .attr('x1', 0).attr('x2', innerW)
+                    .attr('y1', y(v)).attr('y2', y(v));
+            });
+
+            // Zoom rect
+            g.append('rect').attr('class', 'zoom-rect')
+                .attr('x', x(2010)).attr('width', x(2025) - x(2010))
+                .attr('y', 0).attr('height', innerH);
+
+            // Carrying capacity
+            if (state.k) {
+                if (state.wsa) {
+                    g.append('line').attr('class', 'k-line')
+                        .attr('x1', 0).attr('x2', innerW)
+                        .attr('y1', y(carryingCapacity.wsa.k)).attr('y2', y(carryingCapacity.wsa.k))
+                        .attr('stroke', colors.wsa);
+                    g.append('text').attr('class', 'k-label')
+                        .attr('x', 5).attr('y', y(carryingCapacity.wsa.k) - 4).text('K (WSA) = 27k');
+                }
+                if (state.np) {
+                    g.append('line').attr('class', 'k-line')
+                        .attr('x1', x(1966)).attr('x2', innerW)
+                        .attr('y1', y(carryingCapacity.np.k)).attr('y2', y(carryingCapacity.np.k))
+                        .attr('stroke', colors.np).attr('stroke-opacity', 0.3);
+                    g.append('text').attr('class', 'k-label')
+                        .attr('x', x(1970)).attr('y', y(carryingCapacity.np.k) - 4).text('K (NP) ≈ 33k');
+                }
+            }
+
+            // Catch bars
+            if (state.catch) {
+                const yCatch = d3.scaleLinear().domain([0, 15000]).range([innerH, innerH - 60]);
+                g.selectAll('.catch-bar').data(catchData).join('rect')
+                    .attr('class', 'catch-bar')
+                    .attr('x', d => x(d.year) - 1).attr('width', 2)
+                    .attr('y', d => yCatch(d.catch))
+                    .attr('height', d => innerH - yCatch(d.catch))
+                    .attr('fill', colors.catch);
+            }
+
+            // CI areas
+            const areaGen = d3.area()
+                .x(d => x(d.year)).y0(d => y(d.ci_low)).y1(d => y(d.ci_high))
+                .curve(d3.curveMonotoneX);
+
+            if (state.ci) {
+                if (state.wsa) g.append('path').datum(popData.wsa).attr('class', 'ci-area').attr('d', areaGen).attr('fill', colors.wsa);
+                if (state.na) g.append('path').datum(popData.na).attr('class', 'ci-area').attr('d', areaGen).attr('fill', colors.na);
+                if (state.np) g.append('path').datum(popData.np).attr('class', 'ci-area').attr('d', areaGen).attr('fill', colors.np);
+            }
+
+            // Lines
+            const lineGen = d3.line().x(d => x(d.year)).y(d => y(d.pop)).curve(d3.curveMonotoneX);
+            if (state.wsa) g.append('path').datum(popData.wsa).attr('class', 'data-line').attr('d', lineGen).attr('stroke', colors.wsa);
+            if (state.na) g.append('path').datum(popData.na).attr('class', 'data-line').attr('d', lineGen).attr('stroke', colors.na);
+            if (state.np) g.append('path').datum(popData.np).attr('class', 'data-line').attr('d', lineGen).attr('stroke', colors.np);
+
+            // Labels
+            const lastPoints = {
+                na: popData.na[popData.na.length - 1],
+                wsa: popData.wsa[popData.wsa.length - 1],
+                np: popData.np[popData.np.length - 1]
+            };
+            if (state.na) g.append('text').attr('x', innerW + 5).attr('y', y(lastPoints.na.pop) + 3).attr('font-size', '10px').attr('fill', colors.na).text('NA 35k');
+            if (state.wsa) g.append('text').attr('x', innerW + 5).attr('y', y(lastPoints.wsa.pop) - 8).attr('font-size', '10px').attr('fill', colors.wsa).text('WSA 28k');
+            if (state.np) g.append('text').attr('x', innerW + 5).attr('y', y(lastPoints.np.pop) + 12).attr('font-size', '10px').attr('fill', colors.np).text('NP 27k');
+
+            // Axes
+            g.append('g').attr('class', 'axis')
+                .call(d3.axisLeft(y).tickValues([0, 10000, 20000, 30000, 40000]).tickFormat(d => d === 0 ? '0' : (d/1000) + 'k').tickSize(4));
+            g.append('g').attr('class', 'axis').attr('transform', `translate(0,${innerH})`)
+                .call(d3.axisBottom(x).tickValues([1850, 1900, 1950, 2000]).tickSize(4));
+
+            // Events
+            events.forEach((e, i) => {
+                const ex = x(e.year);
+                const labelOffset = 32 + (i % 2) * 12;
+                const eventG = g.append('g');
+                eventG.append('line').attr('class', 'event-line').attr('x1', ex).attr('x2', ex).attr('y1', 0).attr('y2', innerH);
+                eventG.append('line').attr('x1', ex).attr('x2', ex).attr('y1', innerH).attr('y2', innerH + labelOffset - 10)
+                    .attr('stroke', '#64748b').attr('stroke-width', 1).attr('stroke-opacity', 0.2);
+                eventG.append('circle').attr('class', 'event-dot').attr('cx', ex).attr('cy', innerH).attr('r', 3);
+                eventG.append('text').attr('class', 'event-year').attr('x', ex).attr('y', innerH + labelOffset - 8).attr('text-anchor', 'middle').text(e.year);
+                eventG.append('text').attr('class', 'event-label').attr('x', ex).attr('y', innerH + labelOffset + 2).attr('text-anchor', 'middle').text(e.label);
+                if (e.sublabel) eventG.append('text').attr('class', 'event-year').attr('x', ex).attr('y', innerH + labelOffset + 12).attr('text-anchor', 'middle').text(e.sublabel);
+            });
+
+            // Crosshair
+            mainCrosshair = g.append('line').attr('class', 'crosshair').attr('y1', 0).attr('y2', innerH).style('display', 'none');
+            mainDots = [];
+            ['na', 'wsa', 'np'].forEach(key => {
+                const dot = g.append('circle').attr('r', 5).attr('fill', colors[key]).style('display', 'none');
+                mainDots.push({ key, dot });
+            });
+
+            // Hover
+            g.append('rect').attr('fill', 'transparent').attr('width', innerW).attr('height', innerH).attr('cursor', 'crosshair')
+                .on('mousemove', (e) => onHover(e, 'main')).on('mouseleave', onLeave);
+        }
+
+        // ============ RENDER CONNECTOR ============
+        function renderConnector() {
+            connectorSvg.selectAll('*').remove();
+            connectorSvg.append('line').attr('class', 'zoom-connector')
+                .attr('x1', margin.left + x(2010)).attr('y1', 0)
+                .attr('x2', umeMargin.left).attr('y2', 20);
+            connectorSvg.append('line').attr('class', 'zoom-connector')
+                .attr('x1', margin.left + x(2025)).attr('y1', 0)
+                .attr('x2', umeMargin.left + innerW).attr('y2', 20);
+        }
+
+        // ============ RENDER UME ============
+        function renderUME() {
+            umeG.selectAll('*').remove();
+            [15, 30].forEach(v => {
+                umeG.append('line').attr('class', 'grid-line').attr('x1', 0).attr('x2', innerW).attr('y1', umeY(v)).attr('y2', umeY(v));
+            });
+            umeG.append('line').attr('x1', 0).attr('x2', innerW).attr('y1', umeY(14)).attr('y2', umeY(14))
+                .attr('stroke', '#64748b').attr('stroke-dasharray', '4,3').attr('stroke-opacity', 0.5);
+            umeG.append('text').attr('x', innerW + 5).attr('y', umeY(14) + 3).attr('font-size', '9px').attr('fill', '#64748b').text('baseline ≈14');
+
+            umeG.selectAll('.ume-bar').data(umeData).join('rect').attr('class', 'ume-bar')
+                .attr('x', d => detailX(d.year) - 1).attr('width', 2)
+                .attr('y', d => umeY(d.deaths)).attr('height', d => umeInnerH - umeY(d.deaths))
+                .attr('fill', colors.ume);
+
+            umeG.selectAll('.ume-label').data(umeData).join('text')
+                .attr('x', d => detailX(d.year)).attr('y', d => umeY(d.deaths) - 4)
+                .attr('text-anchor', 'middle').attr('font-size', '9px').attr('fill', '#64748b').text(d => d.deaths);
+
+            umeG.append('g').attr('class', 'axis')
+                .call(d3.axisLeft(umeY).tickValues([0, 15, 30, 45]).tickSize(3));
+
+            umeCrosshair = umeG.append('line').attr('class', 'crosshair').attr('y1', 0).attr('y2', umeInnerH).style('display', 'none');
+            umeDot = umeG.append('circle').attr('r', 5).attr('fill', colors.ume).style('display', 'none');
+
+            umeG.append('rect').attr('fill', 'transparent').attr('width', innerW).attr('height', umeInnerH).attr('cursor', 'crosshair')
+                .on('mousemove', (e) => onHover(e, 'detail')).on('mouseleave', onLeave);
+        }
+
+        // ============ RENDER SST ============
+        function renderSST() {
+            sstG.selectAll('*').remove();
+            [0, 1, 2, 3].forEach(v => {
+                sstG.append('line').attr('class', 'grid-line').attr('x1', 0).attr('x2', innerW).attr('y1', sstY(v)).attr('y2', sstY(v));
+            });
+            sstG.append('line').attr('x1', 0).attr('x2', innerW).attr('y1', sstY(0)).attr('y2', sstY(0))
+                .attr('stroke', '#64748b').attr('stroke-width', 1.5).attr('stroke-opacity', 0.5);
+
+            const areaGen = d3.area().x(d => detailX(d.year)).y0(sstY(0)).y1(d => sstY(Math.max(0, d.anomaly))).curve(d3.curveMonotoneX);
+            sstG.append('path').datum(sstData).attr('class', 'sst-area').attr('d', areaGen).attr('fill', colors.sst);
+
+            const lineGen = d3.line().x(d => detailX(d.year)).y(d => sstY(d.anomaly)).curve(d3.curveMonotoneX);
+            sstG.append('path').datum(sstData).attr('class', 'sst-line').attr('d', lineGen).attr('stroke', colors.sst);
+
+            const peak = sstData.find(d => d.anomaly === Math.max(...sstData.map(s => s.anomaly)));
+            sstG.append('circle').attr('cx', detailX(peak.year)).attr('cy', sstY(peak.anomaly)).attr('r', 5).attr('fill', colors.sst);
+            sstG.append('text').attr('x', detailX(peak.year) + 12).attr('y', sstY(peak.anomaly) - 8).attr('font-size', '10px').attr('fill', colors.sst).text(`+${peak.anomaly}°C`);
+
+            sstG.append('rect').attr('x', detailX(2013.5)).attr('width', detailX(2016.5) - detailX(2013.5))
+                .attr('y', 0).attr('height', sstInnerH).attr('fill', colors.sst).attr('opacity', 0.1);
+            sstG.append('text').attr('x', detailX(2014)).attr('y', 14).attr('font-size', '10px').attr('font-weight', '500').attr('fill', colors.sst).text('The Blob');
+
+            // NP overlay
+            const npRecent = popData.np.filter(d => d.year >= 2010);
+            const npY = d3.scaleLinear().domain([20000, 35000]).range([sstInnerH * 0.9, sstInnerH * 0.3]);
+            const npLine = d3.line().x(d => detailX(d.year)).y(d => npY(d.pop)).curve(d3.curveMonotoneX);
+            sstG.append('path').datum(npRecent).attr('d', npLine).attr('fill', 'none')
+                .attr('stroke', colors.np).attr('stroke-width', 1.5).attr('stroke-opacity', 0.4).attr('stroke-dasharray', '4,2');
+            sstG.append('text').attr('x', innerW + 5).attr('y', npY(npRecent[npRecent.length - 1].pop) + 3)
+                .attr('font-size', '9px').attr('fill', colors.np).attr('opacity', 0.6).text('NP pop');
+
+            sstG.append('g').attr('class', 'axis').attr('transform', `translate(0,${sstInnerH})`)
+                .call(d3.axisBottom(detailX).tickValues([2010, 2012, 2014, 2016, 2018, 2020, 2022, 2024, 2026]).tickSize(3));
+            sstG.append('g').attr('class', 'axis')
+                .call(d3.axisLeft(sstY).tickValues([0, 1, 2, 3]).tickFormat(d => d === 0 ? '0' : '+' + d + '°C').tickSize(3));
+
+            sstCrosshair = sstG.append('line').attr('class', 'crosshair').attr('y1', 0).attr('y2', sstInnerH).style('display', 'none');
+            sstDot = sstG.append('circle').attr('r', 5).attr('fill', colors.sst).style('display', 'none');
+
+            sstG.append('rect').attr('fill', 'transparent').attr('width', innerW).attr('height', sstInnerH).attr('cursor', 'crosshair')
+                .on('mousemove', (e) => onHover(e, 'detail')).on('mouseleave', onLeave);
+        }
+
+        // ============ HOVER ============
+        const tooltip = document.getElementById('tooltip');
+
+        function interpolate(data, yr, key = 'pop') {
+            if (yr <= data[0].year) return data[0][key];
+            if (yr >= data[data.length - 1].year) return data[data.length - 1][key];
+            for (let i = 0; i < data.length - 1; i++) {
+                if (yr >= data[i].year && yr <= data[i + 1].year) {
+                    const t = (yr - data[i].year) / (data[i + 1].year - data[i].year);
+                    return data[i][key] + t * (data[i + 1][key] - data[i][key]);
+                }
+            }
+            return null;
+        }
+
+        function onHover(event, source) {
+            const [mx] = d3.pointer(event);
+            const year = source === 'main' ? x.invert(mx) : detailX.invert(mx);
+
+            // Main chart
+            const mainX = x(year);
+            if (mainX >= 0 && mainX <= innerW) {
+                mainCrosshair.attr('x1', mainX).attr('x2', mainX).style('display', null);
+                mainDots.forEach(({ key, dot }) => {
+                    if (state[key]) {
+                        const data = popData[key];
+                        if (year >= data[0].year && year <= data[data.length - 1].year) {
+                            dot.attr('cx', mainX).attr('cy', y(interpolate(data, year))).style('display', null);
+                        } else dot.style('display', 'none');
+                    } else dot.style('display', 'none');
+                });
+            }
+
+            // Detail charts
+            const detX = detailX(year);
+            if (detX >= 0 && detX <= innerW) {
+                umeCrosshair.attr('x1', detX).attr('x2', detX).style('display', null);
+                sstCrosshair.attr('x1', detX).attr('x2', detX).style('display', null);
+
+                const umePoint = umeData.find(d => Math.abs(d.year - year) < 0.6);
+                if (umePoint) umeDot.attr('cx', detailX(umePoint.year)).attr('cy', umeY(umePoint.deaths)).style('display', null);
+                else umeDot.style('display', 'none');
+
+                if (year >= sstData[0].year && year <= sstData[sstData.length - 1].year) {
+                    sstDot.attr('cx', detX).attr('cy', sstY(interpolate(sstData, year, 'anomaly'))).style('display', null);
+                } else sstDot.style('display', 'none');
+            }
+
+            // Tooltip
+            const roundYear = Math.round(year);
+            let html = `<div class="tooltip-title">${roundYear}</div>`;
+
+            const findClosest = (data, yr) => data.reduce((a, b) => Math.abs(b.year - yr) < Math.abs(a.year - yr) ? b : a);
+
+            if (state.na) {
+                const d = findClosest(popData.na, year);
+                if (Math.abs(d.year - year) < 15) html += `<div class="tooltip-row"><span class="tooltip-label">Сев. Атлантика:</span><span class="tooltip-value" style="color:${colors.na}">${d.pop.toLocaleString()}</span></div>`;
+            }
+            if (state.wsa) {
+                const d = findClosest(popData.wsa, year);
+                if (Math.abs(d.year - year) < 15) html += `<div class="tooltip-row"><span class="tooltip-label">Зап. Юж. Атлантика:</span><span class="tooltip-value" style="color:${colors.wsa}">${d.pop.toLocaleString()}</span></div>`;
+            }
+            if (state.np && year >= 1960) {
+                const d = findClosest(popData.np, year);
+                if (Math.abs(d.year - year) < 15) html += `<div class="tooltip-row"><span class="tooltip-label">Сев. Тихий океан:</span><span class="tooltip-value" style="color:${colors.np}">${d.pop.toLocaleString()}</span></div>`;
+            }
+            if (state.catch) {
+                const c = catchData.find(d => Math.abs(d.year - year) < 3);
+                if (c) html += `<div class="tooltip-row"><span class="tooltip-label">Вылов:</span><span class="tooltip-value" style="color:${colors.catch}">${c.catch.toLocaleString()}</span></div>`;
+            }
+            if (year >= 2016 && year <= 2025) {
+                const ume = umeData.find(d => Math.abs(d.year - year) < 0.6);
+                if (ume) html += `<div class="tooltip-section"><div class="tooltip-section-title">UME Атлантика</div><div class="tooltip-row"><span class="tooltip-label">Смертей:</span><span class="tooltip-value" style="color:${colors.ume}">${ume.deaths}</span></div></div>`;
+            }
+            if (year >= 2010 && year <= 2025) {
+                const sst = findClosest(sstData, year);
+                if (Math.abs(sst.year - year) < 1) html += `<div class="tooltip-section"><div class="tooltip-section-title">SST Сев. Тихий океан</div><div class="tooltip-row"><span class="tooltip-label">Аномалия:</span><span class="tooltip-value" style="color:${colors.sst}">${sst.anomaly >= 0 ? '+' : ''}${sst.anomaly.toFixed(1)}°C</span></div></div>`;
+            }
+
+            tooltip.innerHTML = html;
+            tooltip.style.opacity = '1';
+            tooltip.style.left = (event.clientX + 15) + 'px';
+            tooltip.style.top = (event.clientY - 10) + 'px';
+        }
+
+        function onLeave() {
+            mainCrosshair.style('display', 'none');
+            mainDots.forEach(({ dot }) => dot.style('display', 'none'));
+            umeCrosshair.style('display', 'none');
+            umeDot.style('display', 'none');
+            sstCrosshair.style('display', 'none');
+            sstDot.style('display', 'none');
+            tooltip.style.opacity = '0';
+        }
+
+        function toggleSeries(s) {
+            state[s] = !state[s];
+            document.querySelectorAll('.control-item').forEach(el => {
+                el.classList.toggle('inactive', !state[el.dataset.series]);
+            });
+            renderMain();
+        }
+
+        // ============ SCROLL ANIMATIONS ============
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.2 });
+
+        document.querySelectorAll('.story-section, .stat-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(40px)';
+            el.style.transition = 'all 0.8s ease';
+            observer.observe(el);
+        });
+
+        // ============ INIT ============
+        renderMain();
+        renderConnector();
+        renderUME();
+        renderSST();
+    </script>
+</body>
+</html>

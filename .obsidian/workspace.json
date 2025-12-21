@@ -1,0 +1,228 @@
+{
+  "main": {
+    "id": "2a8aeb8500d58da8",
+    "type": "split",
+    "children": [
+      {
+        "id": "5b38dd54b744560a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "ec5d07e78da4b011",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "Новая вкладка"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "55c3f1900afcad0b",
+    "type": "split",
+    "children": [
+      {
+        "id": "a713a54a9faadf52",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a82f4faef973fe35",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Файловый менеджер"
+            }
+          },
+          {
+            "id": "92e3ffb0fef3958f",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "6685552587488deb",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "a4b3e8d319c3cfa9",
+    "type": "split",
+    "children": [
+      {
+        "id": "3d410cf448be6382",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1c3e0f38abfea6d5",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks"
+            }
+          },
+          {
+            "id": "f6380845fff7d9e8",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links"
+            }
+          },
+          {
+            "id": "429cac91636fcd50",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "b85ed51c0efc82dc",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "474962057d632074",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Меню быстрого перехода": false,
+      "graph:Граф": false,
+      "canvas:Создать новый холст": false,
+      "daily-notes:Сегодняшняя заметка": false,
+      "templates:Вставить шаблон": false,
+      "command-palette:Открыть палитру команд": false,
+      "bases:Создать новую базу": false
+    }
+  },
+  "active": "a82f4faef973fe35",
+  "lastOpenFiles": [
+    "artifacts/humpback-scrollytelling.html",
+    "artifacts/humpback-facts.md",
+    "artifacts/music-sankey/images/spotify-сергей-фантом.jpg",
+    "artifacts/music-sankey/images/spotify-сергей-никитин.jpg",
+    "artifacts/music-sankey/images/spotify-самое-большое-простое-число.jpg",
+    "artifacts/music-sankey/images/spotify-ростислав-чебыкин.jpg",
+    "artifacts/music-sankey/images/spotify-ринат-каримов.jpg",
+    "artifacts/music-sankey/images/spotify-он-юн.jpg",
+    "artifacts/music-sankey/images/spotify-моя-дорогая.jpg",
+    "artifacts/music-sankey/images/spotify-золотое-перо.jpg",
+    "artifacts/music-sankey/images/spotify-заточка.jpg",
+    "artifacts/music-sankey/images/spotify-два-рима.jpg",
+    "artifacts/music-sankey/new_photos.json",
+    "download_artist_photos.py",
+    "artifacts/humpback-landing.html",
+    "artifacts/music-sankey/styled-versions/style-130-minimalist-sankey.html",
+    "artifacts/music-sankey/styled-versions/style-128-modernist-info.html",
+    "artifacts/music-sankey/styled-versions/style-125-academic-minimalism.html",
+    "artifacts/music-sankey/styled-versions",
+    "artifacts/music-sankey/apply_classification.py",
+    "lesson-modules/3-nano-banana/__pycache__/style_extract.cpython-314.pyc",
+    "artifacts/music-sankey/classification_table.md",
+    "artifacts/music-sankey/classification_draft.json",
+    "lesson-modules/3-nano-banana/3.2-pm-use-cases/3.2.3-marketing/CLAUDE.md",
+    "lesson-modules/3-nano-banana/3.2-pm-use-cases/3.2.2-strategy-architecture/CLAUDE.md",
+    "lesson-modules/3-nano-banana/3.2-pm-use-cases/3.2.1-users-product/CLAUDE.md",
+    "lesson-modules/3-nano-banana/3.1-intro-to-image-gen/3.1.4-style-database/CLAUDE.md",
+    "lesson-modules/3-nano-banana/3.1-intro-to-image-gen/3.1.3-style/CLAUDE.md",
+    "lesson-modules/3-nano-banana/3.1-intro-to-image-gen/3.1.2-basics/CLAUDE.md",
+    "lesson-modules/3-nano-banana/3.1-intro-to-image-gen/3.1.1-welcome/CLAUDE.md",
+    "lesson-modules/2.3-product-strategy/methods/devils-advocate-strategy.md",
+    "lesson-modules/2.3-product-strategy/frameworks/swot-analysis.md",
+    "lesson-modules/2.3-product-strategy/frameworks/rumelt-strategy-kernel.md",
+    "lesson-modules/2.3-product-strategy/frameworks/gibson-biddle-dhm.md",
+    "lesson-modules/2.3-product-strategy/CLAUDE.md",
+    "lesson-modules/2.2-analyze-data/impact-estimation-framework.md",
+    "lesson-modules/2.2-analyze-data/CLAUDE.md",
+    "lesson-modules/2.1-write-prd/user-research/pain-points.md",
+    "lesson-modules/2.1-write-prd/prd-templates/Lennys-PRD-Template.md",
+    "lesson-modules/2.1-write-prd/prd-templates/Carls-PRD-Template.md",
+    "lesson-modules/2.1-write-prd/taskflow-company-context.md",
+    "lesson-modules/2.1-write-prd/socratic-questioning.md",
+    "lesson-modules/2.1-write-prd/CLAUDE.md",
+    "lesson-modules/2-advanced-pm-work/2.3-product-strategy/methods/devils-advocate-strategy.md",
+    "lesson-modules/2-advanced-pm-work/2.3-product-strategy/frameworks/swot-analysis.md",
+    "lesson-modules/2-advanced-pm-work/2.3-product-strategy/frameworks/rumelt-strategy-kernel.md"
+  ]
+}
