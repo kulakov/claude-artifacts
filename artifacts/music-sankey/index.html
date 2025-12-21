@@ -809,7 +809,7 @@
 
             card.innerHTML = `
                 <div class="artist-avatar ${hasImg ? '' : 'no-img'}" style="background: ${hasImg ? `url('${imgUrl}') ${imgPos}/cover no-repeat` : `linear-gradient(135deg, ${artist.bgColor}60, ${artist.bgColor}25)`}">
-                    <div class="fallback" style="background: linear-gradient(135deg, ${artist.bgColor}60, ${artist.bgColor}25);">${artist.emoji}</div>
+                    <div class="fallback" style="background: linear-gradient(135deg, ${artist.bgColor}60, ${artist.bgColor}25);">${artist.emoji || '🎵'}</div>
                 </div>
                 <div class="artist-tooltip">${artist.name}</div>
             `;
