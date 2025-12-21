@@ -1259,6 +1259,28 @@
         `;
         chart.appendChild(infoPanel);
 
+        // Track active navbar filter (sticky)
+        let activeNavbarFilter = null; // { type: 'genre'|'trait', id: string }
+
+        function setNavbarFilter(type, id) {
+            // If same filter, do nothing
+            if (activeNavbarFilter && activeNavbarFilter.type === type && activeNavbarFilter.id === id) return;
+
+            activeNavbarFilter = { type, id };
+            if (type === 'genre') {
+                highlightFromGenre(id, true);
+            } else {
+                highlightFromTrait(id, true);
+            }
+        }
+
+        function clearNavbarFilter() {
+            if (activeNavbarFilter) {
+                updateHighlight(null, null, null);
+                activeNavbarFilter = null;
+            }
+        }
+
         // Render genres row
         const genresRow = document.getElementById('genresRow');
         genres.forEach(genre => {
@@ -1268,8 +1290,8 @@
             chip.style.background = genre.color + '30';
             chip.style.color = genre.color;
             chip.dataset.id = genre.id;
-            chip.onmouseenter = () => highlightFromGenre(genre.id, true);
-            chip.onmouseleave = () => highlightFromGenre(genre.id, false);
+            chip.onmouseenter = () => setNavbarFilter('genre', genre.id);
+            // No onmouseleave - sticky behavior
             genresRow.appendChild(chip);
         });
 
@@ -1282,8 +1304,8 @@
             chip.style.borderColor = trait.color;
             chip.style.color = trait.color;
             chip.dataset.id = trait.id;
-            chip.onmouseenter = () => highlightFromTrait(trait.id, true);
-            chip.onmouseleave = () => highlightFromTrait(trait.id, false);
+            chip.onmouseenter = () => setNavbarFilter('trait', trait.id);
+            // No onmouseleave - sticky behavior
             traitsRow.appendChild(chip);
         });
 
@@ -1416,28 +1438,53 @@
         // Track currently hovered artist (sticky hover)
         let hoveredArtistId = null;
 
+        // Highlight chips for artist WITHOUT hiding other artists
+        function highlightChipsForArtist(artistId, on) {
+            const g = new Set(), t = new Set();
+            if (on) {
+                genreToArtist.forEach(l => { if (l.target === artistId) g.add(l.source); });
+                artistToTrait.forEach(l => { if (l.source === artistId) t.add(l.target); });
+            }
+
+            // Only add/remove 'active' class, don't dim anything
+            document.querySelectorAll('.genre-chip').forEach(el => {
+                if (!activeNavbarFilter) {
+                    el.classList.toggle('active', on && g.has(el.dataset.id));
+                }
+            });
+            document.querySelectorAll('.trait-chip').forEach(el => {
+                if (!activeNavbarFilter) {
+                    el.classList.toggle('active', on && t.has(el.dataset.id));
+                }
+            });
+        }
+
         function setHoveredArtist(artist) {
             // Clear previous hover state
             if (hoveredArtistId && hoveredArtistId !== artist?.id) {
-                highlightFromArtist(hoveredArtistId, false);
+                highlightChipsForArtist(hoveredArtistId, false);
                 showTrackLines(hoveredArtistId, false);
             }
 
             if (artist) {
                 hoveredArtistId = artist.id;
-                highlightFromArtist(artist.id, true);
+                highlightChipsForArtist(artist.id, true);
                 showInfoPanel(artist, false);
                 showTrackLines(artist.id, true);
             } else {
                 hoveredArtistId = null;
-                updateHighlight(null, null, null);
+                if (!activeNavbarFilter) {
+                    // Clear chip highlights only if no navbar filter
+                    document.querySelectorAll('.genre-chip').forEach(el => el.classList.remove('active'));
+                    document.querySelectorAll('.trait-chip').forEach(el => el.classList.remove('active'));
+                }
                 hideInfoPanel();
             }
         }
 
         function clearHoverState() {
             if (hoveredArtistId) {
-                highlightFromArtist(hoveredArtistId, false);
+                highlightChipsForArtist(hoveredArtistId, false);
                 showTrackLines(hoveredArtistId, false);
                 hoveredArtistId = null;
             }
@@ -1640,11 +1687,13 @@
             });
         }
 
-        // Click outside to deselect and clear hover
+        // Click outside to deselect, clear hover, and clear navbar filter
         document.onclick = (e) => {
             const isOutside = !e.target.closest('.artist-card') &&
                              !e.target.closest('.info-panel') &&
-                             !e.target.closest('.track-dot');
+                             !e.target.closest('.track-dot') &&
+                             !e.target.closest('.genre-chip') &&
+                             !e.target.closest('.trait-chip');
 
             if (isOutside) {
                 if (selectedArtistId) {
@@ -1653,6 +1702,7 @@
                 if (hoveredArtistId) {
                     clearHoverState();
                 }
+                clearNavbarFilter();
             }
         };
 
