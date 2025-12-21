@@ -1218,10 +1218,10 @@
         chart.style.width = width + 'px';
         chart.style.height = height + 'px';
 
-        // Calculate actual year range from data
+        // Calculate actual year range from data (with reasonable bounds)
         const allYears = artists.flatMap(a => a.tracks.map(t => t.year));
-        const minYear = Math.min(...allYears);
-        const maxYear = Math.max(...allYears) + 1; // +1 for small padding
+        const minYear = Math.max(1965, Math.min(...allYears)); // Not earlier than 1965
+        const maxYear = Math.min(2026, Math.max(...allYears) + 1); // Not later than 2026
         const leftPadding = 60, rightPadding = 20, topPadding = 30, bottomPadding = 50;
         const timelineWidth = width - leftPadding - rightPadding;
         const cardSize = 44;
