@@ -1,0 +1,611 @@
+[
+  {
+    "artistId": "search_0",
+    "name": "Atlantida Project",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb790e81a986e403f23f244740",
+    "spotifyId": "0vFgHqFN0fyskjgftFu2Kv",
+    "followers": 13846,
+    "genres": [],
+    "searchMatch": "Atlantida Project"
+  },
+  {
+    "artistId": "search_1",
+    "name": "Brazzaville",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb0bad3080a871c87b31e8b6a8",
+    "spotifyId": "0bsVTqzaepTwR0i1QkeK7j",
+    "followers": 24276,
+    "genres": [],
+    "searchMatch": "Brazzaville"
+  },
+  {
+    "artistId": "search_2",
+    "name": "Cruachan",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb39119ba050555116d79154a4",
+    "spotifyId": "6QpbkfyEQJ3JiQw2AbTRUH",
+    "followers": 49340,
+    "genres": [
+      "folk metal",
+      "celtic rock",
+      "celtic",
+      "celtic punk",
+      "medieval metal",
+      "folk"
+    ],
+    "searchMatch": "Cruachan"
+  },
+  {
+    "artistId": "search_3",
+    "name": "DEEP-EX-SENSE",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebfe3d61b8f35fbda581190639",
+    "spotifyId": "73eLNFQ5AtwMQcIEtu62Ri",
+    "followers": 22759,
+    "genres": [],
+    "searchMatch": "DEEP-EX-SENSE"
+  },
+  {
+    "artistId": "search_4",
+    "name": "Dobranotch",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb27130b918649bc91b8a9cce6",
+    "spotifyId": "1hJOWFwinsN0icJyrVslqy",
+    "followers": 6697,
+    "genres": [],
+    "searchMatch": "Dobranotch"
+  },
+  {
+    "artistId": "search_5",
+    "name": "GREEN CROW",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b2732fb751ba295316612b668328",
+    "spotifyId": "06cxXUhgquf2y3coR0PDxR",
+    "followers": 2883,
+    "genres": [],
+    "searchMatch": "Green Crow"
+  },
+  {
+    "artistId": "search_6",
+    "name": "HORUS",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebbf407c309dc0462b29ce6502",
+    "spotifyId": "1HCxHEbOOHXS0XAJTq3vdi",
+    "followers": 40565,
+    "genres": [
+      "acid house"
+    ],
+    "searchMatch": "Horus"
+  },
+  {
+    "artistId": "search_7",
+    "name": "Heidevolk",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb15c381df4bc53f87d72d3434",
+    "spotifyId": "0A2YaO4tUFeJVNn5Hvjfxa",
+    "followers": 125758,
+    "genres": [
+      "folk metal",
+      "medieval metal",
+      "power metal",
+      "folk"
+    ],
+    "searchMatch": "Heidevolk"
+  },
+  {
+    "artistId": "search_8",
+    "name": "Hot Butter",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273875a39cfc850fc14a680d611",
+    "spotifyId": "2vaRrv3i7PDOXPEue24qe5",
+    "followers": 8575,
+    "genres": [],
+    "searchMatch": "Hot Butter"
+  },
+  {
+    "artistId": "search_9",
+    "name": "Hugo Strasser",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb8ab1034caa6a14b9c0fd4cba",
+    "spotifyId": "2pjrtWl4aP07qrU5Ab9FXu",
+    "followers": 10490,
+    "genres": [
+      "tango",
+      "big band",
+      "cha cha cha",
+      "orchestral"
+    ],
+    "searchMatch": "Hugo Strasser"
+  },
+  {
+    "artistId": "search_10",
+    "name": "Joanna Stingray",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebe5e8eb70304ee4e6296f9e10",
+    "spotifyId": "7iwcPBjBqHagY700z4izgW",
+    "followers": 1014,
+    "genres": [
+      "cold wave"
+    ],
+    "searchMatch": "Joanna Stingray"
+  },
+  {
+    "artistId": "search_11",
+    "name": "Joker James",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273310f43eb151fcf0be6db7b03",
+    "spotifyId": "2Vx0RsZj6WWz2BKkefUv4f",
+    "followers": 6181,
+    "genres": [],
+    "searchMatch": "Joker James"
+  },
+  {
+    "artistId": "search_12",
+    "name": "MOZART HEROES",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb80dccadd946e1977e097b400",
+    "spotifyId": "0h3FQOfCGcMsX8gM1W362y",
+    "followers": 47239,
+    "genres": [],
+    "searchMatch": "MOZART HEROES"
+  },
+  {
+    "artistId": "search_13",
+    "name": "Mark the Hammer",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb8b8a3d9a0b27f183a6993d97",
+    "spotifyId": "55xAMbidWRfL8ZcV9nXvEw",
+    "followers": 40837,
+    "genres": [],
+    "searchMatch": "Mark the Hammer"
+  },
+  {
+    "artistId": "search_14",
+    "name": "Markscheider Kunst",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273c4156be657e4d6c948e9284c",
+    "spotifyId": "1JAC3JLWtP5oCT2kg4DQZP",
+    "followers": 4689,
+    "genres": [
+      "electro swing",
+      "swing music"
+    ],
+    "searchMatch": "Markscheider Kunst"
+  },
+  {
+    "artistId": "search_15",
+    "name": "Nine Treasures",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb95ecbd2b35ebf40a4555ce46",
+    "spotifyId": "2ipMoKk1ZQMUlzPIOWbuTp",
+    "followers": 47479,
+    "genres": [
+      "folk metal",
+      "chinese rock"
+    ],
+    "searchMatch": "Nine Treasures"
+  },
+  {
+    "artistId": "search_16",
+    "name": "PALC",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebfa15d5e9cd54c42cd53670df",
+    "spotifyId": "5kZeTjvW04yZMdS34gVDq5",
+    "followers": 21951,
+    "genres": [],
+    "searchMatch": "PALC"
+  },
+  {
+    "artistId": "search_17",
+    "name": "René Aubry",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eba2932d2a3af5feacfe5f45a1",
+    "spotifyId": "1dyZDfHcTtUJjx0DFBcOvc",
+    "followers": 133424,
+    "genres": [],
+    "searchMatch": "René Aubry"
+  },
+  {
+    "artistId": "search_18",
+    "name": "Skrömta",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb749eafb21e9ed7523ff659ba",
+    "spotifyId": "0Q5DiSwAXpEgLe3t8ehnuH",
+    "followers": 460,
+    "genres": [
+      "folk rock",
+      "folk"
+    ],
+    "searchMatch": "Skrömta"
+  },
+  {
+    "artistId": "search_19",
+    "name": "Stephan Sechi",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b27350fa38511285cd939e82b993",
+    "spotifyId": "78eImwlMmYkZLxJRnnNqA5",
+    "followers": 1972,
+    "genres": [],
+    "searchMatch": "Stephan Sechi"
+  },
+  {
+    "artistId": "search_20",
+    "name": "Teufelstanz",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b2733df923c0108c846d825a022c",
+    "spotifyId": "5BAZwvocDuq06vzuBzU9U4",
+    "followers": 2225,
+    "genres": [
+      "medieval",
+      "medieval metal",
+      "celtic punk",
+      "celtic"
+    ],
+    "searchMatch": "Teufelstanz"
+  },
+  {
+    "artistId": "search_21",
+    "name": "The Dreadnoughts",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebf4e128d697623f40ce53c448",
+    "spotifyId": "0tfnDOJ5a2ib3mHAI4qGyD",
+    "followers": 145110,
+    "genres": [
+      "sea shanties",
+      "celtic punk",
+      "celtic rock",
+      "folk punk",
+      "polka",
+      "celtic"
+    ],
+    "searchMatch": "The Dreadnoughts"
+  },
+  {
+    "artistId": "search_22",
+    "name": "The New Synthesizer Experience",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273eebf2d736773fef8f19c92c5",
+    "spotifyId": "1HrtfFRLUYUMiv0BHaOt0U",
+    "followers": 726,
+    "genres": [],
+    "searchMatch": "The New Synthesizer Experience"
+  },
+  {
+    "artistId": "search_23",
+    "name": "Vitamin String Quartet",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebd98b55075a362aff6356cf01",
+    "spotifyId": "6MERXsiRbur2oJZFgYRDKz",
+    "followers": 780394,
+    "genres": [
+      "orchestral"
+    ],
+    "searchMatch": "Vitamin String Quartet"
+  },
+  {
+    "artistId": "search_24",
+    "name": "Yodelice",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb0ed74d3ef6aa3f6887b63d0a",
+    "spotifyId": "167abweXl3demO9x0VMMeJ",
+    "followers": 137908,
+    "genres": [],
+    "searchMatch": "Yodelice"
+  },
+  {
+    "artistId": "search_25",
+    "name": "Аквариум",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273c16a32ec3dd4f701975e9d98",
+    "spotifyId": "0RVIZpggXkAvhGOW4EFfWG",
+    "followers": 1366,
+    "genres": [
+      "dub"
+    ],
+    "searchMatch": "Аквариум"
+  },
+  {
+    "artistId": "search_26",
+    "name": "Александр Пушной",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb8cb106e5a4a713f2f3129458",
+    "spotifyId": "2WjtJYA3zobHKs3JakaAqN",
+    "followers": 44247,
+    "genres": [],
+    "searchMatch": "Александр Пушной"
+  },
+  {
+    "artistId": "search_27",
+    "name": "Алиса",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b2731ac80fe17e2e981b35785d02",
+    "spotifyId": "0czUqVxop2X2mqgdaXUpd2",
+    "followers": 11,
+    "genres": [],
+    "searchMatch": "Алиса"
+  },
+  {
+    "artistId": "search_28",
+    "name": "АлоэВера",
+    "photoUrl": null,
+    "spotifyId": null
+  },
+  {
+    "artistId": "search_29",
+    "name": "Аукцыон",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273c0a6eaa3e228cd50a4398c34",
+    "spotifyId": "3DHr1nxVSEni4Lp11S7r1C",
+    "followers": 1384,
+    "genres": [],
+    "searchMatch": "АукцЫон"
+  },
+  {
+    "artistId": "search_30",
+    "name": "Борис Гребенщиков",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273b3bddb7187f217a665e89325",
+    "spotifyId": "7xDLK4OxugbyJEydTKJ6NV",
+    "followers": 11,
+    "genres": [],
+    "searchMatch": "Борис Гребенщиков"
+  },
+  {
+    "artistId": "search_31",
+    "name": "Василий К.",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273ee593a4fb9d8aa0a2d62d137",
+    "spotifyId": "1XOaGxApYGtKHM5hj9G7AC",
+    "followers": 2908,
+    "genres": [],
+    "searchMatch": "Василий К."
+  },
+  {
+    "artistId": "search_32",
+    "name": "Вера Полозкова",
+    "photoUrl": null,
+    "spotifyId": null
+  },
+  {
+    "artistId": "search_33",
+    "name": "Влади",
+    "photoUrl": null,
+    "spotifyId": null
+  },
+  {
+    "artistId": "search_34",
+    "name": "Владимир Вавилов",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273d3dd62baf9ac5a511be5585a",
+    "spotifyId": "5oXO3Kcs9ndUP2dVPRWJav",
+    "followers": 101,
+    "genres": [],
+    "searchMatch": "Владимир Вавилов"
+  },
+  {
+    "artistId": "search_35",
+    "name": "Владимир Высоцкий",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebb9da50fbda0e80200fae6d99",
+    "spotifyId": "6hKLYGlOtGVNzZUuvS99Nw",
+    "followers": 119650,
+    "genres": [],
+    "searchMatch": "Владимир Высоцкий"
+  },
+  {
+    "artistId": "search_36",
+    "name": "Геннадий Гладков",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273f88d61f57d8f6978cd2e3317",
+    "spotifyId": "24D4W6ItD9pkqPiH0UVjqr",
+    "followers": 17,
+    "genres": [],
+    "searchMatch": "Геннадий Гладков"
+  },
+  {
+    "artistId": "search_37",
+    "name": "Гражданская оборона",
+    "photoUrl": null,
+    "spotifyId": null
+  },
+  {
+    "artistId": "search_38",
+    "name": "Дельфин",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb58b2ca9cc92254a83f9e1f91",
+    "spotifyId": "2pktDyTJxrLJo7dL2qT1pA",
+    "followers": 103278,
+    "genres": [
+      "cold wave"
+    ],
+    "searchMatch": "Dolphin"
+  },
+  {
+    "artistId": "search_39",
+    "name": "Драконь",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273ddf13c5359c05d728ed513c4",
+    "spotifyId": "6LMoBb2Q9CF3nG2vRHcgsX",
+    "followers": 97,
+    "genres": [],
+    "searchMatch": "Драконь"
+  },
+  {
+    "artistId": "search_40",
+    "name": "Дышать",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb28a19636c95651d133b485da",
+    "spotifyId": "0onYbgr3Uj94RTifQWGDZg",
+    "followers": 3690,
+    "genres": [],
+    "searchMatch": "Дышать"
+  },
+  {
+    "artistId": "search_41",
+    "name": "Евгений Алексеев",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b27356719315c732ccda97a7f545",
+    "spotifyId": "3yv2WJd0zDztsjQWGkvOZE",
+    "followers": 3,
+    "genres": [],
+    "searchMatch": "Евгений Алексеев"
+  },
+  {
+    "artistId": "search_42",
+    "name": "Евгений Женевьев",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273a55b2dc827dd8d4e5a4aeb4b",
+    "spotifyId": "5XEHcySfbQOjKdA0dLGHZz",
+    "followers": 70,
+    "genres": [],
+    "searchMatch": "Евгений Женевьев"
+  },
+  {
+    "artistId": "search_43",
+    "name": "Евгений Крылатов",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b2738e2f2a6b5543734098263722",
+    "spotifyId": "3W6nSwzyXQ63oy2dwZI8oz",
+    "followers": 3873,
+    "genres": [],
+    "searchMatch": "Yevgeny Krylatov"
+  },
+  {
+    "artistId": "search_44",
+    "name": "Екатерина Яшникова",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb97470695ebc246e7b047ffde",
+    "spotifyId": "0FzHzyaGrIdgqgtSQG2sQR",
+    "followers": 15371,
+    "genres": [],
+    "searchMatch": "Екатерина Яшникова"
+  },
+  {
+    "artistId": "search_45",
+    "name": "Железный Занавес",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b2734307f5e7f9bf4ae3d93ba665",
+    "spotifyId": "2fcBGBsJr32l6gfJKjlrb8",
+    "followers": 35,
+    "genres": [],
+    "searchMatch": "Железный Занавес"
+  },
+  {
+    "artistId": "search_46",
+    "name": "Живица",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273a34ef3004147be5acbc8a354",
+    "spotifyId": "5HxcTaVfNSK0hqm5ulQGM4",
+    "followers": 302,
+    "genres": [],
+    "searchMatch": "Живица"
+  },
+  {
+    "artistId": "search_47",
+    "name": "Крыс",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273191fa1c27d09efbfb87f734b",
+    "spotifyId": "3jUpQKE4bgfT7pIVLZUHCB",
+    "followers": 504,
+    "genres": [],
+    "searchMatch": "Крыс"
+  },
+  {
+    "artistId": "search_48",
+    "name": "Леона",
+    "photoUrl": null,
+    "spotifyId": null
+  },
+  {
+    "artistId": "search_49",
+    "name": "Мельница",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebabae217e373514396ee7c563",
+    "spotifyId": "2ymj9CH2kUrvYhbs9T0pqh",
+    "followers": 70575,
+    "genres": [
+      "folk rock"
+    ],
+    "searchMatch": "Мельница"
+  },
+  {
+    "artistId": "search_50",
+    "name": "Михаил Башаков",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b27339d8eb5bbfe20fe34b17db4c",
+    "spotifyId": "52GseYz6RUARal9RBhraJj",
+    "followers": 923,
+    "genres": [],
+    "searchMatch": "Михаил Башаков"
+  },
+  {
+    "artistId": "search_51",
+    "name": "Найк Борзов",
+    "photoUrl": null,
+    "spotifyId": null
+  },
+  {
+    "artistId": "search_52",
+    "name": "Настежь",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb2421fd10242a10086ff4ba3b",
+    "spotifyId": "6ufRDqCoeeOEWk0QJXo00D",
+    "followers": 867,
+    "genres": [
+      "avant-garde"
+    ],
+    "searchMatch": "Настежь"
+  },
+  {
+    "artistId": "search_53",
+    "name": "Нейро Дюбель",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b2739bf497a11ac1b4fe8f3cc041",
+    "spotifyId": "2Qv00e3NugaTAxlf527EYl",
+    "followers": 5700,
+    "genres": [],
+    "searchMatch": "Neuro Dubel"
+  },
+  {
+    "artistId": "search_54",
+    "name": "Немного нервно",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb64d3afbd1b24e69f944d01a9",
+    "spotifyId": "1vwqVuvxQ9bzHPfJY50R1j",
+    "followers": 11791,
+    "genres": [],
+    "searchMatch": "Немного Нервно"
+  },
+  {
+    "artistId": "search_55",
+    "name": "Ноль",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb328d768d2c860a9636f49aa6",
+    "spotifyId": "7AZIDOkFS1VcMSs4GmdoLk",
+    "followers": 23,
+    "genres": [],
+    "searchMatch": "Ноль"
+  },
+  {
+    "artistId": "search_56",
+    "name": "Ольга Арефьева и Ковчег",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb9c42885d3e85e310706d71bf",
+    "spotifyId": "44UIUIvJMwH7jIsrFIPO7J",
+    "followers": 7362,
+    "genres": [],
+    "searchMatch": "Ольга Арефьева и Ковчег"
+  },
+  {
+    "artistId": "search_57",
+    "name": "СолоИНК",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273a36f463df8f62fc94fcfc3df",
+    "spotifyId": "08aYOcKJ3HZsxdyqwJFzmk",
+    "followers": 83,
+    "genres": [],
+    "searchMatch": "СолоИНК"
+  },
+  {
+    "artistId": "search_58",
+    "name": "Сурганова и Оркестр",
+    "photoUrl": null,
+    "spotifyId": null
+  },
+  {
+    "artistId": "search_59",
+    "name": "Тим Скоренко",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273c83236cdd2a02c7e2e55ba65",
+    "spotifyId": "0GmBzGlPuky6NPSvpwT5m2",
+    "followers": 216,
+    "genres": [],
+    "searchMatch": "Тим Скоренко"
+  },
+  {
+    "artistId": "search_60",
+    "name": "Удмуртская тоска",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273ffa7dd7fdd28de679217a4cc",
+    "spotifyId": "3D8h0rNg7qIgyTpCDFcsSi",
+    "followers": 412,
+    "genres": [
+      "neofolk"
+    ],
+    "searchMatch": "Удмуртская тоска"
+  },
+  {
+    "artistId": "search_61",
+    "name": "Умка и Броневик",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273f0416e5e437d8fceebfa54e1",
+    "spotifyId": "6IJZ7zfO5Kc2T1jevVFtze",
+    "followers": 3855,
+    "genres": [],
+    "searchMatch": "Умка и Броневик"
+  },
+  {
+    "artistId": "search_62",
+    "name": "Ундервуд",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb92e7d850fa1b1f6ea7d477a5",
+    "spotifyId": "72B99GBEFdbbEAfmKMdYrr",
+    "followers": 25512,
+    "genres": [],
+    "searchMatch": "Undervud"
+  },
+  {
+    "artistId": "search_63",
+    "name": "Янка Дягилева",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273b5500dc3471de4af5cfa1148",
+    "spotifyId": "5s5hp2upnepWFFfDWZqZW3",
+    "followers": 9763,
+    "genres": [],
+    "searchMatch": "Янка Дягилева"
+  }
+]
