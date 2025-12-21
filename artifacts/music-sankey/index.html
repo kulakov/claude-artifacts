@@ -102,6 +102,7 @@
         #svgLayer { position: absolute; top: 0; left: 0; pointer-events: none; }
         .sankey-link { fill: none; stroke-opacity: 0; stroke-width: 2; transition: stroke-opacity 0.2s; }
         .sankey-link.visible { stroke-opacity: 0.4; }
+        .sankey-link.visible.secondary { stroke-opacity: 0.2; }
 
         /* Artist to track connection lines */
         .track-link {
@@ -1184,10 +1185,14 @@
             a.medianYear = years[Math.floor(years.length / 2)];
         });
 
-        // Setup dimensions
+        // Setup dimensions - fill viewport
         const chart = document.getElementById('chart');
         const width = Math.min(1500, window.innerWidth - 40);
-        const height = Math.min(600, window.innerHeight - 200);
+        const genresRow = document.getElementById('genresRow');
+        const traitsRow = document.getElementById('traitsRow');
+        const titleHeight = 50; // title + margins
+        const navbarHeight = 80; // genres + traits rows
+        const height = window.innerHeight - titleHeight - navbarHeight;
         chart.style.width = width + 'px';
         chart.style.height = height + 'px';
 
@@ -1682,44 +1687,80 @@
             updateHighlight(on ? g : null, on ? a : null, on ? new Set([id]) : null);
         }
 
-        // Draw sankey lines from navbar to artists
-        function drawSankeyLinks(activeArtists, sourceType, sourceId) {
+        // Draw sankey lines from navbar to artists and to opposite side
+        function drawSankeyLinks(activeArtists, activeGenres, activeTraits, sourceType, sourceId) {
             // Clear previous sankey links
             sankeyGroup.selectAll('.sankey-link').remove();
 
             if (!activeArtists || activeArtists.size === 0) return;
 
+            const chartRect = chart.getBoundingClientRect();
+
             // Get source chip element position
             const sourceChip = document.querySelector(`.${sourceType}-chip[data-id="${sourceId}"]`);
             if (!sourceChip) return;
 
-            const chartRect = chart.getBoundingClientRect();
             const chipRect = sourceChip.getBoundingClientRect();
-
-            // Calculate source point (center of chip, relative to chart)
             const sourceX = chipRect.left + chipRect.width / 2 - chartRect.left;
-            const sourceY = sourceType === 'genre' ? 0 : height; // Top for genres, bottom for traits
+            const sourceY = sourceType === 'genre' ? 0 : height;
+            const sourceColor = window.getComputedStyle(sourceChip).color;
 
-            // Draw curved paths to each matching artist
+            // Draw lines from source to artists (full opacity)
             activeArtists.forEach(artistId => {
                 const artist = artists.find(a => a.id === artistId);
                 if (!artist) return;
 
                 const targetX = artist.x + cardSize / 2;
                 const targetY = artist.y + (sourceType === 'genre' ? 0 : cardSize);
-
-                // Get color from source chip
-                const color = window.getComputedStyle(sourceChip).color;
-
-                // Create curved path
                 const midY = (sourceY + targetY) / 2;
                 const path = `M${sourceX},${sourceY} C${sourceX},${midY} ${targetX},${midY} ${targetX},${targetY}`;
 
                 sankeyGroup.append('path')
                     .attr('class', 'sankey-link visible')
-                    .attr('stroke', color)
+                    .attr('stroke', sourceColor)
                     .attr('d', path);
             });
+
+            // Draw lines from artists to opposite side (50% opacity)
+            const oppositeType = sourceType === 'genre' ? 'trait' : 'genre';
+            const oppositeItems = sourceType === 'genre' ? activeTraits : activeGenres;
+
+            if (oppositeItems) {
+                oppositeItems.forEach(itemId => {
+                    const chip = document.querySelector(`.${oppositeType}-chip[data-id="${itemId}"]`);
+                    if (!chip) return;
+
+                    const itemRect = chip.getBoundingClientRect();
+                    const itemX = itemRect.left + itemRect.width / 2 - chartRect.left;
+                    const itemY = oppositeType === 'genre' ? 0 : height;
+                    const itemColor = window.getComputedStyle(chip).color;
+
+                    // Draw from each matching artist to this item
+                    activeArtists.forEach(artistId => {
+                        // Check if this artist is connected to this item
+                        let connected = false;
+                        if (oppositeType === 'trait') {
+                            connected = artistToTrait.some(l => l.source === artistId && l.target === itemId);
+                        } else {
+                            connected = genreToArtist.some(l => l.source === itemId && l.target === artistId);
+                        }
+                        if (!connected) return;
+
+                        const artist = artists.find(a => a.id === artistId);
+                        if (!artist) return;
+
+                        const artistX = artist.x + cardSize / 2;
+                        const artistY = artist.y + (oppositeType === 'genre' ? 0 : cardSize);
+                        const midY = (artistY + itemY) / 2;
+                        const path = `M${artistX},${artistY} C${artistX},${midY} ${itemX},${midY} ${itemX},${itemY}`;
+
+                        sankeyGroup.append('path')
+                            .attr('class', 'sankey-link visible secondary')
+                            .attr('stroke', itemColor)
+                            .attr('d', path);
+                    });
+                });
+            }
         }
 
         // Clear sankey links
@@ -1751,7 +1792,7 @@
 
             // Draw sankey links when filter is active from navbar
             if (on && activeNavbarFilter) {
-                drawSankeyLinks(aA, activeNavbarFilter.type, activeNavbarFilter.id);
+                drawSankeyLinks(aA, aG, aT, activeNavbarFilter.type, activeNavbarFilter.id);
             } else {
                 clearSankeyLinks();
             }
