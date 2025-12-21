@@ -22,6 +22,16 @@
             -webkit-text-fill-color: transparent;
         }
         .subtitle { color: #737373; margin-bottom: 2rem; }
+        .subtitle-link {
+            display: block;
+            color: #737373;
+            margin-bottom: 2rem;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .subtitle-link:hover {
+            color: #667eea;
+        }
         .artifacts-list { list-style: none; }
         .artifact-item {
             background: #171717;
@@ -83,7 +93,7 @@
 <body>
     <div class="container">
         <h1>Коллекция визуализаций</h1>
-        <p class="subtitle">Алексея Кулакова</p>
+        <a href="https://t.me/the_good_question" target="_blank" class="subtitle-link">Lance petproject for «good question»</a>
         
         <p class="section-title">Scrollytelling</p>
         <ul class="artifacts-list" id="artifacts">
