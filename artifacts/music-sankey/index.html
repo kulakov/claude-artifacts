@@ -1209,9 +1209,20 @@
         const timelineWidth = width - leftPadding - rightPadding;
         const cardSize = 44;
 
-        // Year to X position
+        // Time scale mode
+        let logTimeScale = false;
+        const yearRange = maxYear - minYear;
+        const logYearMax = Math.log10(yearRange + 1);
+
+        // Year to X position (supports linear and log scale)
         function yearToX(year) {
-            return leftPadding + ((year - minYear) / (maxYear - minYear)) * timelineWidth;
+            if (logTimeScale) {
+                // Log scale: compress old years, expand recent
+                const yearsFromMin = year - minYear;
+                const logNorm = Math.log10(yearsFromMin + 1) / logYearMax;
+                return leftPadding + logNorm * timelineWidth;
+            }
+            return leftPadding + ((year - minYear) / yearRange) * timelineWidth;
         }
 
         // Popularity to Y position (log scale, higher popularity = higher on screen)
@@ -1334,6 +1345,17 @@
         tracksBtn.id = 'showTracks';
         tracksBtn.textContent = 'Треки';
         genresRow.appendChild(tracksBtn);
+
+        const separator2 = document.createElement('span');
+        separator2.className = 'mode-separator';
+        separator2.textContent = '|';
+        genresRow.appendChild(separator2);
+
+        const logScaleBtn = document.createElement('button');
+        logScaleBtn.className = 'mode-btn';
+        logScaleBtn.id = 'logScale';
+        logScaleBtn.textContent = 'Log время';
+        genresRow.appendChild(logScaleBtn);
 
         // Render traits row
         const traitsRow = document.getElementById('traitsRow');
@@ -1674,6 +1696,57 @@
                 el.style.display = showTracks ? '' : 'none';
             });
         };
+
+        // Log scale toggle
+        document.getElementById('logScale').onclick = () => {
+            logTimeScale = !logTimeScale;
+            document.getElementById('logScale').classList.toggle('active', logTimeScale);
+            recalculatePositions();
+        };
+
+        // Recalculate all X positions when scale changes
+        function recalculatePositions() {
+            // Update artist cards
+            artists.forEach(artist => {
+                artist.x = yearToX(artist.medianYear) - cardSize / 2;
+                artist.x = Math.max(leftPadding, Math.min(artist.x, width - cardSize - rightPadding));
+                const card = document.querySelector(`.artist-card[data-id="${artist.id}"]`);
+                if (card) card.style.left = `${artist.x}px`;
+            });
+
+            // Update track dots and lines
+            artists.forEach(artist => {
+                const artistCenterX = artist.x + cardSize / 2;
+                const artistCenterY = artist.y + cardSize / 2;
+
+                artist.tracks.forEach((track, i) => {
+                    const trackX = yearToX(track.year);
+
+                    // Update dot position
+                    const dot = allTrackDots.find(d => d.artistId === artist.id && d.trackTitle === track.title);
+                    if (dot) dot.dot.style.left = `${trackX}px`;
+
+                    // Update line path
+                    if (trackLinks[artist.id] && trackLinks[artist.id][i]) {
+                        const trackScr = getTrackScrobbles(artist.name, track.title);
+                        const trackY = scrobblesToY(trackScr);
+                        trackLinks[artist.id][i].attr('d', `M${artistCenterX},${artistCenterY} L${trackX},${trackY}`);
+                    }
+                });
+            });
+
+            // Update timeline ticks
+            document.querySelectorAll('.timeline-tick').forEach(tick => {
+                const year = parseInt(tick.textContent);
+                const normalized = logTimeScale
+                    ? Math.log10(year - minYear + 1) / logYearMax
+                    : (year - minYear) / yearRange;
+                tick.style.left = `${normalized * 100}%`;
+            });
+
+            // Clear any active sankey links
+            clearSankeyLinks();
+        }
 
         // Highlighting functions
         function highlightFromGenre(id, on) {
