@@ -101,8 +101,8 @@
         /* SVG for Sankey links */
         #svgLayer { position: absolute; top: 0; left: 0; pointer-events: none; }
         .sankey-link { fill: none; stroke-opacity: 0; stroke-width: 2; transition: stroke-opacity 0.2s; }
-        .sankey-link.visible { stroke-opacity: 0.4; }
-        .sankey-link.visible.secondary { stroke-opacity: 0.2; }
+        .sankey-link.visible { stroke-opacity: 0.5; }
+        .sankey-link.visible.secondary { stroke-opacity: 0.25; }
 
         /* Artist to track connection lines */
         .track-link {
@@ -113,6 +113,10 @@
         }
         .track-link.visible { stroke-opacity: 0.7; }
         .track-link.dimmed { display: none; }
+
+        /* Footer link */
+        .footer-link { font-size: 9px; color: var(--text-dim); text-decoration: none; margin-top: 8px; opacity: 0.6; transition: opacity 0.2s; }
+        .footer-link:hover { opacity: 1; text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -122,6 +126,7 @@
         <div class="genres-row" id="genresRow"></div>
         <div id="chart"></div>
         <div class="traits-row" id="traitsRow"></div>
+        <a href="https://t.me/the_good_question" target="_blank" class="footer-link">lance pet project for good question</a>
     </div>
 
 
@@ -1644,6 +1649,8 @@
             document.querySelectorAll('.artist-card').forEach(el => {
                 el.style.display = showArtists ? '' : 'none';
             });
+            // Hide sankey links when artists hidden
+            if (!showArtists) clearSankeyLinks();
         };
 
         document.getElementById('showTracks').onclick = () => {
@@ -1788,8 +1795,8 @@
                 el.classList.toggle('active', on && aT.has(el.dataset.id));
             });
 
-            // Draw sankey links when filter is active from navbar
-            if (on && activeNavbarFilter) {
+            // Draw sankey links when filter is active from navbar (only if artists visible)
+            if (on && activeNavbarFilter && showArtists) {
                 drawSankeyLinks(aA, aG, aT, activeNavbarFilter.type, activeNavbarFilter.id);
             } else {
                 clearSankeyLinks();
