@@ -1004,7 +1004,7 @@
         // Calculate actual year range from data (with reasonable bounds)
         const allYears = artists.flatMap(a => a.tracks.map(t => t.year));
         const minYear = Math.max(1965, Math.min(...allYears)); // Not earlier than 1965
-        const maxYear = Math.min(2026, Math.max(...allYears) + 1); // Not later than 2026
+        const maxYear = 2024; // Fixed endpoint - current year
         const leftPadding = 60, rightPadding = 20, topPadding = 30, bottomPadding = 50;
         const timelineWidth = width - leftPadding - rightPadding;
         const cardSize = 44;
@@ -1056,15 +1056,6 @@
             tick.textContent = year;
             tick.style.left = `${((year - minYear) / (maxYear - minYear)) * 100}%`;
             axisDiv.appendChild(tick);
-        }
-        // Add endpoint tick if there's data beyond the last decade
-        const currentYear = new Date().getFullYear();
-        if (maxYear > endDecade + 1) {
-            const endTick = document.createElement('div');
-            endTick.className = 'timeline-tick';
-            endTick.textContent = Math.min(currentYear, maxYear - 1);
-            endTick.style.left = `${((Math.min(currentYear, maxYear - 1) - minYear) / (maxYear - minYear)) * 100}%`;
-            axisDiv.appendChild(endTick);
         }
         chart.appendChild(axisDiv);
 
