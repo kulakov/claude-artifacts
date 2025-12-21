@@ -1,0 +1,1905 @@
+[
+  {
+    "id": "a29",
+    "name": "Krishna Das",
+    "genres": [
+      "world",
+      "spiritual"
+    ],
+    "traits": [
+      "t1",
+      "t3",
+      "t5"
+    ]
+  },
+  {
+    "id": "a30",
+    "name": "Oliver Koletzki",
+    "genres": [
+      "electronic"
+    ],
+    "traits": [
+      "t1",
+      "t5"
+    ]
+  },
+  {
+    "id": "a31",
+    "name": "Saez",
+    "genres": [
+      "author",
+      "melancholy"
+    ],
+    "traits": [
+      "t4",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a32",
+    "name": "Eivør",
+    "genres": [
+      "world",
+      "neofolk",
+      "melancholy"
+    ],
+    "traits": [
+      "t1",
+      "t3",
+      "t4",
+      "t7"
+    ]
+  },
+  {
+    "id": "a33",
+    "name": "Ляпис Трубецкой",
+    "genres": [
+      "soviet-rock",
+      "protest"
+    ],
+    "traits": [
+      "t2",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a34",
+    "name": "Anoushka Shankar",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1",
+      "t3"
+    ]
+  },
+  {
+    "id": "a35",
+    "name": "Django Django",
+    "genres": [
+      "irony"
+    ],
+    "traits": [
+      "t6"
+    ]
+  },
+  {
+    "id": "a36",
+    "name": "Seasick Steve",
+    "genres": [
+      "virtuoso"
+    ],
+    "traits": [
+      "t3"
+    ]
+  },
+  {
+    "id": "a37",
+    "name": "Anacondaz",
+    "genres": [
+      "modern-rap",
+      "irony"
+    ],
+    "traits": [
+      "t2",
+      "t6"
+    ]
+  },
+  {
+    "id": "a38",
+    "name": "Tommy Emmanuel",
+    "genres": [
+      "virtuoso"
+    ],
+    "traits": [
+      "t3"
+    ]
+  },
+  {
+    "id": "a39",
+    "name": "Найк Борзов",
+    "genres": [
+      "soviet-rock"
+    ],
+    "traits": [
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a40",
+    "name": "Max Cooper",
+    "genres": [
+      "electronic"
+    ],
+    "traits": [
+      "t1",
+      "t5"
+    ]
+  },
+  {
+    "id": "a41",
+    "name": "Simply Three",
+    "genres": [
+      "virtuoso"
+    ],
+    "traits": [
+      "t3"
+    ]
+  },
+  {
+    "id": "a42",
+    "name": "АлоэВера",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a43",
+    "name": "Nolwenn Leroy",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1",
+      "t3"
+    ]
+  },
+  {
+    "id": "a44",
+    "name": "Blackmore",
+    "genres": [
+      "world",
+      "neofolk"
+    ],
+    "traits": [
+      "t1",
+      "t3",
+      "t7"
+    ]
+  },
+  {
+    "id": "a45",
+    "name": "Steve ",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a46",
+    "name": "Пикник",
+    "genres": [
+      "soviet-rock"
+    ],
+    "traits": [
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a47",
+    "name": "Seatbelts",
+    "genres": [
+      "soundtrack"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a48",
+    "name": "Schiller",
+    "genres": [
+      "electronic"
+    ],
+    "traits": [
+      "t1",
+      "t5"
+    ]
+  },
+  {
+    "id": "a49",
+    "name": "James Last",
+    "genres": [
+      "soundtrack"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a50",
+    "name": "Каста",
+    "genres": [
+      "modern-rap"
+    ],
+    "traits": [
+      "t2"
+    ]
+  },
+  {
+    "id": "a51",
+    "name": "The Dreadnoughts",
+    "genres": [
+      "neofolk"
+    ],
+    "traits": [
+      "t1",
+      "t7"
+    ]
+  },
+  {
+    "id": "a52",
+    "name": "Yodelice",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1",
+      "t3"
+    ]
+  },
+  {
+    "id": "a53",
+    "name": "Corvus Corax",
+    "genres": [
+      "world",
+      "neofolk"
+    ],
+    "traits": [
+      "t1",
+      "t3",
+      "t7"
+    ]
+  },
+  {
+    "id": "a54",
+    "name": "René Aubry",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a55",
+    "name": "Heidevolk",
+    "genres": [
+      "world",
+      "neofolk"
+    ],
+    "traits": [
+      "t1",
+      "t3",
+      "t7"
+    ]
+  },
+  {
+    "id": "a56",
+    "name": "Rokia Traoré",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1",
+      "t3"
+    ]
+  },
+  {
+    "id": "a57",
+    "name": "Владимир Высоцкий",
+    "genres": [
+      "author",
+      "modern-rap",
+      "protest"
+    ],
+    "traits": [
+      "t2",
+      "t4",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a58",
+    "name": "Klaus Schulze",
+    "genres": [
+      "electronic"
+    ],
+    "traits": [
+      "t1",
+      "t5"
+    ]
+  },
+  {
+    "id": "a59",
+    "name": "Дельфин",
+    "genres": [
+      "soviet-rock",
+      "melancholy"
+    ],
+    "traits": [
+      "t4",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a60",
+    "name": "Juno Reactor",
+    "genres": [
+      "electronic"
+    ],
+    "traits": [
+      "t1",
+      "t5"
+    ]
+  },
+  {
+    "id": "a61",
+    "name": "Angelo Branduardi",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1",
+      "t3"
+    ]
+  },
+  {
+    "id": "a62",
+    "name": "Die Apokalyptischen Reiter",
+    "genres": [
+      "neofolk"
+    ],
+    "traits": [
+      "t1",
+      "t7"
+    ]
+  },
+  {
+    "id": "a63",
+    "name": "Hannes Wader",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1",
+      "t3"
+    ]
+  },
+  {
+    "id": "a64",
+    "name": "LOUNA",
+    "genres": [
+      "soviet-rock",
+      "protest"
+    ],
+    "traits": [
+      "t2",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a65",
+    "name": "Мельница",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1",
+      "t3"
+    ]
+  },
+  {
+    "id": "a66",
+    "name": "Steeleye Span",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1",
+      "t3"
+    ]
+  },
+  {
+    "id": "a67",
+    "name": "Joachim Witt",
+    "genres": [
+      "author"
+    ],
+    "traits": [
+      "t4",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a68",
+    "name": "Cruachan",
+    "genres": [
+      "world",
+      "neofolk"
+    ],
+    "traits": [
+      "t1",
+      "t3",
+      "t7"
+    ]
+  },
+  {
+    "id": "a69",
+    "name": "The Tossers",
+    "genres": [
+      "neofolk"
+    ],
+    "traits": [
+      "t1",
+      "t7"
+    ]
+  },
+  {
+    "id": "a70",
+    "name": "Nine Treasures",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1",
+      "t3"
+    ]
+  },
+  {
+    "id": "a71",
+    "name": "MOZART HEROES",
+    "genres": [
+      "virtuoso"
+    ],
+    "traits": [
+      "t3"
+    ]
+  },
+  {
+    "id": "a72",
+    "name": "Александр Пушной",
+    "genres": [
+      "irony"
+    ],
+    "traits": [
+      "t6"
+    ]
+  },
+  {
+    "id": "a73",
+    "name": "ST1M",
+    "genres": [
+      "modern-rap"
+    ],
+    "traits": [
+      "t2"
+    ]
+  },
+  {
+    "id": "a74",
+    "name": "Żywiołak",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1",
+      "t3"
+    ]
+  },
+  {
+    "id": "a75",
+    "name": "Mark the Hammer",
+    "genres": [
+      "virtuoso"
+    ],
+    "traits": [
+      "t3"
+    ]
+  },
+  {
+    "id": "a76",
+    "name": "HORUS",
+    "genres": [
+      "modern-rap"
+    ],
+    "traits": [
+      "t2"
+    ]
+  },
+  {
+    "id": "a77",
+    "name": "Neil Zaza",
+    "genres": [
+      "virtuoso"
+    ],
+    "traits": [
+      "t3"
+    ]
+  },
+  {
+    "id": "a78",
+    "name": "Sabo",
+    "genres": [
+      "electronic"
+    ],
+    "traits": [
+      "t1",
+      "t5"
+    ]
+  },
+  {
+    "id": "a79",
+    "name": "Xploding Plastix",
+    "genres": [
+      "electronic"
+    ],
+    "traits": [
+      "t1",
+      "t5"
+    ]
+  },
+  {
+    "id": "a80",
+    "name": "Byron Metcalf",
+    "genres": [
+      "spiritual"
+    ],
+    "traits": [
+      "t1",
+      "t5"
+    ]
+  },
+  {
+    "id": "a81",
+    "name": "Ундервуд",
+    "genres": [
+      "soviet-rock"
+    ],
+    "traits": [
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a82",
+    "name": "Лигалайз",
+    "genres": [
+      "modern-rap"
+    ],
+    "traits": [
+      "t2"
+    ]
+  },
+  {
+    "id": "a83",
+    "name": "Mathias Duplessy",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1",
+      "t3"
+    ]
+  },
+  {
+    "id": "a84",
+    "name": "Brazzaville",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1",
+      "t3"
+    ]
+  },
+  {
+    "id": "a85",
+    "name": "DEEP-EX-SENSE",
+    "genres": [
+      "modern-rap"
+    ],
+    "traits": [
+      "t2"
+    ]
+  },
+  {
+    "id": "a86",
+    "name": "PALC",
+    "genres": [
+      "modern-rap"
+    ],
+    "traits": [
+      "t2"
+    ]
+  },
+  {
+    "id": "a87",
+    "name": "Ekseption",
+    "genres": [
+      "electronic"
+    ],
+    "traits": [
+      "t1",
+      "t5"
+    ]
+  },
+  {
+    "id": "a88",
+    "name": "Эдуард Артемьев",
+    "genres": [
+      "electronic",
+      "soundtrack"
+    ],
+    "traits": [
+      "t1",
+      "t5"
+    ]
+  },
+  {
+    "id": "a89",
+    "name": "musica nuda",
+    "genres": [
+      "virtuoso"
+    ],
+    "traits": [
+      "t3"
+    ]
+  },
+  {
+    "id": "a90",
+    "name": "Artem Uzunov",
+    "genres": [
+      "virtuoso"
+    ],
+    "traits": [
+      "t3"
+    ]
+  },
+  {
+    "id": "a91",
+    "name": "Екатерина Яшникова",
+    "genres": [
+      "author"
+    ],
+    "traits": [
+      "t4",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a92",
+    "name": "Atlantida Project",
+    "genres": [
+      "spiritual"
+    ],
+    "traits": [
+      "t1",
+      "t5"
+    ]
+  },
+  {
+    "id": "a93",
+    "name": "Зоя Ященко",
+    "genres": [
+      "author"
+    ],
+    "traits": [
+      "t4",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a94",
+    "name": "London Festival Orchestra",
+    "genres": [
+      "virtuoso"
+    ],
+    "traits": [
+      "t3"
+    ]
+  },
+  {
+    "id": "a95",
+    "name": "Немного нервно",
+    "genres": [
+      "soviet-rock"
+    ],
+    "traits": [
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a96",
+    "name": "Gabriel Saban",
+    "genres": [
+      "soundtrack"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a97",
+    "name": "Hugo Strasser",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a98",
+    "name": "Янка Дягилева",
+    "genres": [
+      "soviet-rock",
+      "protest",
+      "melancholy"
+    ],
+    "traits": [
+      "t2",
+      "t4",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a99",
+    "name": "ICHI",
+    "genres": [
+      "virtuoso"
+    ],
+    "traits": [
+      "t3"
+    ]
+  },
+  {
+    "id": "a100",
+    "name": "Hot Butter",
+    "genres": [
+      "electronic"
+    ],
+    "traits": [
+      "t1",
+      "t5"
+    ]
+  },
+  {
+    "id": "a101",
+    "name": "Ольга Арефьева и Ковчег",
+    "genres": [
+      "author"
+    ],
+    "traits": [
+      "t4",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a102",
+    "name": "Dobranotch",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1",
+      "t3"
+    ]
+  },
+  {
+    "id": "a103",
+    "name": "Joker James",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a104",
+    "name": "Нейро Дюбель",
+    "genres": [
+      "soviet-rock"
+    ],
+    "traits": [
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a105",
+    "name": "Faraualla",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1",
+      "t3"
+    ]
+  },
+  {
+    "id": "a106",
+    "name": "Markscheider Kunst",
+    "genres": [
+      "irony"
+    ],
+    "traits": [
+      "t6"
+    ]
+  },
+  {
+    "id": "a107",
+    "name": "Карелия",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a108",
+    "name": "Евгений Крылатов",
+    "genres": [
+      "soundtrack"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a109",
+    "name": "Умка и Броневик",
+    "genres": [
+      "author"
+    ],
+    "traits": [
+      "t4",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a110",
+    "name": "Gae Bolg",
+    "genres": [
+      "neofolk"
+    ],
+    "traits": [
+      "t1",
+      "t7"
+    ]
+  },
+  {
+    "id": "a111",
+    "name": "Дышать",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a112",
+    "name": "Stoner Train",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a113",
+    "name": "Thorr",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a114",
+    "name": "Василий К.",
+    "genres": [
+      "author"
+    ],
+    "traits": [
+      "t4",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a115",
+    "name": "GREEN CROW",
+    "genres": [
+      "modern-rap"
+    ],
+    "traits": [
+      "t2"
+    ]
+  },
+  {
+    "id": "a116",
+    "name": "Бахыт Компот",
+    "genres": [
+      "irony"
+    ],
+    "traits": [
+      "t6"
+    ]
+  },
+  {
+    "id": "a117",
+    "name": "Teufelstanz",
+    "genres": [
+      "world",
+      "neofolk"
+    ],
+    "traits": [
+      "t1",
+      "t3",
+      "t7"
+    ]
+  },
+  {
+    "id": "a118",
+    "name": "Александр Ф. Скляр",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a119",
+    "name": "Stephan Sechi",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a120",
+    "name": "Вера Полозкова",
+    "genres": [
+      "author"
+    ],
+    "traits": [
+      "t4",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a121",
+    "name": "Дмитрий Ревякин",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a122",
+    "name": "Jody Gwin",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a123",
+    "name": "Spiritual Seasons",
+    "genres": [
+      "neofolk"
+    ],
+    "traits": [
+      "t1",
+      "t7"
+    ]
+  },
+  {
+    "id": "a124",
+    "name": "Аукцыон",
+    "genres": [
+      "soviet-rock"
+    ],
+    "traits": [
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a125",
+    "name": "Аквариум",
+    "genres": [
+      "soviet-rock",
+      "spiritual"
+    ],
+    "traits": [
+      "t1",
+      "t5",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a126",
+    "name": "Joanna Stingray",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1",
+      "t3"
+    ]
+  },
+  {
+    "id": "a127",
+    "name": "Brand X Music",
+    "genres": [
+      "soundtrack"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a128",
+    "name": "grande1899",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a129",
+    "name": "Сергей Фантом",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a130",
+    "name": "Самое Большое Простое Число",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a131",
+    "name": "Barbatuques",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1",
+      "t3"
+    ]
+  },
+  {
+    "id": "a132",
+    "name": "Drum Ecstasy",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a133",
+    "name": "ОН ЮН",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a134",
+    "name": "FreshmanSound",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a135",
+    "name": "Борис Гребенщиков",
+    "genres": [
+      "soviet-rock",
+      "spiritual"
+    ],
+    "traits": [
+      "t1",
+      "t5",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a136",
+    "name": "Марк Рейзен",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a137",
+    "name": "Моя дорогая",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a138",
+    "name": "Удмуртская тоска",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a139",
+    "name": "José Larralde",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1",
+      "t3"
+    ]
+  },
+  {
+    "id": "a140",
+    "name": "Civil War",
+    "genres": [
+      "neofolk"
+    ],
+    "traits": [
+      "t1",
+      "t7"
+    ]
+  },
+  {
+    "id": "a141",
+    "name": "Martina Camargo",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a142",
+    "name": "Larkin Poe",
+    "genres": [
+      "virtuoso"
+    ],
+    "traits": [
+      "t3"
+    ]
+  },
+  {
+    "id": "a143",
+    "name": "Klayton",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a144",
+    "name": "Love",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a145",
+    "name": "Ryan Taubert",
+    "genres": [
+      "soundtrack"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a146",
+    "name": "Fanfare Vagabontu",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a147",
+    "name": "Jelonek",
+    "genres": [
+      "virtuoso"
+    ],
+    "traits": [
+      "t3"
+    ]
+  },
+  {
+    "id": "a148",
+    "name": "Yuma",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a149",
+    "name": "Karolina Cicha",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a150",
+    "name": "Ринат Каримов",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a151",
+    "name": "Влади",
+    "genres": [
+      "modern-rap",
+      "protest"
+    ],
+    "traits": [
+      "t2"
+    ]
+  },
+  {
+    "id": "a152",
+    "name": "Василий Уриевский",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a153",
+    "name": "Эрнесто Заткнитесь",
+    "genres": [
+      "modern-rap"
+    ],
+    "traits": [
+      "t2"
+    ]
+  },
+  {
+    "id": "a154",
+    "name": "The OM",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a155",
+    "name": "Danish National Symphony Orchestra",
+    "genres": [
+      "soundtrack"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a156",
+    "name": "Заточка",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a157",
+    "name": "Тим Скоренко",
+    "genres": [
+      "author"
+    ],
+    "traits": [
+      "t4",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a158",
+    "name": "Сергей Никитин",
+    "genres": [
+      "author"
+    ],
+    "traits": [
+      "t4",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a159",
+    "name": "Vivaldi String Orchestra",
+    "genres": [
+      "soundtrack"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a160",
+    "name": "Be Svendsen",
+    "genres": [
+      "electronic"
+    ],
+    "traits": [
+      "t1",
+      "t5"
+    ]
+  },
+  {
+    "id": "a161",
+    "name": "Sly5thAve",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a162",
+    "name": "Владимир Федосеев",
+    "genres": [
+      "modern-rap",
+      "protest"
+    ],
+    "traits": [
+      "t2"
+    ]
+  },
+  {
+    "id": "a163",
+    "name": "Opal Ocean",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a164",
+    "name": "Bel Suono",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a165",
+    "name": "Geek Music",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a166",
+    "name": "Suidakra",
+    "genres": [
+      "neofolk"
+    ],
+    "traits": [
+      "t1",
+      "t7"
+    ]
+  },
+  {
+    "id": "a167",
+    "name": "Zodiac",
+    "genres": [
+      "electronic"
+    ],
+    "traits": [
+      "t1",
+      "t5"
+    ]
+  },
+  {
+    "id": "a168",
+    "name": "Сурганова и Оркестр",
+    "genres": [
+      "soviet-rock"
+    ],
+    "traits": [
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a169",
+    "name": "Золотое Перо",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a170",
+    "name": "Julius Frederick Rinaldi",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a171",
+    "name": "Два Рима",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a172",
+    "name": "Драконь",
+    "genres": [
+      "author"
+    ],
+    "traits": [
+      "t4",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a173",
+    "name": "Леона",
+    "genres": [
+      "author",
+      "melancholy"
+    ],
+    "traits": [
+      "t4",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a174",
+    "name": "Евгений Женевьев",
+    "genres": [
+      "author"
+    ],
+    "traits": [
+      "t4",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a175",
+    "name": "Евгений Алексеев",
+    "genres": [
+      "author"
+    ],
+    "traits": [
+      "t4",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a176",
+    "name": "Геннадий Гладков",
+    "genres": [
+      "soundtrack"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a177",
+    "name": "Михаил Башаков",
+    "genres": [
+      "author"
+    ],
+    "traits": [
+      "t4",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a178",
+    "name": "Железный Занавес",
+    "genres": [
+      "protest"
+    ],
+    "traits": [
+      "t2"
+    ]
+  },
+  {
+    "id": "a179",
+    "name": "The New Synthesizer Experience",
+    "genres": [
+      "electronic"
+    ],
+    "traits": [
+      "t1",
+      "t5"
+    ]
+  },
+  {
+    "id": "a180",
+    "name": "Skrömta",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1",
+      "t3"
+    ]
+  },
+  {
+    "id": "a181",
+    "name": "Lama Tenzin Sangpo",
+    "genres": [
+      "world",
+      "spiritual"
+    ],
+    "traits": [
+      "t1",
+      "t3",
+      "t5"
+    ]
+  },
+  {
+    "id": "a182",
+    "name": "The Brass Knuckle Steampunk Sinfonia",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a183",
+    "name": "SuNA Mantra",
+    "genres": [
+      "spiritual"
+    ],
+    "traits": [
+      "t1",
+      "t5"
+    ]
+  },
+  {
+    "id": "a184",
+    "name": "Jambey",
+    "genres": [
+      "spiritual"
+    ],
+    "traits": [
+      "t1",
+      "t5"
+    ]
+  },
+  {
+    "id": "a185",
+    "name": "Муха",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a186",
+    "name": "Настежь",
+    "genres": [
+      "soviet-rock"
+    ],
+    "traits": [
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a187",
+    "name": "Гражданская оборона",
+    "genres": [
+      "soviet-rock",
+      "protest"
+    ],
+    "traits": [
+      "t2",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a188",
+    "name": "The Charades",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a189",
+    "name": "IP Orchestra",
+    "genres": [
+      "soundtrack"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a190",
+    "name": "Владимир Вавилов",
+    "genres": [
+      "modern-rap",
+      "protest"
+    ],
+    "traits": [
+      "t2"
+    ]
+  },
+  {
+    "id": "a191",
+    "name": "Дореволюціонный совѣтчикъ",
+    "genres": [
+      "irony"
+    ],
+    "traits": [
+      "t6"
+    ]
+  },
+  {
+    "id": "a192",
+    "name": "Ÿuma",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a193",
+    "name": "Алиса",
+    "genres": [
+      "soviet-rock",
+      "protest"
+    ],
+    "traits": [
+      "t2",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a194",
+    "name": "Василий Васильев",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a195",
+    "name": "MarimbaMix",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a196",
+    "name": "Ростислав Чебыкин",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a197",
+    "name": "Shedda",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a198",
+    "name": "Кирилл Комаров",
+    "genres": [
+      "author"
+    ],
+    "traits": [
+      "t4",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a199",
+    "name": "Тропы не врут",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1"
+    ]
+  },
+  {
+    "id": "a200",
+    "name": "Ноль",
+    "genres": [
+      "soviet-rock",
+      "melancholy"
+    ],
+    "traits": [
+      "t4",
+      "t7",
+      "t8"
+    ]
+  },
+  {
+    "id": "a201",
+    "name": "Живица",
+    "genres": [
+      "world"
+    ],
+    "traits": [
+      "t1",
+      "t3"
+    ]
+  },
+  {
+    "id": "a202",
+    "name": "Элечка",
+    "genres": [
+      "irony"
+    ],
+    "traits": [
+      "t6"
+    ]
+  },
+  {
+    "id": "a203",
+    "name": "Крыс",
+    "genres": [
+      "modern-rap"
+    ],
+    "traits": [
+      "t2"
+    ]
+  }
+]
