@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Музыкальная ДНК — Timeline</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+
+    <style>
+        :root {
+            --text-primary: #fafafa;
+            --text-muted: #a1a1aa;
+            --text-dim: #71717a;
+            --card-bg: #1f1f28;
+            --card-border: #2a2a3a;
+            --accent-blue: #60a5fa;
+            --accent-green: #22c55e;
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #1a1a2e;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-primary) 100%);
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .container { padding: 15px; display: flex; flex-direction: column; align-items: center; height: 100vh; overflow: hidden; }
+        .title { font-size: 1.6rem; font-weight: 600; margin-bottom: 2px; letter-spacing: 0.1em; background: linear-gradient(90deg, #fff 0%, #888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subtitle { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; font-family: 'JetBrains Mono', monospace; font-weight: 300; }
+        #chart { width: 100%; max-width: 1600px; position: relative; }
+
+        /* Mode toggle */
+        .mode-toggle { position: absolute; top: 10px; right: 20px; display: flex; gap: 8px; z-index: 100; }
+        .mode-btn { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 6px 12px; border: 1px solid var(--card-border); border-radius: 4px; background: var(--card-bg); color: var(--text-muted); cursor: pointer; transition: all 0.2s; }
+        .mode-btn:hover { border-color: var(--accent-blue); color: var(--text-primary); }
+        .mode-btn.active { border-color: var(--accent-green); color: var(--accent-green); background: rgba(34, 197, 94, 0.1); }
+
+        /* Genres - top row */
+        .genres-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; max-width: 1400px; }
+        .genre-chip { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 4px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s; opacity: 0.7; }
+        .genre-chip:hover, .genre-chip.active { opacity: 1; transform: scale(1.05); }
+        .genre-chip.dimmed { opacity: 0.15; }
+
+        /* Traits - bottom row */
+        .traits-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; max-width: 1400px; }
+        .trait-chip { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 4px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s; opacity: 0.7; border: 1px solid; }
+        .trait-chip:hover, .trait-chip.active { opacity: 1; }
+        .trait-chip.dimmed { opacity: 0.15; }
+
+        /* Timeline axis */
+        .timeline-axis { position: absolute; top: 0; left: 60px; right: 20px; height: 25px; border-bottom: 1px solid var(--card-border); }
+        .timeline-tick { position: absolute; bottom: 5px; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); transform: translateX(-50%); }
+        .timeline-tick::after { content: ''; position: absolute; bottom: -5px; left: 50%; width: 1px; height: 100%; background: var(--card-border); }
+
+        /* Geo labels - left column */
+        .geo-label { position: absolute; left: 5px; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); }
+
+        /* Artist card */
+        .artist-card { position: absolute; width: 44px; height: 44px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 6px; padding: 3px; cursor: pointer; transition: all 0.3s ease; z-index: 10; }
+        .artist-card:hover, .artist-card.selected { border-color: var(--accent-blue); transform: scale(1.15); box-shadow: 0 4px 20px rgba(0,0,0,0.5); z-index: 50; }
+        .artist-card.selected { border-color: var(--accent-green); box-shadow: 0 0 15px rgba(34, 197, 94, 0.3); }
+        .artist-card.dimmed { opacity: 0.15; transform: scale(0.9); }
+        .artist-avatar { width: 100%; height: 100%; border-radius: 4px; position: relative; overflow: hidden; background-size: cover; background-position: center top; }
+        .artist-avatar .fallback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; opacity: 0; }
+        .artist-avatar.no-img .fallback { opacity: 1; }
+        .artist-tooltip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 4px; padding: 4px 8px; white-space: nowrap; font-family: 'JetBrains Mono', monospace; font-size: 10px; opacity: 0; pointer-events: none; transition: opacity 0.2s; margin-bottom: 4px; z-index: 100; }
+        .artist-card:hover .artist-tooltip { opacity: 1; }
+
+        /* Track dots */
+        .track-dot { position: absolute; width: 8px; height: 8px; border-radius: 50%; cursor: pointer; transition: all 0.2s ease; transform: translate(-50%, -50%); z-index: 5; opacity: 0.7; }
+        .track-dot:hover { transform: translate(-50%, -50%) scale(1.8); opacity: 1; z-index: 60; }
+        .track-dot.dimmed { opacity: 0.08; }
+        .track-dot .track-tooltip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 4px; padding: 4px 8px; white-space: nowrap; font-family: 'JetBrains Mono', monospace; font-size: 9px; opacity: 0; pointer-events: none; transition: opacity 0.2s; margin-bottom: 4px; }
+        .track-dot:hover .track-tooltip { opacity: 1; }
+
+        /* Info panel */
+        .info-panel { position: fixed; right: 15px; top: 50%; transform: translateY(-50%); width: 280px; max-height: 70vh; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 14px; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.2s; overflow-y: auto; }
+        .info-panel.visible { opacity: 1; pointer-events: auto; }
+        .info-panel.selected { border-color: var(--accent-green); box-shadow: 0 0 20px rgba(34, 197, 94, 0.2); }
+        .panel-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--card-border); }
+        .panel-image { width: 50px; height: 50px; border-radius: 6px; overflow: hidden; flex-shrink: 0; background-size: cover; background-position: center; }
+        .panel-title { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 400; }
+        .panel-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); }
+        .close-btn { position: absolute; top: 10px; right: 10px; width: 20px; height: 20px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 16px; display: none; }
+        .info-panel.selected .close-btn { display: block; }
+        .track-list { list-style: none; }
+        .track-item { display: flex; align-items: center; gap: 6px; padding: 6px; margin: 3px 0; border-radius: 4px; cursor: pointer; transition: background 0.15s; font-family: 'JetBrains Mono', monospace; font-size: 10px; }
+        .track-item:hover { background: rgba(96, 165, 250, 0.15); }
+        .track-item .year { color: var(--text-dim); font-size: 9px; min-width: 30px; }
+        .track-item .track-name { flex: 1; color: var(--text-primary); }
+
+        /* SVG for Sankey links */
+        #svgLayer { position: absolute; top: 0; left: 0; pointer-events: none; }
+        .sankey-link { fill: none; stroke-opacity: 0.15; transition: stroke-opacity 0.2s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">МУЗЫКАЛЬНАЯ ДНК</h1>
+        <p class="subtitle" id="subtitle">таймлайн: 1968–2024 | география: мир → регионы РФ</p>
+
+        <div class="genres-row" id="genresRow"></div>
+        <div id="chart"></div>
+        <div class="traits-row" id="traitsRow"></div>
+    </div>
+
+    <div class="mode-toggle">
+        <button class="mode-btn active" id="showAll">Все треки</button>
+        <button class="mode-btn" id="showSelected">Только выбранный</button>
+    </div>
+
+    <div class="info-panel" id="infoPanel">
+        <button class="close-btn" id="closeBtn">×</button>
+        <div class="panel-header">
+            <div class="panel-image" id="panelImage"></div>
+            <div><div class="panel-title" id="panelTitle"></div><div class="panel-subtitle" id="panelSubtitle"></div></div>
+        </div>
+        <ul class="track-list" id="trackList"></ul>
+    </div>
+
+    <script>
+        const imagePath = (filename) => `./images/${filename}`;
+
+        const genres = [
+            { id: 'soviet-rock', name: 'Русский рок', color: '#ff6b6b' },
+            { id: 'protest', name: 'Протест', color: '#ffd93d' },
+            { id: 'world', name: 'World', color: '#6bcb77' },
+            { id: 'spiritual', name: 'Медитатив', color: '#9d4edd' },
+            { id: 'author', name: 'Авторская', color: '#4ecdc4' },
+            { id: 'neofolk', name: 'Неофолк', color: '#a0522d' },
+            { id: 'electronic', name: 'Электроника', color: '#00d4ff' },
+            { id: 'virtuoso', name: 'Виртуозы', color: '#ff9f1c' },
+            { id: 'irony', name: 'Ирония', color: '#ff85a2' },
+            { id: 'soundtrack', name: 'Саундтреки', color: '#7b68ee' },
+            { id: 'modern-rap', name: 'Рэп', color: '#e63946' },
+            { id: 'melancholy', name: 'Меланхолия', color: '#457b9d' },
+        ];
+
+        const geoRegions = [
+            { id: 'world', name: 'Мир', y: 0 },
+            { id: 'spb', name: 'СПб', y: 1 },
+            { id: 'moscow', name: 'Москва', y: 2 },
+            { id: 'regions', name: 'Регионы РФ', y: 3 },
+        ];
+
+        const artists = [
+            { id: 'a1', name: 'КИНО', desc: 'Виктор Цой', emoji: '⭐', bgColor: '#ff6b6b', geo: 'spb',
+              image: 'kino.jpg', imagePos: 'center 15%',
+              tracks: [{ title: 'Перемен', search: 'КИНО Перемен', year: 1986 },{ title: 'Группа крови', search: 'КИНО Группа крови', year: 1988 },{ title: 'Город', search: 'КИНО Город', year: 1982 },{ title: 'Муравейник', search: 'КИНО Муравейник', year: 1986 }]},
+            { id: 'a2', name: 'Высоцкий', desc: 'Бард, поэт', emoji: '🎭', bgColor: '#4ecdc4', geo: 'moscow',
+              image: 'vysotsky.jpg', imagePos: 'center top',
+              tracks: [{ title: 'Мой Гамлет', search: 'Высоцкий Мой Гамлет', year: 1972 },{ title: 'Як-истребитель', search: 'Высоцкий Як-истребитель', year: 1968 },{ title: 'Песня космических негодяев', search: 'Высоцкий Песня космических негодяев', year: 1981 }]},
+            { id: 'a3', name: 'Noize MC', desc: 'Протестный рэп', emoji: '🔥', bgColor: '#ffd93d', geo: 'moscow',
+              image: 'noize-mc.jpg', imagePos: 'center 20%',
+              tracks: [{ title: 'Иордан', search: 'Noize MC Иордан', year: 2018 },{ title: 'Всё как у людей', search: 'Noize MC Всё как у людей', year: 2016 },{ title: 'Столетняя война', search: 'Noize MC Столетняя война', year: 2016 },{ title: 'Вояджер-1', search: 'Noize MC Вояджер', year: 2018 },{ title: 'Почитай старших', search: 'Noize MC Почитай старших', year: 2024 }]},
+            { id: 'a4', name: 'БГ', desc: 'Аквариум', emoji: '🕉️', bgColor: '#9d4edd', geo: 'spb',
+              image: 'bg.jpg', imagePos: 'center 35%',
+              tracks: [{ title: 'Om Namah Shivaya', search: 'Гребенщиков Om Namah Shivaya', year: 2012 },{ title: 'Поезд в огне', search: 'Аквариум Поезд в огне', year: 1987 },{ title: 'Вон Вавилон', search: 'Гребенщиков Вон Вавилон', year: 2017 },{ title: 'Назад в Архангельск', search: 'Аквариум Назад в Архангельск', year: 1982 },{ title: 'Молитва и пост', search: 'Аквариум Молитва и пост', year: 1999 },{ title: 'Новый Шёлковый Путь', search: 'Гребенщиков Новый Шелковый Путь', year: 2011 },{ title: 'Если Я Уйду', search: 'Гребенщиков Если Я Уйду', year: 2007 },{ title: 'Не судьба', search: 'Гребенщиков Не судьба', year: 2018 },{ title: 'Не Было Такой', search: 'Гребенщиков Не Было Такой', year: 2016 }]},
+            { id: 'a5', name: 'Василий К.', desc: 'Авторский сарказм', emoji: '😏', bgColor: '#ff85a2', geo: 'spb',
+              image: 'vasiliy-k.jpg', imagePos: 'center 30%',
+              tracks: [{ title: 'Не моя', search: 'Василий К Не моя', year: 2008 },{ title: 'Держава', search: 'Василий К Держава', year: 2010 },{ title: 'Ганеша', search: 'Василий К Ганеша', year: 2012 },{ title: 'Интеллигенты', search: 'Василий К Интеллигенты', year: 2006 },{ title: 'Самое худшее', search: 'Василий К Самое худшее', year: 2015 },{ title: 'Монотеизм', search: 'Василий К Монотеизм', year: 2006 },{ title: 'Манхэттен и Берлин', search: 'Василий К Манхэттен и Берлин', year: 2018 },{ title: 'Так бывает', search: 'Василий К Так бывает', year: 2015 },{ title: 'Безобразны и злы', search: 'Василий К Безобразны и злы', year: 2015 },{ title: 'Исусы Христосы', search: 'Василий К Исусы Христосы', year: 2006 },{ title: 'Игра в ящик', search: 'Василий К Игра в ящик', year: 2018 }]},
+            { id: 'a6', name: 'Heilung', desc: 'Скандинавский пейган', emoji: '🦌', bgColor: '#a0522d', geo: 'world',
+              image: 'heilung.jpg', imagePos: 'center 35%',
+              tracks: [{ title: 'Fylgija Ear', search: 'Heilung Fylgija Ear', year: 2019 },{ title: 'Hakkerskaldyr', search: 'Heilung Hakkerskaldyr', year: 2019 }]},
+            { id: 'a7', name: 'Hans Zimmer', desc: 'Саундтреки', emoji: '🎬', bgColor: '#7b68ee', geo: 'world',
+              image: 'hans-zimmer.jpg', imagePos: 'center 25%',
+              tracks: [{ title: 'Interstellar Suite', search: 'Hans Zimmer Interstellar Suite', year: 2014 },{ title: 'Dust', search: 'Hans Zimmer Dust Interstellar', year: 2014 }]},
+            { id: 'a8', name: 'Rodrigo y Gabriela', desc: 'Гитарные виртуозы', emoji: '🎸', bgColor: '#ff9f1c', geo: 'world',
+              image: 'rodrigo-gabriela.jpg', imagePos: 'center 20%',
+              tracks: [{ title: 'Electric Soul', search: 'Rodrigo y Gabriela Electric Soul', year: 2019 },{ title: 'Ixtapa', search: 'Rodrigo y Gabriela Ixtapa', year: 2006 }]},
+            { id: 'a9', name: 'Каста', desc: 'Ростовский рэп', emoji: '🎤', bgColor: '#e63946', geo: 'regions',
+              image: '_kasta.jpg', imagePos: 'center 15%',
+              tracks: [{ title: 'Самый счастливый человек', search: 'Каста Самый счастливый человек', year: 2007 },{ title: 'На порядок выше', search: 'Каста На порядок выше', year: 2009 },{ title: 'Радиосигналы', search: 'Каста Радиосигналы', year: 2017 },{ title: 'Горячее время', search: 'Каста Горячее время', year: 2006 }]},
+            { id: 'a10', name: 'Nick Cave', desc: 'Тёмная романтика', emoji: '🖤', bgColor: '#457b9d', geo: 'world',
+              image: 'nick-cave.jpg', imagePos: 'center 25%',
+              tracks: [{ title: 'Papa Won\'t Leave You, Henry', search: 'Nick Cave Papa Wont Leave You Henry', year: 1994 },{ title: 'Red Right Hand', search: 'Nick Cave Red Right Hand', year: 1994 },{ title: 'Brother, My Cup Is Empty', search: 'Nick Cave Brother My Cup Is Empty', year: 1996 }]},
+            { id: 'a11', name: 'Nine Treasures', desc: 'Монгольский фолк', emoji: '🏔️', bgColor: '#6bcb77', geo: 'world',
+              image: 'nine-treasures.jpg', imagePos: 'center 40%',
+              tracks: [{ title: 'The Dream About Ancient City', search: 'Nine Treasures Dream Ancient City', year: 2017 }]},
+            { id: 'a12', name: 'Jean-Michel Jarre', desc: 'Пионер электроники', emoji: '🌌', bgColor: '#00d4ff', geo: 'world',
+              image: 'jarre.jpg', imagePos: 'center 15%',
+              tracks: [{ title: 'Equinoxe, Pt. 4', search: 'Jean Michel Jarre Equinoxe 4', year: 1978 }]},
+            { id: 'a13', name: 'Пушной', desc: 'Ироничный интеллектуал', emoji: '🤓', bgColor: '#ff85a2', geo: 'regions',
+              image: 'pushnoy.jpg', imagePos: 'center 15%',
+              tracks: [{ title: 'Вершина', search: 'Пушной Вершина', year: 2007 },{ title: 'Город Омск', search: 'Пушной Город Омск', year: 2010 },{ title: 'Надо радоваться!', search: 'Пушной Надо радоваться', year: 2008 }]},
+            { id: 'a14', name: 'Oxxxymiron', desc: 'Литературный рэп', emoji: '📚', bgColor: '#ffd93d', geo: 'spb',
+              image: 'oxxxymiron.jpg', imagePos: 'center 15%',
+              tracks: [{ title: 'Где нас нет', search: 'Oxxxymiron Где нас нет', year: 2015 },{ title: 'Город под подошвой', search: 'Oxxxymiron Город под подошвой', year: 2015 },{ title: 'ОРГАНИЗАЦИЯ', search: 'Oxxxymiron ОРГАНИЗАЦИЯ', year: 2022 },{ title: 'Лондонград', search: 'Oxxxymiron Лондонград', year: 2015 }]},
+            { id: 'a15', name: 'Corvus Corax', desc: 'Средневековый неофолк', emoji: '🏰', bgColor: '#a0522d', geo: 'world',
+              image: 'corvus-corax.jpg', imagePos: 'center 25%',
+              tracks: [{ title: 'In Taberna', search: 'Corvus Corax In Taberna', year: 1992 },{ title: 'Skál', search: 'Corvus Corax Skal', year: 2013 }]},
+            { id: 'a16', name: 'Krishna Das', desc: 'Киртан, мантры', emoji: '🙏', bgColor: '#9d4edd', geo: 'world',
+              image: 'krishna-das.jpg', imagePos: 'center 20%',
+              tracks: [{ title: 'Hallelujah Chalisa', search: 'Krishna Das Hallelujah Chalisa', year: 2014 }]},
+            { id: 'a17', name: 'Сплин', desc: 'Питерский рок', emoji: '🌧️', bgColor: '#457b9d', geo: 'spb',
+              image: '',
+              tracks: [{ title: 'За семью печатями', search: 'Сплин За семью печатями', year: 2004 },{ title: 'Нечего делать внутри', search: 'Сплин Нечего делать внутри', year: 2001 },{ title: 'Семь восьмых', search: 'Сплин Семь восьмых', year: 1998 },{ title: 'Передайте это Гарри Поттеру', search: 'Сплин Передайте это Гарри Поттеру', year: 2001 }]},
+            { id: 'a18', name: 'Дельфин', desc: 'Электронная меланхолия', emoji: '🐬', bgColor: '#1e3a5f', geo: 'moscow',
+              image: '',
+              tracks: [{ title: '744', search: 'Дельфин 744', year: 2014 },{ title: 'Я люблю людей', search: 'Дельфин Я люблю людей', year: 2005 }]},
+            { id: 'a19', name: 'Порнофильмы', desc: 'Социальный панк', emoji: '🔥', bgColor: '#dc2626', geo: 'moscow',
+              image: '',
+              tracks: [{ title: 'Я так соскучился', search: 'Порнофильмы Я так соскучился', year: 2017 },{ title: 'Чужое горе', search: 'Порнофильмы Чужое горе', year: 2018 },{ title: 'Россия для грустных', search: 'Порнофильмы Россия для грустных', year: 2019 }]},
+            { id: 'a20', name: 'Леона', desc: 'Тёмный авторский фолк', emoji: '🌑', bgColor: '#374151', geo: 'moscow',
+              image: '',
+              tracks: [{ title: 'Хозяйка медной горы', search: 'Леона Хозяйка медной горы', year: 2018 },{ title: 'Плохо, ничего хорошего', search: 'Леона Плохо ничего хорошего', year: 2019 },{ title: 'Пустое святое', search: 'Леона Пустое святое', year: 2019 },{ title: 'Зверь, которого не бывает', search: 'Леона Зверь которого не бывает', year: 2020 },{ title: 'Проводник', search: 'Леона Проводник', year: 2018 },{ title: 'На металлоломе', search: 'Леона На металлоломе', year: 2019 },{ title: 'Всё, что мы скажем', search: 'Леона Всё что мы скажем', year: 2020 }]},
+            { id: 'a21', name: 'Anacondaz', desc: 'Ироничный рэп-рок', emoji: '🐍', bgColor: '#65a30d', geo: 'moscow',
+              image: '',
+              tracks: [{ title: 'Дубак', search: 'Anacondaz Дубак', year: 2015 },{ title: 'Смертельное оружие', search: 'Anacondaz Смертельное оружие', year: 2018 }]},
+            { id: 'a22', name: 'Nautilus Pompilius', desc: 'Свердловский рок', emoji: '🐚', bgColor: '#0ea5e9', geo: 'regions',
+              image: '',
+              tracks: [{ title: 'Я хочу быть с тобой', search: 'Nautilus Pompilius Я хочу быть с тобой', year: 1989 },{ title: 'Хлоп-хлоп', search: 'Nautilus Pompilius Хлоп-хлоп', year: 1988 }]},
+            { id: 'a23', name: 'Гражданская оборона', desc: 'Сибирский панк', emoji: '💀', bgColor: '#1f2937', geo: 'regions',
+              image: '',
+              tracks: [{ title: 'После нас', search: 'Гражданская оборона После нас', year: 2004 }]},
+            { id: 'a24', name: 'Алиса', desc: 'Кинчев, рок', emoji: '⚡', bgColor: '#b91c1c', geo: 'spb',
+              image: '',
+              tracks: [{ title: 'Rock-N-Roll', search: 'Алиса Rock-N-Roll', year: 1988 }]},
+            { id: 'a25', name: 'Влади', desc: 'Каста соло', emoji: '🎤', bgColor: '#7c3aed', geo: 'regions',
+              image: '',
+              tracks: [{ title: 'Как это блядь возможно', search: 'Влади Как это возможно', year: 2022 },{ title: 'Краски не сгущайте', search: 'Влади Краски не сгущайте', year: 2022 }]},
+            { id: 'a26', name: 'Драконь', desc: 'Бардовский юмор', emoji: '🐉', bgColor: '#ea580c', geo: 'moscow',
+              image: '',
+              tracks: [{ title: 'О всадниках и черепахах', search: 'Драконь О всадниках и черепахах', year: 2012 },{ title: 'Найти омелу', search: 'Драконь Найти омелу', year: 2015 },{ title: 'Песня о вашем друге', search: 'Драконь Песня о вашем друге', year: 2014 },{ title: 'Испанская романтическая баллада', search: 'Драконь Испанская романтическая баллада', year: 2016 }]},
+            { id: 'a27', name: 'Atlantida Project', desc: 'Этно-электроника', emoji: '🌊', bgColor: '#0891b2', geo: 'moscow',
+              image: '',
+              tracks: [{ title: 'Чистое зло', search: 'Atlantida Project Чистое зло', year: 2015 },{ title: 'Сарва Мангалам', search: 'Atlantida Project Сарва Мангалам', year: 2012 },{ title: 'Красная королева', search: 'Atlantida Project Красная королева', year: 2018 }]},
+            { id: 'a28', name: 'Ольга Арефьева', desc: 'Авторская мистика', emoji: '🔮', bgColor: '#a855f7', geo: 'moscow',
+              image: '',
+              tracks: [{ title: 'Сансара', search: 'Ольга Арефьева Сансара', year: 2000 },{ title: 'Вертолёт', search: 'Ольга Арефьева Вертолёт', year: 2003 }]},
+        ];
+
+        const traits = [
+            { id: 't1', name: 'Открытость', color: '#22c55e' },
+            { id: 't2', name: 'Антиавторитарность', color: '#eab308' },
+            { id: 't3', name: 'Космополитизм', color: '#3b82f6' },
+            { id: 't4', name: 'Меланхолия', color: '#8b5cf6' },
+            { id: 't5', name: 'Созерцательность', color: '#ec4899' },
+            { id: 't6', name: 'Ирония', color: '#f97316' },
+            { id: 't7', name: 'Аутентичность', color: '#14b8a6' },
+            { id: 't8', name: 'Интеллигенция', color: '#ef4444' },
+        ];
+
+        const genreToArtist = [
+            { source: 'soviet-rock', target: 'a1' },
+            { source: 'protest', target: 'a3' },{ source: 'protest', target: 'a14' },
+            { source: 'world', target: 'a11' },{ source: 'world', target: 'a8' },
+            { source: 'spiritual', target: 'a4' },{ source: 'spiritual', target: 'a16' },
+            { source: 'author', target: 'a5' },{ source: 'author', target: 'a2' },
+            { source: 'neofolk', target: 'a6' },{ source: 'neofolk', target: 'a15' },
+            { source: 'electronic', target: 'a12' },{ source: 'electronic', target: 'a7' },
+            { source: 'virtuoso', target: 'a8' },{ source: 'virtuoso', target: 'a7' },
+            { source: 'irony', target: 'a13' },{ source: 'irony', target: 'a5' },
+            { source: 'soundtrack', target: 'a7' },
+            { source: 'modern-rap', target: 'a3' },{ source: 'modern-rap', target: 'a9' },{ source: 'modern-rap', target: 'a14' },{ source: 'modern-rap', target: 'a21' },{ source: 'modern-rap', target: 'a25' },
+            { source: 'melancholy', target: 'a10' },{ source: 'melancholy', target: 'a1' },{ source: 'melancholy', target: 'a17' },{ source: 'melancholy', target: 'a18' },{ source: 'melancholy', target: 'a20' },
+            { source: 'soviet-rock', target: 'a17' },{ source: 'soviet-rock', target: 'a22' },{ source: 'soviet-rock', target: 'a24' },
+            { source: 'protest', target: 'a19' },{ source: 'protest', target: 'a23' },{ source: 'protest', target: 'a25' },
+            { source: 'electronic', target: 'a18' },
+            { source: 'author', target: 'a20' },{ source: 'author', target: 'a26' },{ source: 'author', target: 'a28' },
+            { source: 'irony', target: 'a21' },{ source: 'irony', target: 'a26' },
+            { source: 'world', target: 'a27' },
+            { source: 'spiritual', target: 'a27' },{ source: 'spiritual', target: 'a28' },
+        ];
+
+        const artistToTrait = [
+            { source: 'a1', target: 't8' },{ source: 'a1', target: 't4' },
+            { source: 'a2', target: 't7' },{ source: 'a2', target: 't8' },
+            { source: 'a3', target: 't2' },
+            { source: 'a4', target: 't5' },{ source: 'a4', target: 't1' },
+            { source: 'a5', target: 't6' },{ source: 'a5', target: 't7' },
+            { source: 'a6', target: 't1' },{ source: 'a6', target: 't3' },
+            { source: 'a7', target: 't1' },
+            { source: 'a8', target: 't7' },{ source: 'a8', target: 't3' },
+            { source: 'a9', target: 't2' },
+            { source: 'a10', target: 't4' },
+            { source: 'a11', target: 't3' },{ source: 'a11', target: 't1' },
+            { source: 'a12', target: 't1' },
+            { source: 'a13', target: 't6' },
+            { source: 'a14', target: 't2' },{ source: 'a14', target: 't8' },
+            { source: 'a15', target: 't1' },
+            { source: 'a16', target: 't5' },
+            { source: 'a17', target: 't4' },{ source: 'a17', target: 't8' },
+            { source: 'a18', target: 't4' },{ source: 'a18', target: 't1' },
+            { source: 'a19', target: 't2' },
+            { source: 'a20', target: 't4' },{ source: 'a20', target: 't7' },
+            { source: 'a21', target: 't6' },{ source: 'a21', target: 't2' },
+            { source: 'a22', target: 't4' },{ source: 'a22', target: 't8' },
+            { source: 'a23', target: 't2' },{ source: 'a23', target: 't7' },
+            { source: 'a24', target: 't7' },
+            { source: 'a25', target: 't2' },
+            { source: 'a26', target: 't6' },{ source: 'a26', target: 't7' },
+            { source: 'a27', target: 't1' },{ source: 'a27', target: 't5' },
+            { source: 'a28', target: 't5' },{ source: 'a28', target: 't7' },
+        ];
+
+        // Calculate median year for each artist
+        artists.forEach(a => {
+            const years = a.tracks.map(t => t.year).sort((x, y) => x - y);
+            a.medianYear = years[Math.floor(years.length / 2)];
+        });
+
+        // Setup dimensions
+        const chart = document.getElementById('chart');
+        const width = Math.min(1500, window.innerWidth - 40);
+        const height = Math.min(600, window.innerHeight - 200);
+        chart.style.width = width + 'px';
+        chart.style.height = height + 'px';
+
+        const minYear = 1968, maxYear = 2025;
+        const leftPadding = 60, rightPadding = 20, topPadding = 30, bottomPadding = 10;
+        const timelineWidth = width - leftPadding - rightPadding;
+        const cardSize = 44;
+
+        // Year to X position
+        function yearToX(year) {
+            return leftPadding + ((year - minYear) / (maxYear - minYear)) * timelineWidth;
+        }
+
+        // Geo to Y position
+        const geoHeight = (height - topPadding - bottomPadding) / geoRegions.length;
+        function geoToY(geoId) {
+            const region = geoRegions.find(g => g.id === geoId);
+            return topPadding + region.y * geoHeight + geoHeight / 2;
+        }
+
+        // Create SVG for Sankey links
+        const svg = d3.select('#chart').append('svg')
+            .attr('id', 'svgLayer')
+            .attr('width', width)
+            .attr('height', height);
+
+        // Create timeline axis
+        const axisDiv = document.createElement('div');
+        axisDiv.className = 'timeline-axis';
+        for (let year = 1970; year <= 2020; year += 10) {
+            const tick = document.createElement('div');
+            tick.className = 'timeline-tick';
+            tick.textContent = year;
+            tick.style.left = `${((year - minYear) / (maxYear - minYear)) * 100}%`;
+            axisDiv.appendChild(tick);
+        }
+        chart.appendChild(axisDiv);
+
+        // Create geo labels
+        geoRegions.forEach(geo => {
+            const label = document.createElement('div');
+            label.className = 'geo-label';
+            label.textContent = geo.name;
+            label.style.top = `${topPadding + geo.y * geoHeight + geoHeight / 2}px`;
+            chart.appendChild(label);
+        });
+
+        // Render genres row
+        const genresRow = document.getElementById('genresRow');
+        genres.forEach(genre => {
+            const chip = document.createElement('div');
+            chip.className = 'genre-chip';
+            chip.textContent = genre.name;
+            chip.style.background = genre.color + '30';
+            chip.style.color = genre.color;
+            chip.dataset.id = genre.id;
+            chip.onmouseenter = () => highlightFromGenre(genre.id, true);
+            chip.onmouseleave = () => highlightFromGenre(genre.id, false);
+            genresRow.appendChild(chip);
+        });
+
+        // Render traits row
+        const traitsRow = document.getElementById('traitsRow');
+        traits.forEach(trait => {
+            const chip = document.createElement('div');
+            chip.className = 'trait-chip';
+            chip.textContent = trait.name;
+            chip.style.borderColor = trait.color;
+            chip.style.color = trait.color;
+            chip.dataset.id = trait.id;
+            chip.onmouseenter = () => highlightFromTrait(trait.id, true);
+            chip.onmouseleave = () => highlightFromTrait(trait.id, false);
+            traitsRow.appendChild(chip);
+        });
+
+        // Position artists and create cards
+        let selectedArtistId = null;
+        let showAllTracks = true;
+
+        // Group artists by geo for vertical spreading
+        const artistsByGeo = {};
+        geoRegions.forEach(g => artistsByGeo[g.id] = []);
+        artists.forEach(a => artistsByGeo[a.geo].push(a));
+
+        // Sort each geo group by median year
+        Object.values(artistsByGeo).forEach(arr => arr.sort((a, b) => a.medianYear - b.medianYear));
+
+        // Calculate positions with vertical offset within geo region
+        artists.forEach(artist => {
+            const geoGroup = artistsByGeo[artist.geo];
+            const index = geoGroup.indexOf(artist);
+            const baseY = geoToY(artist.geo);
+            // Spread vertically within geo band
+            const offsetRange = geoHeight * 0.7;
+            const step = offsetRange / Math.max(1, geoGroup.length - 1);
+            const offset = geoGroup.length === 1 ? 0 : -offsetRange / 2 + index * step;
+
+            artist.x = yearToX(artist.medianYear) - cardSize / 2;
+            artist.y = baseY + offset - cardSize / 2;
+        });
+
+        // Create artist cards
+        artists.forEach(artist => {
+            const card = document.createElement('div');
+            card.className = 'artist-card';
+            card.style.cssText = `left: ${artist.x}px; top: ${artist.y}px;`;
+            card.dataset.id = artist.id;
+
+            const hasImg = artist.image && artist.image.length > 0;
+            const imgUrl = hasImg ? imagePath(artist.image) : '';
+            const imgPos = artist.imagePos || 'center top';
+
+            card.innerHTML = `
+                <div class="artist-avatar ${hasImg ? '' : 'no-img'}" style="background: ${hasImg ? `url('${imgUrl}') ${imgPos}/cover no-repeat` : `linear-gradient(135deg, ${artist.bgColor}60, ${artist.bgColor}25)`}">
+                    <div class="fallback" style="background: linear-gradient(135deg, ${artist.bgColor}60, ${artist.bgColor}25);">${artist.emoji}</div>
+                </div>
+                <div class="artist-tooltip">${artist.name}</div>
+            `;
+
+            card.onmouseenter = () => {
+                if (!selectedArtistId) {
+                    highlightFromArtist(artist.id, true);
+                    showInfoPanel(artist, false);
+                }
+            };
+            card.onmouseleave = () => {
+                if (!selectedArtistId) {
+                    highlightFromArtist(artist.id, false);
+                    hideInfoPanel();
+                }
+            };
+            card.onclick = (e) => {
+                e.stopPropagation();
+                if (selectedArtistId === artist.id) {
+                    deselectArtist();
+                } else {
+                    selectArtist(artist);
+                }
+            };
+
+            chart.appendChild(card);
+        });
+
+        // Create track dots
+        const allTrackDots = [];
+        artists.forEach(artist => {
+            const baseY = artist.y + cardSize / 2;
+            artist.tracks.forEach((track, i) => {
+                const dot = document.createElement('div');
+                dot.className = 'track-dot';
+                dot.style.background = artist.bgColor;
+                dot.style.left = `${yearToX(track.year)}px`;
+                // Offset dots slightly above/below artist line
+                const yOffset = (i % 3 - 1) * 12;
+                dot.style.top = `${baseY + yOffset}px`;
+                dot.dataset.artistId = artist.id;
+                dot.innerHTML = `<div class="track-tooltip">${track.title} (${track.year})</div>`;
+                dot.onclick = (e) => {
+                    e.stopPropagation();
+                    window.open(`https://open.spotify.com/search/${encodeURIComponent(track.search)}`, '_blank');
+                };
+                chart.appendChild(dot);
+                allTrackDots.push({ dot, artistId: artist.id });
+            });
+        });
+
+        // Info panel functions
+        function showInfoPanel(artist, selected) {
+            const panel = document.getElementById('infoPanel');
+            const panelImg = document.getElementById('panelImage');
+            const hasImg = artist.image && artist.image.length > 0;
+            panelImg.style.background = hasImg ? `url('${imagePath(artist.image)}') center/cover` : `linear-gradient(135deg, ${artist.bgColor}60, ${artist.bgColor}20)`;
+            panelImg.innerHTML = hasImg ? '' : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:24px;">${artist.emoji}</div>`;
+
+            document.getElementById('panelTitle').textContent = artist.name;
+            document.getElementById('panelSubtitle').textContent = `${artist.desc} • ${artist.tracks.length} треков`;
+
+            const trackList = document.getElementById('trackList');
+            trackList.innerHTML = '';
+            artist.tracks.sort((a, b) => a.year - b.year).forEach(track => {
+                const li = document.createElement('li');
+                li.className = 'track-item';
+                li.innerHTML = `<span class="year">${track.year}</span><span class="track-name">${track.title}</span>`;
+                li.onclick = (e) => {
+                    e.stopPropagation();
+                    window.open(`https://open.spotify.com/search/${encodeURIComponent(track.search)}`, '_blank');
+                };
+                trackList.appendChild(li);
+            });
+
+            panel.classList.add('visible');
+            panel.classList.toggle('selected', selected);
+        }
+
+        function hideInfoPanel() {
+            document.getElementById('infoPanel').classList.remove('visible');
+        }
+
+        function selectArtist(artist) {
+            if (selectedArtistId) {
+                document.querySelector(`.artist-card[data-id="${selectedArtistId}"]`)?.classList.remove('selected');
+            }
+            selectedArtistId = artist.id;
+            document.querySelector(`.artist-card[data-id="${artist.id}"]`)?.classList.add('selected');
+            highlightFromArtist(artist.id, true);
+            showInfoPanel(artist, true);
+            updateTrackVisibility();
+        }
+
+        function deselectArtist() {
+            if (selectedArtistId) {
+                document.querySelector(`.artist-card[data-id="${selectedArtistId}"]`)?.classList.remove('selected');
+            }
+            selectedArtistId = null;
+            updateHighlight(null, null, null);
+            hideInfoPanel();
+            updateTrackVisibility();
+        }
+
+        document.getElementById('closeBtn').onclick = deselectArtist;
+
+        // Track visibility mode
+        function updateTrackVisibility() {
+            allTrackDots.forEach(({ dot, artistId }) => {
+                if (showAllTracks) {
+                    dot.classList.toggle('dimmed', selectedArtistId && artistId !== selectedArtistId);
+                } else {
+                    dot.style.display = (!selectedArtistId || artistId === selectedArtistId) ? 'block' : 'none';
+                    dot.classList.remove('dimmed');
+                }
+            });
+        }
+
+        document.getElementById('showAll').onclick = () => {
+            showAllTracks = true;
+            document.getElementById('showAll').classList.add('active');
+            document.getElementById('showSelected').classList.remove('active');
+            updateTrackVisibility();
+        };
+
+        document.getElementById('showSelected').onclick = () => {
+            showAllTracks = false;
+            document.getElementById('showSelected').classList.add('active');
+            document.getElementById('showAll').classList.remove('active');
+            updateTrackVisibility();
+        };
+
+        // Highlighting functions
+        function highlightFromGenre(id, on) {
+            const a = new Set(), t = new Set();
+            if (on) {
+                genreToArtist.forEach(l => { if (l.source === id) a.add(l.target); });
+                artistToTrait.forEach(l => { if (a.has(l.source)) t.add(l.target); });
+            }
+            updateHighlight(on ? new Set([id]) : null, on ? a : null, on ? t : null);
+        }
+
+        function highlightFromArtist(id, on) {
+            const g = new Set(), t = new Set();
+            if (on) {
+                genreToArtist.forEach(l => { if (l.target === id) g.add(l.source); });
+                artistToTrait.forEach(l => { if (l.source === id) t.add(l.target); });
+            }
+            updateHighlight(on ? g : null, on ? new Set([id]) : null, on ? t : null);
+        }
+
+        function highlightFromTrait(id, on) {
+            const a = new Set(), g = new Set();
+            if (on) {
+                artistToTrait.forEach(l => { if (l.target === id) a.add(l.source); });
+                genreToArtist.forEach(l => { if (a.has(l.target)) g.add(l.source); });
+            }
+            updateHighlight(on ? g : null, on ? a : null, on ? new Set([id]) : null);
+        }
+
+        function updateHighlight(aG, aA, aT) {
+            const on = aG !== null;
+
+            document.querySelectorAll('.genre-chip').forEach(el => {
+                el.classList.toggle('dimmed', on && !aG.has(el.dataset.id));
+                el.classList.toggle('active', on && aG.has(el.dataset.id));
+            });
+
+            document.querySelectorAll('.artist-card').forEach(el => {
+                if (on) {
+                    el.classList.toggle('dimmed', !aA.has(el.dataset.id));
+                } else {
+                    el.classList.remove('dimmed');
+                }
+            });
+
+            document.querySelectorAll('.trait-chip').forEach(el => {
+                el.classList.toggle('dimmed', on && !aT.has(el.dataset.id));
+                el.classList.toggle('active', on && aT.has(el.dataset.id));
+            });
+
+            // Update track dots
+            if (!showAllTracks && selectedArtistId) return;
+            allTrackDots.forEach(({ dot, artistId }) => {
+                dot.classList.toggle('dimmed', on && !aA.has(artistId));
+            });
+        }
+
+        // Click outside to deselect
+        document.onclick = (e) => {
+            if (selectedArtistId && !e.target.closest('.artist-card') && !e.target.closest('.info-panel') && !e.target.closest('.track-dot')) {
+                deselectArtist();
+            }
+        };
+
+        // Initial track visibility
+        updateTrackVisibility();
+    </script>
+</body>
+</html>
