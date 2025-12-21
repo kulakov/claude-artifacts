@@ -588,10 +588,7 @@
                 const path = linksGroup.append('path')
                     .attr('class', 'track-link')
                     .attr('stroke', artist.bgColor)
-                    .attr('d', () => {
-                        const midX = (artistCenterX + trackX) / 2;
-                        return `M${artistCenterX},${artistCenterY} C${midX},${artistCenterY} ${midX},${trackY} ${trackX},${trackY}`;
-                    });
+                    .attr('d', `M${artistCenterX},${artistCenterY} L${trackX},${trackY}`);
                 trackLinks[artist.id].push(path);
 
                 // Create dot
