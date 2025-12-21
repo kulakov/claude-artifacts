@@ -79,6 +79,11 @@
         .track-dot.highlighted { opacity: 0.7; }
         .track-dot.hovered { transform: translate(-50%, -50%) scale(2.2); opacity: 1; z-index: 70; box-shadow: 0 0 12px currentColor; }
         .track-dot.dimmed { display: none; }
+        .track-dot.pulsing { opacity: 0.9; animation: pulse var(--pulse-duration, 1.5s) ease-in-out infinite; }
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+            50% { transform: translate(-50%, -50%) scale(1.5); opacity: 1; box-shadow: 0 0 8px currentColor; }
+        }
         .track-dot .track-tooltip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 4px; padding: 4px 8px; white-space: nowrap; font-size: 9px; opacity: 0; pointer-events: none; transition: opacity 0.2s; margin-bottom: 4px; }
         .track-dot:hover .track-tooltip { opacity: 1; }
 
@@ -1649,8 +1654,14 @@
             document.querySelectorAll('.artist-card').forEach(el => {
                 el.style.display = showArtists ? '' : 'none';
             });
-            // Hide sankey links when artists hidden
-            if (!showArtists) clearSankeyLinks();
+            // Re-apply navbar filter with new view mode
+            if (activeNavbarFilter) {
+                if (activeNavbarFilter.type === 'genre') {
+                    highlightFromGenre(activeNavbarFilter.id, true);
+                } else {
+                    highlightFromTrait(activeNavbarFilter.id, true);
+                }
+            }
         };
 
         document.getElementById('showTracks').onclick = () => {
@@ -1804,14 +1815,33 @@
 
             // Update track dots and links
             if (!showTracks) return;
-            allTrackDots.forEach(({ dot, artistId }) => {
-                dot.classList.toggle('dimmed', on && !aA.has(artistId));
-            });
 
-            // Update track links
+            // When artists hidden but tracks shown - pulse matching tracks
+            if (!showArtists && on && activeNavbarFilter) {
+                allTrackDots.forEach(({ dot, artistId }) => {
+                    const isActive = aA.has(artistId);
+                    dot.classList.toggle('dimmed', !isActive);
+                    dot.classList.toggle('pulsing', isActive);
+                    // Random pulse duration for variety (1.2s to 2s)
+                    if (isActive) {
+                        dot.style.setProperty('--pulse-duration', (1.2 + Math.random() * 0.8) + 's');
+                        dot.style.animationDelay = (Math.random() * 1) + 's';
+                    }
+                });
+            } else {
+                allTrackDots.forEach(({ dot, artistId }) => {
+                    dot.classList.toggle('dimmed', on && !aA.has(artistId));
+                    dot.classList.remove('pulsing');
+                    dot.style.removeProperty('--pulse-duration');
+                    dot.style.animationDelay = '';
+                });
+            }
+
+            // Update track links (hide when artists hidden)
             Object.keys(trackLinks).forEach(artistId => {
                 trackLinks[artistId].forEach(path => {
                     path.classed('dimmed', on && !aA.has(artistId));
+                    if (!showArtists) path.classed('visible', false);
                 });
             });
         }
