@@ -34,11 +34,11 @@
         .subtitle { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; font-weight: 300; }
         #chart { width: 100%; max-width: 1600px; position: relative; overflow: visible; }
 
-        /* Mode toggle */
-        .mode-toggle { position: absolute; top: 10px; right: 20px; display: flex; gap: 8px; z-index: 100; }
-        .mode-btn { font-size: 10px; padding: 6px 12px; border: 1px solid var(--card-border); border-radius: 4px; background: var(--card-bg); color: var(--text-muted); cursor: pointer; transition: all 0.15s; }
-        .mode-btn:hover { border-color: var(--accent-blue); color: var(--text-primary); }
-        .mode-btn.active { border-color: var(--accent-green); color: var(--accent-green); background: rgba(34, 197, 94, 0.1); }
+        /* Mode toggle - inline with genres */
+        .mode-separator { color: var(--text-dim); font-size: 9px; padding: 0 8px; display: flex; align-items: center; }
+        .mode-btn { font-size: 9px; padding: 4px 8px; border: 1px solid var(--card-border); border-radius: 4px; background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.15s; opacity: 0.7; }
+        .mode-btn:hover { border-color: var(--text-muted); color: var(--text-primary); opacity: 1; }
+        .mode-btn.active { border-color: var(--text-primary); color: var(--text-primary); opacity: 1; }
 
         /* Genres - top row */
         .genres-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; max-width: 1400px; }
@@ -56,6 +56,8 @@
         .timeline-axis { position: absolute; top: 0; left: 60px; right: 20px; height: 25px; border-bottom: 1px solid var(--card-border); }
         .timeline-tick { position: absolute; bottom: 5px; font-size: 9px; color: var(--text-dim); transform: translateX(-50%); }
         .timeline-tick::after { content: ''; position: absolute; bottom: -5px; left: 50%; width: 1px; height: 100%; background: var(--card-border); }
+        .axis-label-x { position: absolute; bottom: 5px; right: 25px; font-size: 8px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; }
+        .axis-label-y { position: absolute; top: 30px; left: 5px; font-size: 8px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); }
 
         /* Geo labels - left column */
         .geo-label { position: absolute; left: 5px; font-size: 9px; color: var(--text-dim); writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); }
@@ -98,7 +100,8 @@
 
         /* SVG for Sankey links */
         #svgLayer { position: absolute; top: 0; left: 0; pointer-events: none; }
-        .sankey-link { fill: none; stroke-opacity: 0.25; transition: stroke-opacity 0.15s; }
+        .sankey-link { fill: none; stroke-opacity: 0; stroke-width: 2; transition: stroke-opacity 0.2s; }
+        .sankey-link.visible { stroke-opacity: 0.4; }
 
         /* Artist to track connection lines */
         .track-link {
@@ -113,18 +116,13 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="title">МУЗЫКАЛЬНАЯ ДНК</h1>
-        <p class="subtitle" id="subtitle">X: год | Y: популярность (Last.fm scrobbles)</p>
+        <h1 class="title">LANCE'S PLAYLIST</h1>
 
         <div class="genres-row" id="genresRow"></div>
         <div id="chart"></div>
         <div class="traits-row" id="traitsRow"></div>
     </div>
 
-    <div class="mode-toggle">
-        <button class="mode-btn active" id="showArtists">Исполнители</button>
-        <button class="mode-btn active" id="showTracks">Треки</button>
-    </div>
 
     <script>
         const imagePath = (filename) => `./images/${filename}`;
@@ -1234,6 +1232,17 @@
         }
         chart.appendChild(axisDiv);
 
+        // Add axis labels
+        const xLabel = document.createElement('div');
+        xLabel.className = 'axis-label-x';
+        xLabel.textContent = 'год →';
+        chart.appendChild(xLabel);
+
+        const yLabel = document.createElement('div');
+        yLabel.className = 'axis-label-y';
+        yLabel.textContent = '← популярность';
+        chart.appendChild(yLabel);
+
         // Create popularity labels
         popTiers.forEach(tier => {
             if (tier.value >= minPop && tier.value <= maxPop) {
@@ -1294,6 +1303,24 @@
             // No onmouseleave - sticky behavior
             genresRow.appendChild(chip);
         });
+
+        // Add separator and mode toggle buttons to genres row
+        const separator = document.createElement('span');
+        separator.className = 'mode-separator';
+        separator.textContent = '|';
+        genresRow.appendChild(separator);
+
+        const artistsBtn = document.createElement('button');
+        artistsBtn.className = 'mode-btn active';
+        artistsBtn.id = 'showArtists';
+        artistsBtn.textContent = 'Исполнители';
+        genresRow.appendChild(artistsBtn);
+
+        const tracksBtn = document.createElement('button');
+        tracksBtn.className = 'mode-btn active';
+        tracksBtn.id = 'showTracks';
+        tracksBtn.textContent = 'Треки';
+        genresRow.appendChild(tracksBtn);
 
         // Render traits row
         const traitsRow = document.getElementById('traitsRow');
@@ -1361,6 +1388,9 @@
 
         // Create a group for track connection lines
         const linksGroup = svg.append('g').attr('class', 'track-links-group');
+
+        // Create a group for sankey lines (navbar to artists)
+        const sankeyGroup = svg.append('g').attr('class', 'sankey-links-group');
 
         // Scrobbles scale for tracks (log scale)
         const minScrobbles = 50; // Min for log scale
@@ -1652,6 +1682,52 @@
             updateHighlight(on ? g : null, on ? a : null, on ? new Set([id]) : null);
         }
 
+        // Draw sankey lines from navbar to artists
+        function drawSankeyLinks(activeArtists, sourceType, sourceId) {
+            // Clear previous sankey links
+            sankeyGroup.selectAll('.sankey-link').remove();
+
+            if (!activeArtists || activeArtists.size === 0) return;
+
+            // Get source chip element position
+            const sourceChip = document.querySelector(`.${sourceType}-chip[data-id="${sourceId}"]`);
+            if (!sourceChip) return;
+
+            const chartRect = chart.getBoundingClientRect();
+            const chipRect = sourceChip.getBoundingClientRect();
+
+            // Calculate source point (center of chip, relative to chart)
+            const sourceX = chipRect.left + chipRect.width / 2 - chartRect.left;
+            const sourceY = sourceType === 'genre' ? 0 : height; // Top for genres, bottom for traits
+
+            // Draw curved paths to each matching artist
+            activeArtists.forEach(artistId => {
+                const artist = artists.find(a => a.id === artistId);
+                if (!artist) return;
+
+                const targetX = artist.x + cardSize / 2;
+                const targetY = artist.y + (sourceType === 'genre' ? 0 : cardSize);
+
+                // Get color from source chip
+                const color = window.getComputedStyle(sourceChip).color;
+
+                // Create curved path
+                const midY = (sourceY + targetY) / 2;
+                const path = `M${sourceX},${sourceY} C${sourceX},${midY} ${targetX},${midY} ${targetX},${targetY}`;
+
+                sankeyGroup.append('path')
+                    .attr('class', 'sankey-link visible')
+                    .attr('stroke', color)
+                    .attr('d', path);
+            });
+        }
+
+        // Clear sankey links
+        function clearSankeyLinks() {
+            sankeyGroup.selectAll('.sankey-link').classed('visible', false);
+            setTimeout(() => sankeyGroup.selectAll('.sankey-link').remove(), 200);
+        }
+
         function updateHighlight(aG, aA, aT) {
             const on = aG !== null;
 
@@ -1672,6 +1748,13 @@
                 el.classList.toggle('dimmed', on && !aT.has(el.dataset.id));
                 el.classList.toggle('active', on && aT.has(el.dataset.id));
             });
+
+            // Draw sankey links when filter is active from navbar
+            if (on && activeNavbarFilter) {
+                drawSankeyLinks(aA, activeNavbarFilter.type, activeNavbarFilter.id);
+            } else {
+                clearSankeyLinks();
+            }
 
             // Update track dots and links
             if (!showTracks) return;
