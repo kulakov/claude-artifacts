@@ -42,6 +42,30 @@
             font-size: 0.875rem;
         }
         .artifact-link:hover { text-decoration: underline; }
+        .section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #525252;
+            margin: 2rem 0 0.75rem 0;
+        }
+        .section-title:first-of-type {
+            margin-top: 0;
+        }
+        .artifact-badge {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            margin-left: 0.5rem;
+            background: #1a1a2e;
+            color: #667eea;
+        }
+        .artifact-badge.new {
+            background: #1a2e1a;
+            color: #4ade80;
+        }
         .empty-state {
             text-align: center;
             padding: 3rem;
@@ -61,18 +85,27 @@
         <h1>Коллекция визуализаций</h1>
         <p class="subtitle">Алексея Кулакова</p>
         
+        <p class="section-title">Scrollytelling</p>
         <ul class="artifacts-list" id="artifacts">
             <li class="artifact-item">
-                <span class="artifact-name">Динамика популяции горбатых китов</span>
-                <a href="artifacts/humpback_v7.html" class="artifact-link">Открыть →</a>
+                <span class="artifact-name">Возвращение гигантов <span class="artifact-badge new">new</span></span>
+                <a href="artifacts/humpback-scrollytelling.html" class="artifact-link">Открыть →</a>
             </li>
+        </ul>
+
+        <p class="section-title">Инфографика</p>
+        <ul class="artifacts-list">
             <li class="artifact-item">
-                <span class="artifact-name">Формальные паттерны фасилитации в LARP</span>
-                <a href="artifacts/viz_d3_compact.html" class="artifact-link">Открыть →</a>
+                <span class="artifact-name">Динамика популяции горбатых китов <span class="artifact-badge">chart</span></span>
+                <a href="artifacts/humpback_v7.html" class="artifact-link">Открыть →</a>
             </li>
             <li class="artifact-item">
                 <span class="artifact-name">Музыкальное ДНК</span>
                 <a href="artifacts/music-sankey/index.html" class="artifact-link">Открыть →</a>
+            </li>
+            <li class="artifact-item">
+                <span class="artifact-name">Формальные паттерны фасилитации в LARP</span>
+                <a href="artifacts/viz_d3_compact.html" class="artifact-link">Открыть →</a>
             </li>
         </ul>
         
