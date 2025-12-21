@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Музыкальная ДНК — Timeline</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 
     <style>
@@ -21,41 +24,41 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-primary) 100%);
-            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-family: 'IBM Plex Mono', monospace;
             color: var(--text-primary);
             min-height: 100vh;
             overflow-x: hidden;
         }
         .container { padding: 15px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .title { font-size: 1.6rem; font-weight: 600; margin-bottom: 2px; letter-spacing: 0.1em; background: linear-gradient(90deg, #fff 0%, #888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .subtitle { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; font-family: 'JetBrains Mono', monospace; font-weight: 300; }
+        .subtitle { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; font-weight: 300; }
         #chart { width: 100%; max-width: 1600px; position: relative; overflow: visible; }
 
         /* Mode toggle */
         .mode-toggle { position: absolute; top: 10px; right: 20px; display: flex; gap: 8px; z-index: 100; }
-        .mode-btn { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 6px 12px; border: 1px solid var(--card-border); border-radius: 4px; background: var(--card-bg); color: var(--text-muted); cursor: pointer; transition: all 0.15s; }
+        .mode-btn { font-size: 10px; padding: 6px 12px; border: 1px solid var(--card-border); border-radius: 4px; background: var(--card-bg); color: var(--text-muted); cursor: pointer; transition: all 0.15s; }
         .mode-btn:hover { border-color: var(--accent-blue); color: var(--text-primary); }
         .mode-btn.active { border-color: var(--accent-green); color: var(--accent-green); background: rgba(34, 197, 94, 0.1); }
 
         /* Genres - top row */
         .genres-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; max-width: 1400px; }
-        .genre-chip { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 4px 8px; border-radius: 4px; cursor: pointer; transition: all 0.15s; opacity: 0.7; }
+        .genre-chip { font-size: 9px; padding: 4px 8px; border-radius: 4px; cursor: pointer; transition: all 0.15s; opacity: 0.7; }
         .genre-chip:hover, .genre-chip.active { opacity: 1; transform: scale(1.05); }
         .genre-chip.dimmed { opacity: 0.15; }
 
         /* Traits - bottom row */
         .traits-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; max-width: 1400px; }
-        .trait-chip { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 4px 8px; border-radius: 4px; cursor: pointer; transition: all 0.15s; opacity: 0.7; border: 1px solid; }
+        .trait-chip { font-size: 9px; padding: 4px 8px; border-radius: 4px; cursor: pointer; transition: all 0.15s; opacity: 0.7; border: 1px solid; }
         .trait-chip:hover, .trait-chip.active { opacity: 1; }
         .trait-chip.dimmed { opacity: 0.15; }
 
         /* Timeline axis */
         .timeline-axis { position: absolute; top: 0; left: 60px; right: 20px; height: 25px; border-bottom: 1px solid var(--card-border); }
-        .timeline-tick { position: absolute; bottom: 5px; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); transform: translateX(-50%); }
+        .timeline-tick { position: absolute; bottom: 5px; font-size: 9px; color: var(--text-dim); transform: translateX(-50%); }
         .timeline-tick::after { content: ''; position: absolute; bottom: -5px; left: 50%; width: 1px; height: 100%; background: var(--card-border); }
 
         /* Geo labels - left column */
-        .geo-label { position: absolute; left: 5px; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); }
+        .geo-label { position: absolute; left: 5px; font-size: 9px; color: var(--text-dim); writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); }
 
         /* Artist card */
         .artist-card { position: absolute; width: 44px; height: 44px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 6px; padding: 3px; cursor: pointer; transition: all 0.3s ease; z-index: 10; }
@@ -65,7 +68,7 @@
         .artist-avatar { width: 100%; height: 100%; border-radius: 4px; position: relative; overflow: hidden; background-size: cover; background-position: center top; }
         .artist-avatar .fallback { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; font-size: 18px; }
         .artist-avatar.no-img .fallback { display: flex; }
-        .artist-tooltip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 4px; padding: 4px 8px; white-space: nowrap; font-family: 'JetBrains Mono', monospace; font-size: 10px; opacity: 0; pointer-events: none; transition: opacity 0.2s; margin-bottom: 4px; z-index: 100; }
+        .artist-tooltip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 4px; padding: 4px 8px; white-space: nowrap; font-size: 10px; opacity: 0; pointer-events: none; transition: opacity 0.2s; margin-bottom: 4px; z-index: 100; }
         .artist-card:hover .artist-tooltip { opacity: 1; }
 
         /* Track dots */
@@ -74,7 +77,7 @@
         .track-dot.highlighted { opacity: 0.7; }
         .track-dot.hovered { transform: translate(-50%, -50%) scale(2.2); opacity: 1; z-index: 70; box-shadow: 0 0 12px currentColor; }
         .track-dot.dimmed { opacity: 0.02; pointer-events: none; }
-        .track-dot .track-tooltip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 4px; padding: 4px 8px; white-space: nowrap; font-family: 'JetBrains Mono', monospace; font-size: 9px; opacity: 0; pointer-events: none; transition: opacity 0.2s; margin-bottom: 4px; }
+        .track-dot .track-tooltip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 4px; padding: 4px 8px; white-space: nowrap; font-size: 9px; opacity: 0; pointer-events: none; transition: opacity 0.2s; margin-bottom: 4px; }
         .track-dot:hover .track-tooltip { opacity: 1; }
 
         /* Info panel */
@@ -83,12 +86,12 @@
         .info-panel.selected { border-color: var(--accent-green); box-shadow: 0 0 20px rgba(34, 197, 94, 0.2); }
         .panel-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--card-border); }
         .panel-image { width: 50px; height: 50px; border-radius: 6px; overflow: hidden; flex-shrink: 0; background-size: cover; background-position: center; }
-        .panel-title { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 400; }
-        .panel-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); }
+        .panel-title { font-size: 13px; font-weight: 400; }
+        .panel-subtitle { font-size: 9px; color: var(--text-dim); }
         .close-btn { position: absolute; top: 10px; right: 10px; width: 20px; height: 20px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 16px; display: none; }
         .info-panel.selected .close-btn { display: block; }
         .track-list { list-style: none; }
-        .track-item { display: flex; align-items: center; gap: 6px; padding: 6px; margin: 3px 0; border-radius: 4px; cursor: pointer; transition: background 0.15s; font-family: 'JetBrains Mono', monospace; font-size: 10px; }
+        .track-item { display: flex; align-items: center; gap: 6px; padding: 6px; margin: 3px 0; border-radius: 4px; cursor: pointer; transition: background 0.15s; font-size: 10px; }
         .track-item:hover { background: rgba(96, 165, 250, 0.15); }
         .track-item .year { color: var(--text-dim); font-size: 9px; min-width: 30px; }
         .track-item .track-name { flex: 1; color: var(--text-primary); }
@@ -119,8 +122,8 @@
     </div>
 
     <div class="mode-toggle">
-        <button class="mode-btn active" id="showAll">Все треки</button>
-        <button class="mode-btn" id="showSelected">Только выбранный</button>
+        <button class="mode-btn active" id="showArtists">Исполнители</button>
+        <button class="mode-btn active" id="showTracks">Треки</button>
     </div>
 
     <script>
@@ -1286,7 +1289,8 @@
 
         // Position artists and create cards
         let selectedArtistId = null;
-        let showAllTracks = true;
+        let showArtists = true;
+        let showTracks = true;
 
         // Calculate positions based on year (X) and popularity (Y)
         artists.forEach(artist => {
@@ -1546,27 +1550,31 @@
         // Track visibility mode
         function updateTrackVisibility() {
             allTrackDots.forEach(({ dot, artistId }) => {
-                if (showAllTracks) {
+                if (showTracks) {
                     dot.classList.toggle('dimmed', selectedArtistId && artistId !== selectedArtistId);
                 } else {
-                    dot.style.display = (!selectedArtistId || artistId === selectedArtistId) ? 'block' : 'none';
-                    dot.classList.remove('dimmed');
+                    dot.style.display = 'none';
                 }
             });
         }
 
-        document.getElementById('showAll').onclick = () => {
-            showAllTracks = true;
-            document.getElementById('showAll').classList.add('active');
-            document.getElementById('showSelected').classList.remove('active');
-            updateTrackVisibility();
+        document.getElementById('showArtists').onclick = () => {
+            showArtists = !showArtists;
+            document.getElementById('showArtists').classList.toggle('active', showArtists);
+            document.querySelectorAll('.artist-card').forEach(el => {
+                el.style.display = showArtists ? 'block' : 'none';
+            });
         };
 
-        document.getElementById('showSelected').onclick = () => {
-            showAllTracks = false;
-            document.getElementById('showSelected').classList.add('active');
-            document.getElementById('showAll').classList.remove('active');
-            updateTrackVisibility();
+        document.getElementById('showTracks').onclick = () => {
+            showTracks = !showTracks;
+            document.getElementById('showTracks').classList.toggle('active', showTracks);
+            document.querySelectorAll('.track-dot').forEach(el => {
+                el.style.display = showTracks ? 'block' : 'none';
+            });
+            document.querySelectorAll('.track-link').forEach(el => {
+                el.style.display = showTracks ? 'block' : 'none';
+            });
         };
 
         // Highlighting functions
@@ -1619,7 +1627,7 @@
             });
 
             // Update track dots and links
-            if (!showAllTracks && selectedArtistId) return;
+            if (!showTracks) return;
             allTrackDots.forEach(({ dot, artistId }) => {
                 dot.classList.toggle('dimmed', on && !aA.has(artistId));
             });
