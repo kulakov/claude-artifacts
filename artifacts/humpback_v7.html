@@ -351,6 +351,22 @@
             cursor: pointer;
         }
 
+        .back-link {
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            font-size: 11px;
+            color: var(--text-muted);
+            text-decoration: none;
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-link:hover {
+            opacity: 1;
+        }
+
         .panel-connector {
             width: 100%;
             height: 20px;
@@ -372,8 +388,9 @@
     </style>
 </head>
 <body>
+    <a href="../" class="back-link">← All visualizations</a>
     <button class="theme-toggle" onclick="toggleTheme()">◐</button>
-    
+
     <div class="container" id="container">
         <h1 class="title">Динамика популяции горбатых китов</h1>
         <p class="subtitle">Атлантический и Тихий океаны · 1830–2024 · IWC, NOAA, Zerbini et al. 2019, Cheeseman et al. 2024</p>

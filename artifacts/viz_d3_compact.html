@@ -810,7 +810,23 @@
             border-color: var(--accent-yellow);
             color: var(--accent-yellow);
         }
-        
+
+        .back-link {
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            font-size: 11px;
+            color: var(--text-muted);
+            text-decoration: none;
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-link:hover {
+            opacity: 1;
+        }
+
         .card-header-with-toggle {
             display: flex;
             align-items: center;
@@ -1258,6 +1274,7 @@
     </style>
 </head>
 <body>
+    <a href="../" class="back-link">← All visualizations</a>
     <header class="page-header">
         <div class="page-header-content">
             <h1 class="page-title" onclick="goHome()" style="cursor:pointer">Формальные паттерны фасилитации в LARP <span class="page-author-inline">Григорий Ноаров</span></h1>

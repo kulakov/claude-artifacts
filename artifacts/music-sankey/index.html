@@ -122,9 +122,23 @@
         /* Footer link */
         .footer-link { font-size: 9px; color: var(--text-dim); text-decoration: none; margin-top: 8px; opacity: 0.6; transition: opacity 0.2s; }
         .footer-link:hover { opacity: 1; text-decoration: underline; }
+
+        .back-link {
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            font-size: 11px;
+            color: var(--text-muted);
+            text-decoration: none;
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+        .back-link:hover { opacity: 1; }
     </style>
 </head>
 <body>
+    <a href="../../" class="back-link">← All visualizations</a>
     <div class="container">
         <h1 class="title">LANCE'S PLAYLIST</h1>
 
