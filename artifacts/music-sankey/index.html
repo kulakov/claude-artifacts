@@ -56,8 +56,8 @@
         .timeline-axis { position: absolute; top: 0; left: 60px; right: 20px; height: 25px; border-bottom: 1px solid var(--card-border); }
         .timeline-tick { position: absolute; bottom: 5px; font-size: 9px; color: var(--text-dim); transform: translateX(-50%); }
         .timeline-tick::after { content: ''; position: absolute; bottom: -5px; left: 50%; width: 1px; height: 100%; background: var(--card-border); }
-        .axis-label-x { position: absolute; bottom: 5px; right: 25px; font-size: 8px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; }
-        .axis-label-y { position: absolute; top: 30px; left: 5px; font-size: 8px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); }
+        .axis-label-x { position: absolute; bottom: 8px; right: 25px; font-size: 8px; color: var(--text-dim); letter-spacing: 0.05em; }
+        .axis-label-y { position: absolute; top: 35px; left: 8px; font-size: 8px; color: var(--text-dim); letter-spacing: 0.05em; }
 
         /* Geo labels - left column */
         .geo-label { position: absolute; left: 5px; font-size: 9px; color: var(--text-dim); writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); }
@@ -1248,7 +1248,7 @@
 
         const yLabel = document.createElement('div');
         yLabel.className = 'axis-label-y';
-        yLabel.textContent = '← популярность';
+        yLabel.textContent = '↑ популярность';
         chart.appendChild(yLabel);
 
         // Create popularity labels
