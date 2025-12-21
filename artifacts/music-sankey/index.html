@@ -1057,6 +1057,15 @@
             tick.style.left = `${((year - minYear) / (maxYear - minYear)) * 100}%`;
             axisDiv.appendChild(tick);
         }
+        // Add endpoint tick if there's data beyond the last decade
+        const currentYear = new Date().getFullYear();
+        if (maxYear > endDecade + 1) {
+            const endTick = document.createElement('div');
+            endTick.className = 'timeline-tick';
+            endTick.textContent = Math.min(currentYear, maxYear - 1);
+            endTick.style.left = `${((Math.min(currentYear, maxYear - 1) - minYear) / (maxYear - minYear)) * 100}%`;
+            axisDiv.appendChild(endTick);
+        }
         chart.appendChild(axisDiv);
 
         // Add axis labels
