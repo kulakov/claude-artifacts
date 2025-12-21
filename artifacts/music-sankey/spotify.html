@@ -1252,9 +1252,9 @@
         // Year to X position (supports linear and log scale)
         function yearToX(year) {
             if (logTimeScale) {
-                // Log scale: compress old years, expand recent
-                const yearsFromMin = year - minYear;
-                const logNorm = Math.log10(yearsFromMin + 1) / logYearMax;
+                // Log scale: compress old years, expand recent (more space for modern music)
+                const yearsFromMax = maxYear - year;
+                const logNorm = 1 - Math.log10(yearsFromMax + 1) / logYearMax;
                 return leftPadding + logNorm * timelineWidth;
             }
             return leftPadding + ((year - minYear) / yearRange) * timelineWidth;
@@ -1774,7 +1774,7 @@
             document.querySelectorAll('.timeline-tick').forEach(tick => {
                 const year = parseInt(tick.textContent);
                 const normalized = logTimeScale
-                    ? Math.log10(year - minYear + 1) / logYearMax
+                    ? 1 - Math.log10(maxYear - year + 1) / logYearMax
                     : (year - minYear) / yearRange;
                 tick.style.left = `${normalized * 100}%`;
             });
