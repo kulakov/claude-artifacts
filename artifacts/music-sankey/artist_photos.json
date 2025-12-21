@@ -1,0 +1,984 @@
+[
+  {
+    "artistId": "a1",
+    "name": "Phil Collins",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebd4e38c4e3e5c82774740e28d",
+    "spotifyId": "4lxfqrEsLX6N1N4OCSkILp",
+    "followers": 7522852,
+    "genres": [
+      "soft rock"
+    ]
+  },
+  {
+    "artistId": "a2",
+    "name": "David Bowie",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebb78f77c5583ae99472dd4a49",
+    "spotifyId": "0oSGxfWSnnOXhD2fKuz2Gy",
+    "followers": 11896831,
+    "genres": [
+      "glam rock",
+      "art rock"
+    ]
+  },
+  {
+    "artistId": "a3",
+    "name": "Fleetwood Mac",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebc8752dd511cda8c31e9daee8",
+    "spotifyId": "08GQAI4eElDnROBrJRGE0X",
+    "followers": 14279728,
+    "genres": [
+      "classic rock",
+      "yacht rock",
+      "soft rock"
+    ]
+  },
+  {
+    "artistId": "a4",
+    "name": "Hans Zimmer",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb371632043a8c12bb7eeeaf9d",
+    "spotifyId": "0YC192cP3KPCRWx8zr8MfZ",
+    "followers": 4882773,
+    "genres": [
+      "soundtrack",
+      "score"
+    ]
+  },
+  {
+    "artistId": "a5",
+    "name": "Bob Dylan",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb791742524609864273747ef5",
+    "spotifyId": "74ASZWbe4lXaubB36ztrGX",
+    "followers": 7448644,
+    "genres": [
+      "folk rock",
+      "folk",
+      "singer-songwriter",
+      "roots rock"
+    ]
+  },
+  {
+    "artistId": "a6",
+    "name": "Leonard Cohen",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebd09c1295779cfb71683cee99",
+    "spotifyId": "5l8VQNuIg0turYE1VtM9zV",
+    "followers": 3738042,
+    "genres": [
+      "singer-songwriter"
+    ]
+  },
+  {
+    "artistId": "a7",
+    "name": "Moby",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb51998989b51d8bda6a7486f2",
+    "spotifyId": "3OsRAKCvk37zwYcnzRf5XF",
+    "followers": 2097673,
+    "genres": [
+      "downtempo",
+      "trip hop"
+    ]
+  },
+  {
+    "artistId": "a8",
+    "name": "Nick Cave",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb6bc10cacb013806f27aa7700",
+    "spotifyId": "4UXJsSlnKd7ltsrHebV79Q",
+    "followers": 1581496,
+    "genres": []
+  },
+  {
+    "artistId": "a9",
+    "name": "Ramin Djawadi",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb91e7dd670bc7d3ec7d1cbc6f",
+    "spotifyId": "1hCkSJcXREhrodeIHQdav8",
+    "followers": 726220,
+    "genres": [
+      "soundtrack",
+      "score"
+    ]
+  },
+  {
+    "artistId": "a10",
+    "name": "Tom Waits",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb4679f0c1c8f862730c0b5109",
+    "spotifyId": "7x83XhcMbOTl1UdYsPTuZM",
+    "followers": 1471736,
+    "genres": [
+      "singer-songwriter",
+      "southern gothic"
+    ]
+  },
+  {
+    "artistId": "a11",
+    "name": "Sabaton",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebfc0524cca1171fac8678f4bf",
+    "spotifyId": "3o2dn2O0FCVsWDFSh8qxgG",
+    "followers": 2474154,
+    "genres": [
+      "power metal",
+      "metal",
+      "heavy metal",
+      "symphonic metal",
+      "folk metal"
+    ]
+  },
+  {
+    "artistId": "a12",
+    "name": "Bo Burnham",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb30d9a4acdf8cd3e8c0ad39ab",
+    "spotifyId": "2Waw2sSbqvAwK8NwACNjVo",
+    "followers": 2089700,
+    "genres": [
+      "comedy"
+    ]
+  },
+  {
+    "artistId": "a13",
+    "name": "King Crimson",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb7c1c2fcf5a73dbfa60a40a18",
+    "spotifyId": "7M1FPw29m5FbicYzS2xdpi",
+    "followers": 1329253,
+    "genres": [
+      "progressive rock",
+      "art rock",
+      "psychedelic rock"
+    ]
+  },
+  {
+    "artistId": "a14",
+    "name": "Rainbow",
+    "photoUrl": "https://i.scdn.co/image/e0ad73e5231086142031094d86e8bef61576268c",
+    "spotifyId": "6SLAMfhOi7UJI0fMztaK0m",
+    "followers": 1670509,
+    "genres": [
+      "hard rock",
+      "aor",
+      "metal",
+      "heavy metal"
+    ]
+  },
+  {
+    "artistId": "a15",
+    "name": "Монеточка",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebed68a9d2e9fc49d039de0276",
+    "spotifyId": "0yp6xP5xe1qarfugfTixOK",
+    "followers": 1406078,
+    "genres": []
+  },
+  {
+    "artistId": "a16",
+    "name": "Mike Oldfield",
+    "photoUrl": "https://i.scdn.co/image/b04f41784ba49ed0875cbd018e0e0e55c94344eb",
+    "spotifyId": "562Od3CffWedyz2BbeYWVn",
+    "followers": 698865,
+    "genres": [
+      "progressive rock",
+      "new age"
+    ]
+  },
+  {
+    "artistId": "a17",
+    "name": "КИНО",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb0f9e913afb90d4b58b6e8ebb",
+    "spotifyId": "2jkl2xJVm71azWAgZKyf42",
+    "followers": 2477761,
+    "genres": [
+      "post-punk",
+      "cold wave"
+    ]
+  },
+  {
+    "artistId": "a18",
+    "name": "Django Django",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb4a1eea3559fa5e3708c4a81d",
+    "spotifyId": "2ARO60gI5do88ho6azmzab",
+    "followers": 248870,
+    "genres": []
+  },
+  {
+    "artistId": "a19",
+    "name": "Би-2",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb763469d49447da0f04203dbd",
+    "spotifyId": "3SXDCIdqI1AR686ukKtKCq",
+    "followers": 1081179,
+    "genres": []
+  },
+  {
+    "artistId": "a20",
+    "name": "Steve 'n' Seagulls",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb976a678028c8f39a634bb5a4",
+    "spotifyId": "77A9XsX4SDJlhB23yyUwQt",
+    "followers": 185400,
+    "genres": [
+      "bluegrass",
+      "finnish rock"
+    ]
+  },
+  {
+    "artistId": "a21",
+    "name": "Jean-Michel Jarre",
+    "photoUrl": "https://i.scdn.co/image/b52c1d09b0fb64ab4a88b84f3166dc5886826be1",
+    "spotifyId": "5MhLmv7GgyjbxGqiIGasvT",
+    "followers": 664047,
+    "genres": [
+      "new age",
+      "electronic",
+      "space music"
+    ]
+  },
+  {
+    "artistId": "a22",
+    "name": "Celtic Woman",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb289a23d02e8b98282e284c8c",
+    "spotifyId": "6NWtt9pNOL2Gx7kBykdE5x",
+    "followers": 567847,
+    "genres": [
+      "celtic",
+      "classical crossover"
+    ]
+  },
+  {
+    "artistId": "a23",
+    "name": "Noize MC",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb1a2fa7f8aa9217d579e3804d",
+    "spotifyId": "69v4ZOOomf1TNp59YYB1j7",
+    "followers": 689016,
+    "genres": []
+  },
+  {
+    "artistId": "a24",
+    "name": "Oliver Koletzki",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb0a51f7b8076d36c7c1bbb784",
+    "spotifyId": "1WjBIvYAnZTkTh5UiZNwlR",
+    "followers": 369092,
+    "genres": [
+      "organic house",
+      "minimal techno"
+    ]
+  },
+  {
+    "artistId": "a25",
+    "name": "Krishna Das",
+    "photoUrl": "https://i.scdn.co/image/d2e3faa7399d510598224c12c0229f1b68e5fb9b",
+    "spotifyId": "7BIXafmacnax46P30TEzNz",
+    "followers": 416678,
+    "genres": [
+      "bhajan",
+      "devotional"
+    ]
+  },
+  {
+    "artistId": "a26",
+    "name": "Heilung",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebdcbf7f3ea842bfcb04315054",
+    "spotifyId": "7sTKZr30LqC928DZ5P9mNQ",
+    "followers": 806275,
+    "genres": [
+      "neofolk",
+      "folk metal",
+      "ambient folk",
+      "celtic",
+      "medieval"
+    ]
+  },
+  {
+    "artistId": "a27",
+    "name": "Nolwenn Leroy",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb08a61d1e3eea5c114fcc8304",
+    "spotifyId": "6suRVbMTiFWlTpB6fdLdF2",
+    "followers": 198287,
+    "genres": [
+      "variété française",
+      "celtic",
+      "chanson",
+      "french pop"
+    ]
+  },
+  {
+    "artistId": "a28",
+    "name": "Anoushka Shankar",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebb766a4a9eab69e890309be84",
+    "spotifyId": "6MTByljF8u5omBltY2VKPU",
+    "followers": 288846,
+    "genres": []
+  },
+  {
+    "artistId": "a29",
+    "name": "Oxxxymiron",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb7f036f52da0410d09fc6f15c",
+    "spotifyId": "1gCOYbJNUa1LBVO5rlx0jB",
+    "followers": 648359,
+    "genres": []
+  },
+  {
+    "artistId": "a30",
+    "name": "Eivør",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb53b4f0b39586366c93e55bdc",
+    "spotifyId": "2dB4ya2W1Gvng8gjWSPu2H",
+    "followers": 329620,
+    "genres": [
+      "celtic",
+      "ambient folk",
+      "medieval"
+    ]
+  },
+  {
+    "artistId": "a31",
+    "name": "Ляпис Трубецкой",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb6b3da82eafb9f3e169745b15",
+    "spotifyId": "1PH7LtTLFyoZUEa7B64pws",
+    "followers": 326045,
+    "genres": []
+  },
+  {
+    "artistId": "a32",
+    "name": "Tommy Emmanuel",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb202dcc14c5b6405ce84b8c33",
+    "spotifyId": "6HjfVflhYjbu6PSIsFOjwM",
+    "followers": 213580,
+    "genres": [
+      "electroacoustic"
+    ]
+  },
+  {
+    "artistId": "a33",
+    "name": "Rodrigo y Gabriela",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebaf824664934f599fa2601a40",
+    "spotifyId": "7vX3cMVyW8gtDA4y855ynF",
+    "followers": 464880,
+    "genres": []
+  },
+  {
+    "artistId": "a34",
+    "name": "Сплин",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebc894c0972364c7977c56ac2e",
+    "spotifyId": "6rdFMVoMSEN4GGX98u6QTj",
+    "followers": 553394,
+    "genres": []
+  },
+  {
+    "artistId": "a35",
+    "name": "Juno Reactor",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb14d77dbf42fcdcbcb214aaeb",
+    "spotifyId": "1Pe3z1UqRzKsQtHsl25dm6",
+    "followers": 94846,
+    "genres": [
+      "psytrance"
+    ]
+  },
+  {
+    "artistId": "a36",
+    "name": "Nautilus Pompilius",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb02c9f014a84d2d013043716f",
+    "spotifyId": "3tYzkTZtYt5dGBSrAnWpX0",
+    "followers": 508516,
+    "genres": []
+  },
+  {
+    "artistId": "a37",
+    "name": "Blackmore's Night",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb75244c3799eaee4925f40bf4",
+    "spotifyId": "5BnNG7QQQDTNd43ozx5y13",
+    "followers": 192900,
+    "genres": [
+      "celtic",
+      "medieval",
+      "medieval metal",
+      "celtic rock",
+      "folk rock"
+    ]
+  },
+  {
+    "artistId": "a38",
+    "name": "ST1M",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb89a5654731f1e104e2b54a5e",
+    "spotifyId": "77Q33g6Rb5TR0cOECdJSOf",
+    "followers": 43683,
+    "genres": []
+  },
+  {
+    "artistId": "a39",
+    "name": "Max Cooper",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb876151cdb606003d1915ac5f",
+    "spotifyId": "0WSSKmoRbxqLf3MnXInQ2J",
+    "followers": 207714,
+    "genres": [
+      "minimal techno",
+      "idm",
+      "electronica"
+    ]
+  },
+  {
+    "artistId": "a40",
+    "name": "Klaus Schulze",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb103d7d2d43d3b8c8f3522439",
+    "spotifyId": "3U2U4TR03ZuStsizrv0EJB",
+    "followers": 104114,
+    "genres": [
+      "krautrock",
+      "space music",
+      "ambient",
+      "space rock",
+      "new age",
+      "electroacoustic"
+    ]
+  },
+  {
+    "artistId": "a41",
+    "name": "Пикник",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebae3943a13c61d89b43f8f941",
+    "spotifyId": "625pLI6ukICVgPMaZZ9QVX",
+    "followers": 177953,
+    "genres": [
+      "art rock"
+    ]
+  },
+  {
+    "artistId": "a42",
+    "name": "Каста",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb87dea001e415bd35f58364e7",
+    "spotifyId": "5I37oVgAnT7OGiqKJSMVRH",
+    "followers": 148029,
+    "genres": []
+  },
+  {
+    "artistId": "a43",
+    "name": "Порнофильмы",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb618e12d928c8d39d63c6c733",
+    "spotifyId": "47jBQjRmURjRn3XfLIaHvV",
+    "followers": 643944,
+    "genres": []
+  },
+  {
+    "artistId": "a44",
+    "name": "Corvus Corax",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb5468fe331077ac4df1e5ae97",
+    "spotifyId": "0Qeg2Ytz5AcfvkIO3RYV3z",
+    "followers": 135852,
+    "genres": [
+      "medieval",
+      "medieval metal",
+      "folk metal",
+      "celtic",
+      "neofolk",
+      "folk"
+    ]
+  },
+  {
+    "artistId": "a45",
+    "name": "Seatbelts",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273e90a54d6e31d9ff3f1d566fa",
+    "spotifyId": "3U3zr5PCRa9ty74uN46iBa",
+    "followers": 174228,
+    "genres": [
+      "bebop",
+      "anime"
+    ]
+  },
+  {
+    "artistId": "a46",
+    "name": "Лигалайз",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebfacb1f04137d4ee40dd58dc5",
+    "spotifyId": "7uYLyM7Zr2UnuQF5QX6m1y",
+    "followers": 25466,
+    "genres": []
+  },
+  {
+    "artistId": "a47",
+    "name": "Die Apokalyptischen Reiter",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eba7dce22665c6dd4cafa20524",
+    "spotifyId": "04L8hbMJRQ5vFnLeDgA8xn",
+    "followers": 78898,
+    "genres": [
+      "medieval metal",
+      "folk metal",
+      "medieval",
+      "metal"
+    ]
+  },
+  {
+    "artistId": "a48",
+    "name": "Steeleye Span",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebc26b341d2f600a466e229f90",
+    "spotifyId": "4OrrjMGltjy6ojX6034f8u",
+    "followers": 61336,
+    "genres": [
+      "folk rock",
+      "folk",
+      "traditional folk",
+      "celtic rock",
+      "celtic"
+    ]
+  },
+  {
+    "artistId": "a49",
+    "name": "LOUNA",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebd1e6159b65156797afcc4872",
+    "spotifyId": "2OhFv0nL7QXOWMYXPoLEP8",
+    "followers": 74936,
+    "genres": []
+  },
+  {
+    "artistId": "a50",
+    "name": "Anacondaz",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb53be7de7911a457b6bbcfafa",
+    "spotifyId": "2e7yDxnK4osy7nKhnqrOFM",
+    "followers": 214734,
+    "genres": []
+  },
+  {
+    "artistId": "a151",
+    "name": "Lama Tenzin Sangpo",
+    "photoUrl": null,
+    "spotifyId": "6Qzbw2EZScHkIZ18eaG98w"
+  },
+  {
+    "artistId": "a152",
+    "name": "Byron Metcalf",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb718b701f1f0953631a2a94d6",
+    "spotifyId": "6hjwMyRlrBjgwFPZIIewmz",
+    "followers": 25938,
+    "genres": []
+  },
+  {
+    "artistId": "a153",
+    "name": "The Brass Knuckle Steampunk Sinfonia",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b2737eb7385af747eaaab8fa1a43",
+    "spotifyId": "4ccVTKqRHP4NgO2LL50mKY",
+    "followers": 249,
+    "genres": []
+  },
+  {
+    "artistId": "a154",
+    "name": "Ekseption",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b27384d9786bb79dd281a8f3fc8a",
+    "spotifyId": "6M0BcAcPSDpABYnNPf8oQE",
+    "followers": 21862,
+    "genres": [
+      "nederpop",
+      "progressive rock",
+      "classical crossover"
+    ]
+  },
+  {
+    "artistId": "a156",
+    "name": "SuNA Mantra",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273a428cb09a00d6e5cd9a0c90c",
+    "spotifyId": "30yQdMx6AGbM7K8qH5Zzo7",
+    "followers": 727,
+    "genres": []
+  },
+  {
+    "artistId": "a157",
+    "name": "Jambey",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb3f5df9cd23fb596a0c1d9940",
+    "spotifyId": "2R9YcazbWPz1tdbFq6qAaA",
+    "followers": 65,
+    "genres": []
+  },
+  {
+    "artistId": "a159",
+    "name": "Муха",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273ddd28606e011d5ea41c35f83",
+    "spotifyId": "4s8JP3ylmlZo2xXsjamm52",
+    "followers": 320,
+    "genres": []
+  },
+  {
+    "artistId": "a160",
+    "name": "Jody Gwin",
+    "photoUrl": null,
+    "spotifyId": "6jOG40H3tj9cX3dtQuaU84"
+  },
+  {
+    "artistId": "a161",
+    "name": "Xploding Plastix",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebc2fe99647a09b390c3990a03",
+    "spotifyId": "0azLE0hIUlbMbV0g2Ezt9m",
+    "followers": 26446,
+    "genres": [
+      "nu jazz",
+      "acid jazz",
+      "trip hop",
+      "idm",
+      "downtempo"
+    ]
+  },
+  {
+    "artistId": "a162",
+    "name": "Faraualla",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb05a86aa594cee44c77b1da71",
+    "spotifyId": "4iWiLtbHEqBPo7w3x3CgrL",
+    "followers": 5012,
+    "genres": []
+  },
+  {
+    "artistId": "a163",
+    "name": "Mathias Duplessy",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebe14cd48392fde764450beb19",
+    "spotifyId": "43aKbycIA40vHixe0yBZJx",
+    "followers": 25006,
+    "genres": []
+  },
+  {
+    "artistId": "a164",
+    "name": "musica nuda",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb604892a1835e12b418a652a6",
+    "spotifyId": "4SCNBobp8MbdOHco1VRiPc",
+    "followers": 17271,
+    "genres": [
+      "italian singer-songwriter"
+    ]
+  },
+  {
+    "artistId": "a166",
+    "name": "Эдуард Артемьев",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebcee756087a7e44602866ae93",
+    "spotifyId": "3USCHZcnp37AHaCzYhGHGJ",
+    "followers": 20396,
+    "genres": []
+  },
+  {
+    "artistId": "a167",
+    "name": "Neil Zaza",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb1ebb8ac2e7b6989de3dcd959",
+    "spotifyId": "4FzEKhLeEN58Mu7JzUHdHF",
+    "followers": 31135,
+    "genres": []
+  },
+  {
+    "artistId": "a168",
+    "name": "London Festival Orchestra",
+    "photoUrl": "https://i.scdn.co/image/e71b09f4ae75137c5117488b0dc551a508cf571e",
+    "spotifyId": "3akUqAy3Q1WqRZqceC4jW9",
+    "followers": 12360,
+    "genres": [
+      "classical"
+    ]
+  },
+  {
+    "artistId": "a169",
+    "name": "Карелия",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b2737a77de8de657e34d21e2761f",
+    "spotifyId": "4PODUa7UyqHLQ20929fhqr",
+    "followers": 4521,
+    "genres": []
+  },
+  {
+    "artistId": "a170",
+    "name": "Thorr",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebcee54fb1369b63a45b2902cc",
+    "spotifyId": "0Iya8LminBqbPLY0bISqZ8",
+    "followers": 3602,
+    "genres": []
+  },
+  {
+    "artistId": "a171",
+    "name": "Дмитрий Ревякин",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebf23efc161b6f04f9fcc9d3bd",
+    "spotifyId": "7wwhvSqUAsbz7ZytluHnoP",
+    "followers": 1859,
+    "genres": [
+      "acid rock",
+      "psychedelic rock"
+    ]
+  },
+  {
+    "artistId": "a172",
+    "name": "The Charades",
+    "photoUrl": null,
+    "spotifyId": "7jGSWllSEDu5hoAis5NYmG"
+  },
+  {
+    "artistId": "a173",
+    "name": "IP Orchestra",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b2730ee458351700d13fd3dea1cb",
+    "spotifyId": "5FH3FMeSCavp1sMzXuB8AQ",
+    "followers": 139,
+    "genres": []
+  },
+  {
+    "artistId": "a174",
+    "name": "Дореволюціонный совѣтчикъ",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b2732068497a2b4cfad56c4aeee9",
+    "spotifyId": "4IGAGg3VbmqNjPPL1rhB29",
+    "followers": 803,
+    "genres": []
+  },
+  {
+    "artistId": "a175",
+    "name": "Stoner Train",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273ef9a4bf7931ec77bbadac342",
+    "spotifyId": "0Og0nBKCyWqFvUl3Jodzq3",
+    "followers": 3682,
+    "genres": [
+      "stoner rock",
+      "stoner metal",
+      "blues rock",
+      "southern gothic"
+    ]
+  },
+  {
+    "artistId": "a176",
+    "name": "Seasick Steve",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb40d060d4fbe57334dfe4121d",
+    "spotifyId": "6OVkHZQP8QoBYqr1ejCGDv",
+    "followers": 223857,
+    "genres": [
+      "blues",
+      "modern blues",
+      "blues rock",
+      "country blues"
+    ]
+  },
+  {
+    "artistId": "a177",
+    "name": "ICHI",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb356a785bce83cc86bdb90566",
+    "spotifyId": "7fef7GzZZrPZVZArGAjAyE",
+    "followers": 9227,
+    "genres": []
+  },
+  {
+    "artistId": "a178",
+    "name": "HELVEGEN",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebf59a5f82bf343dfc0e185450",
+    "spotifyId": "57Ensv662mpoTllG3FD2BI",
+    "followers": 2880,
+    "genres": [
+      "black metal"
+    ]
+  },
+  {
+    "artistId": "a179",
+    "name": "The Tossers",
+    "photoUrl": "https://i.scdn.co/image/ab6772690000c46c0d6b2c462693be9f2d150244",
+    "spotifyId": "6JqiYCJwtFqBMCvX772Pw2",
+    "followers": 47479,
+    "genres": [
+      "celtic punk",
+      "celtic rock",
+      "celtic",
+      "folk punk"
+    ]
+  },
+  {
+    "artistId": "a180",
+    "name": "James Last",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb395e1f225bba2ec88c2026e1",
+    "spotifyId": "5UyJW2eCOuXtyYftgbMxZG",
+    "followers": 149835,
+    "genres": [
+      "orchestral",
+      "polka",
+      "easy listening",
+      "big band"
+    ]
+  },
+  {
+    "artistId": "a181",
+    "name": "Ÿuma",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273669150238e0997a913f99d03",
+    "spotifyId": "2FYiII3bJGFsYF82B9o0RY",
+    "followers": 19,
+    "genres": []
+  },
+  {
+    "artistId": "a182",
+    "name": "Artem Uzunov",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebe4f7d3be874a158c8c8314d5",
+    "spotifyId": "74joL6h4xBpMvmMigcuTpq",
+    "followers": 17150,
+    "genres": []
+  },
+  {
+    "artistId": "a183",
+    "name": "Александр Ф. Скляр",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273aebc9c7dd3f29706fde7662a",
+    "spotifyId": "5niF0k8tDOYmGU0HC7Jek9",
+    "followers": 2199,
+    "genres": []
+  },
+  {
+    "artistId": "a184",
+    "name": "Бахыт Компот",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273e262c841749fb0f5a3e095d1",
+    "spotifyId": "1chh3vtmlyt0mHAdY45Gik",
+    "followers": 2273,
+    "genres": []
+  },
+  {
+    "artistId": "a185",
+    "name": "Василий Васильев",
+    "photoUrl": null,
+    "spotifyId": "4mUa0jc0e3uDWjJ5J1uNJ0"
+  },
+  {
+    "artistId": "a187",
+    "name": "Żywiołak",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebdb26e41b39dbbd6cd72e66e4",
+    "spotifyId": "3EYuaOf6w8uTG7eM8vpMLH",
+    "followers": 42487,
+    "genres": [
+      "folk metal",
+      "neofolk",
+      "folk"
+    ]
+  },
+  {
+    "artistId": "a188",
+    "name": "Hannes Wader",
+    "photoUrl": "https://i.scdn.co/image/3d8458796a6ea439e2dd3f1b1a695b6c2cc430f3",
+    "spotifyId": "1ePGBuJM1znQUYt4qpgUdW",
+    "followers": 76296,
+    "genres": [
+      "singer-songwriter"
+    ]
+  },
+  {
+    "artistId": "a189",
+    "name": "Ростислав Чебыкин",
+    "photoUrl": null,
+    "spotifyId": "4MCZ26jxKTkvFdcU8NAma7"
+  },
+  {
+    "artistId": "a190",
+    "name": "Shedda",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb00a837340a38e0506e6228bc",
+    "spotifyId": "2XPUW3u6crXfYYWC2ikDSZ",
+    "followers": 75,
+    "genres": [
+      "sea shanties"
+    ]
+  },
+  {
+    "artistId": "a191",
+    "name": "Angelo Branduardi",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb5392c958a81f992dd5a778e1",
+    "spotifyId": "3qlU3Nyu3XXO2k9AUnTcy1",
+    "followers": 90164,
+    "genres": [
+      "italian singer-songwriter",
+      "singer-songwriter",
+      "italo dance"
+    ]
+  },
+  {
+    "artistId": "a192",
+    "name": "Тропы не врут",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b27387b898030e6075e6c4d56497",
+    "spotifyId": "5OA4Z2ppLHzq7elqExqfME",
+    "followers": 193,
+    "genres": []
+  },
+  {
+    "artistId": "a193",
+    "name": "Rokia Traoré",
+    "photoUrl": "https://i.scdn.co/image/ab6772690000c46c63a2dc676abae86b0c2c4600",
+    "spotifyId": "6sz0k1q2aEtG5dxEgr4YWV",
+    "followers": 124550,
+    "genres": []
+  },
+  {
+    "artistId": "a194",
+    "name": "Saez",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb2da93a82abb858239a1392ac",
+    "spotifyId": "2yQBgACksUJgNKh1JWPWPe",
+    "followers": 334636,
+    "genres": [
+      "variété française",
+      "chanson",
+      "french house",
+      "french pop"
+    ]
+  },
+  {
+    "artistId": "a196",
+    "name": "Schiller",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5ebf420eb9d0e75139d7db0e0c9",
+    "spotifyId": "4tRSX1e4hJYjMNdl1TkINg",
+    "followers": 161791,
+    "genres": []
+  },
+  {
+    "artistId": "a197",
+    "name": "Зоя Ященко",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273d9df9a6aaaa84fe6bb0449e3",
+    "spotifyId": "3YJ2OGcWL5SRssBzoHZwLE",
+    "followers": 12535,
+    "genres": []
+  },
+  {
+    "artistId": "a198",
+    "name": "Элечка",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b273f231a8f629598ce2747d194f",
+    "spotifyId": "26Nrg6jW2QrPuy58UntuHk",
+    "followers": 128,
+    "genres": []
+  },
+  {
+    "artistId": "a199",
+    "name": "Joachim Witt",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb82242566d435a165f7a48ab8",
+    "spotifyId": "130taNt2uNYJmou3IGnRHV",
+    "followers": 57328,
+    "genres": [
+      "neue deutsche welle",
+      "schlager"
+    ]
+  },
+  {
+    "artistId": "a200",
+    "name": "Spiritual Seasons",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b2734d864be8120e1bcb65397b6a",
+    "spotifyId": "7C5Q22cWsSEkWEmFmbk3Fs",
+    "followers": 1615,
+    "genres": [
+      "medieval"
+    ]
+  },
+  {
+    "artistId": "a201",
+    "name": "Sabo",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb33073630377b49d86102d973",
+    "spotifyId": "10RszNTsRxSVY5IQOITArN",
+    "followers": 29604,
+    "genres": [
+      "organic house",
+      "tribal house",
+      "electrocumbia",
+      "downtempo"
+    ]
+  },
+  {
+    "artistId": "a204",
+    "name": "Simply Three",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eba4b48f14ee4635a60c5f7df9",
+    "spotifyId": "4ZZVk8undJqXJqQ1GHCTp2",
+    "followers": 204154,
+    "genres": [
+      "classical crossover"
+    ]
+  },
+  {
+    "artistId": "a205",
+    "name": "Gabriel Saban",
+    "photoUrl": "https://i.scdn.co/image/ab6761610000e5eb2872bef328f83e2a26dae7a3",
+    "spotifyId": "2lgEU996kHhYBlo10vh59G",
+    "followers": 11468,
+    "genres": [
+      "neoclassical",
+      "orchestral"
+    ]
+  },
+  {
+    "artistId": "a206",
+    "name": "Gae Bolg",
+    "photoUrl": "https://i.scdn.co/image/ab67616d0000b2730ca843479988c7c76afd87d7",
+    "spotifyId": "2aapS1M4mB0CdJUoyxG5XN",
+    "followers": 3741,
+    "genres": [
+      "neofolk",
+      "neoclassical"
+    ]
+  }
+]
