@@ -1562,7 +1562,7 @@
             showArtists = !showArtists;
             document.getElementById('showArtists').classList.toggle('active', showArtists);
             document.querySelectorAll('.artist-card').forEach(el => {
-                el.style.display = showArtists ? 'block' : 'none';
+                el.style.display = showArtists ? '' : 'none';
             });
         };
 
@@ -1570,10 +1570,10 @@
             showTracks = !showTracks;
             document.getElementById('showTracks').classList.toggle('active', showTracks);
             document.querySelectorAll('.track-dot').forEach(el => {
-                el.style.display = showTracks ? 'block' : 'none';
+                el.style.display = showTracks ? '' : 'none';
             });
             document.querySelectorAll('.track-link').forEach(el => {
-                el.style.display = showTracks ? 'block' : 'none';
+                el.style.display = showTracks ? '' : 'none';
             });
         };
 
