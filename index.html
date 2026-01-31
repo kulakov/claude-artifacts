@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Claude Artifacts</title>
+    <title>Lance Projects</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -21,19 +21,19 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .subtitle { color: #737373; margin-bottom: 2rem; }
-        .subtitle-link {
-            display: block;
+        .subtitle {
             color: #737373;
             margin-bottom: 2rem;
-            text-decoration: none;
-            transition: color 0.2s;
         }
-        .subtitle-link:hover {
+        .subtitle a {
             color: #667eea;
+            text-decoration: none;
         }
-        .artifacts-list { list-style: none; }
-        .artifact-item {
+        .subtitle a:hover {
+            text-decoration: underline;
+        }
+        .projects-list { list-style: none; }
+        .project-item {
             background: #171717;
             border: 1px solid #262626;
             border-radius: 8px;
@@ -44,14 +44,14 @@
             align-items: center;
             transition: border-color 0.2s;
         }
-        .artifact-item:hover { border-color: #404040; }
-        .artifact-name { font-weight: 500; }
-        .artifact-link {
+        .project-item:hover { border-color: #404040; }
+        .project-name { font-weight: 500; }
+        .project-link {
             color: #667eea;
             text-decoration: none;
             font-size: 0.875rem;
         }
-        .artifact-link:hover { text-decoration: underline; }
+        .project-link:hover { text-decoration: underline; }
         .section-title {
             font-size: 0.75rem;
             text-transform: uppercase;
@@ -62,7 +62,7 @@
         .section-title:first-of-type {
             margin-top: 0;
         }
-        .artifact-badge {
+        .project-badge {
             font-size: 0.65rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -72,14 +72,17 @@
             background: #1a1a2e;
             color: #667eea;
         }
-        .artifact-badge.new {
+        .project-badge.vercel {
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .project-badge.new {
             background: #1a2e1a;
             color: #4ade80;
         }
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: #525252;
+        .project-badge.chart {
+            background: #2e1a2e;
+            color: #a78bfa;
         }
         footer {
             margin-top: 3rem;
@@ -92,44 +95,63 @@
 </head>
 <body>
     <div class="container">
-        <h1>Коллекция визуализаций</h1>
-        <a href="https://t.me/the_good_question" target="_blank" class="subtitle-link">Lance petproject for «good question»</a>
-        <a href="https://kulakov.github.io/social-design-web/" target="_blank" class="subtitle-link">→ Social Design Web</a>
+        <h1>Lance Projects</h1>
+        <p class="subtitle">Petprojects by <a href="https://t.me/the_good_question" target="_blank" rel="noopener">@the_good_question</a></p>
+
+        <p class="section-title">Web Apps</p>
+        <ul class="projects-list">
+            <li class="project-item">
+                <span class="project-name">Social Design Web <span class="project-badge new">new</span></span>
+                <a href="https://kulakov.github.io/social-design-web/" target="_blank" rel="noopener" class="project-link">Открыть →</a>
+            </li>
+            <li class="project-item">
+                <span class="project-name">EdDesign Website <span class="project-badge vercel">vercel</span></span>
+                <a href="https://eddesign-website.vercel.app" target="_blank" rel="noopener" class="project-link">Открыть →</a>
+            </li>
+            <li class="project-item">
+                <span class="project-name">SkillCoach Landing <span class="project-badge vercel">vercel</span></span>
+                <a href="https://skillcoach-woad.vercel.app" target="_blank" rel="noopener" class="project-link">Открыть →</a>
+            </li>
+            <li class="project-item">
+                <span class="project-name">SkillCoach Deploy <span class="project-badge vercel">vercel</span></span>
+                <a href="https://skillcoach-deploy.vercel.app" target="_blank" rel="noopener" class="project-link">Открыть →</a>
+            </li>
+        </ul>
 
         <p class="section-title">Scrollytelling</p>
-        <ul class="artifacts-list" id="artifacts">
-            <li class="artifact-item">
-                <span class="artifact-name">Возвращение гигантов <span class="artifact-badge new">new</span></span>
-                <a href="artifacts/humpback-scrollytelling.html" class="artifact-link">Открыть →</a>
+        <ul class="projects-list">
+            <li class="project-item">
+                <span class="project-name">Возвращение гигантов</span>
+                <a href="artifacts/humpback-scrollytelling.html" class="project-link">Открыть →</a>
             </li>
         </ul>
 
         <p class="section-title">Инфографика</p>
-        <ul class="artifacts-list">
-            <li class="artifact-item">
-                <span class="artifact-name">Динамика популяции горбатых китов <span class="artifact-badge">chart</span></span>
-                <a href="artifacts/humpback_v7.html" class="artifact-link">Открыть →</a>
+        <ul class="projects-list">
+            <li class="project-item">
+                <span class="project-name">Динамика популяции горбатых китов <span class="project-badge chart">chart</span></span>
+                <a href="artifacts/humpback_v7.html" class="project-link">Открыть →</a>
             </li>
-            <li class="artifact-item">
-                <span class="artifact-name">Музыкальное ДНК</span>
-                <a href="artifacts/music-sankey/index.html" class="artifact-link">Открыть →</a>
+            <li class="project-item">
+                <span class="project-name">Музыкальное ДНК</span>
+                <a href="artifacts/music-sankey/index.html" class="project-link">Открыть →</a>
             </li>
-            <li class="artifact-item">
-                <span class="artifact-name">Формальные паттерны фасилитации в LARP</span>
-                <a href="artifacts/viz_d3_compact.html" class="artifact-link">Открыть →</a>
+            <li class="project-item">
+                <span class="project-name">Формальные паттерны фасилитации в LARP</span>
+                <a href="artifacts/viz_d3_compact.html" class="project-link">Открыть →</a>
             </li>
         </ul>
 
         <p class="section-title">Инструменты</p>
-        <ul class="artifacts-list">
-            <li class="artifact-item">
-                <span class="artifact-name">Калькулятор юнит-экономики <span class="artifact-badge new">new</span></span>
-                <a href="https://unit-economics-calculator-seven.vercel.app" target="_blank" rel="noopener" class="artifact-link">Открыть →</a>
+        <ul class="projects-list">
+            <li class="project-item">
+                <span class="project-name">Калькулятор юнит-экономики <span class="project-badge new">new</span></span>
+                <a href="https://unit-economics-calculator-seven.vercel.app" target="_blank" rel="noopener" class="project-link">Открыть →</a>
             </li>
         </ul>
 
         <footer>
-            Хостинг через GitHub Pages • Доступно из России
+            GitHub Pages + Vercel
         </footer>
     </div>
 </body>
