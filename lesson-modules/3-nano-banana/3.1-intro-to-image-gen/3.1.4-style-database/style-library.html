@@ -1016,6 +1016,190 @@
         padding: 0.5rem;
       }
     }
+
+    /* What's New Section */
+    .whats-new {
+      margin-bottom: 2rem;
+      background: linear-gradient(135deg, rgba(232, 255, 71, 0.05) 0%, rgba(71, 255, 180, 0.03) 100%);
+      border: 1px solid rgba(232, 255, 71, 0.15);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .whats-new details {
+      position: relative;
+    }
+
+    .whats-new summary {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem 1.5rem;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+      transition: background 0.2s;
+    }
+
+    .whats-new summary:hover {
+      background: rgba(232, 255, 71, 0.03);
+    }
+
+    .whats-new summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .new-badge {
+      background: var(--accent);
+      color: var(--bg-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+    }
+
+    .new-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.25rem;
+      font-weight: 400;
+      color: var(--text-primary);
+    }
+
+    .new-subtitle {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-left: auto;
+    }
+
+    .new-timeline {
+      padding: 0 1.5rem 1.5rem 1.5rem;
+    }
+
+    .new-week {
+      margin-bottom: 1.5rem;
+    }
+
+    .new-week:last-child {
+      margin-bottom: 0;
+    }
+
+    .new-week-header {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-dim);
+      margin-bottom: 0.75rem;
+      padding-left: 2rem;
+      position: relative;
+    }
+
+    .new-week-header::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 1.25rem;
+      height: 1px;
+      background: var(--accent-dim);
+    }
+
+    .new-item {
+      display: grid;
+      grid-template-columns: 4rem 1fr;
+      gap: 0.5rem 1rem;
+      padding: 0.75rem 0;
+      border-left: 1px dashed var(--border);
+      padding-left: 2rem;
+      position: relative;
+      transition: all 0.2s;
+    }
+
+    .new-item::before {
+      content: '';
+      position: absolute;
+      left: -4px;
+      top: 1rem;
+      width: 7px;
+      height: 7px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 0 3px var(--bg-primary), 0 0 0 4px var(--accent);
+    }
+
+    .new-item:hover {
+      background: rgba(232, 255, 71, 0.02);
+      border-left-color: var(--accent-dim);
+    }
+
+    .new-item:hover::before {
+      background: var(--success);
+      box-shadow: 0 0 0 3px var(--bg-primary), 0 0 0 4px var(--success);
+    }
+
+    .new-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-align: right;
+    }
+
+    .new-name {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      grid-column: 2;
+    }
+
+    .new-desc {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      grid-column: 2;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 768px) {
+      .whats-new summary {
+        padding: 0.85rem 1rem;
+      }
+
+      .new-timeline {
+        padding: 0 1rem 1rem 1rem;
+      }
+
+      .new-item {
+        grid-template-columns: 1fr;
+        gap: 0.25rem;
+        padding-left: 1.5rem;
+      }
+
+      .new-date {
+        text-align: left;
+        grid-column: 1;
+      }
+
+      .new-name {
+        grid-column: 1;
+      }
+
+      .new-desc {
+        grid-column: 1;
+      }
+
+      .new-week-header {
+        padding-left: 1.5rem;
+      }
+
+      .new-week-header::before {
+        width: 1rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1028,6 +1212,115 @@
         <a href="ridero-design-system.html" class="ds-link">Ridero</a>
       </div>
     </header>
+
+    <!-- What's New Section -->
+    <div class="whats-new">
+      <details open>
+        <summary>
+          <span class="new-badge">New</span>
+          <span class="new-title">What's New</span>
+          <span class="new-subtitle">Last 2 weeks</span>
+        </summary>
+        <div class="new-timeline">
+          <div class="new-week">
+            <div class="new-week-header">Week of Feb 10-14</div>
+            <div class="new-item">
+              <span class="new-date">Feb 14</span>
+              <span class="new-name">Pinterest Grid View</span>
+              <span class="new-desc">Added bento-grid layout for style library, responsive masonry view</span>
+            </div>
+            <div class="new-item">
+              <span class="new-date">Feb 14</span>
+              <span class="new-name">RAT My Goals</span>
+              <span class="new-desc">#479 — Premortеm analysis of O1-O7 goals via Strategyzer RAT methodology</span>
+            </div>
+            <div class="new-item">
+              <span class="new-date">Feb 13</span>
+              <span class="new-name">Granola Transcript Analyzer</span>
+              <span class="new-desc">/l-w-granola — Universal meeting analysis from Granola transcripts</span>
+            </div>
+            <div class="new-item">
+              <span class="new-date">Feb 13</span>
+              <span class="new-name">Thesis Extraction</span>
+              <span class="new-desc">Extract and cluster theses from meeting transcripts, interviews, lectures</span>
+            </div>
+            <div class="new-item">
+              <span class="new-date">Feb 12</span>
+              <span class="new-name">Dybowski Agent v2</span>
+              <span class="new-desc">#469 — Existential depth provocateur for game design (Pathologic methodology)</span>
+            </div>
+            <div class="new-item">
+              <span class="new-date">Feb 12</span>
+              <span class="new-name">Tender Archivist</span>
+              <span class="new-desc">#469.5 — Polyphonic lore builder (Tokarczuk + Eco + Borges methods)</span>
+            </div>
+            <div class="new-item">
+              <span class="new-date">Feb 12</span>
+              <span class="new-name">Canon Keeper</span>
+              <span class="new-desc">/l-g-canon — LARP lore systematization, source of truth builder</span>
+            </div>
+            <div class="new-item">
+              <span class="new-date">Feb 11</span>
+              <span class="new-name">Session Lifecycle</span>
+              <span class="new-desc">/session-start + /session-finish — Protocol for Claude Code sessions</span>
+            </div>
+            <div class="new-item">
+              <span class="new-date">Feb 11</span>
+              <span class="new-name">Ridero Design System</span>
+              <span class="new-desc">Book carousel generator for marketplace (Wildberries, Ozon)</span>
+            </div>
+          </div>
+
+          <div class="new-week">
+            <div class="new-week-header">Week of Feb 3-7</div>
+            <div class="new-item">
+              <span class="new-date">Feb 6</span>
+              <span class="new-name">Quotes Article Generator</span>
+              <span class="new-desc">/l-c-quotes-article — Full pipeline: Telegram JSON → quote extraction → blog article</span>
+            </div>
+            <div class="new-item">
+              <span class="new-date">Feb 4</span>
+              <span class="new-name">Vibe Motion Prompts</span>
+              <span class="new-desc">/vibe-motion — Prompt generator for Higgsfield Vibe-Motion (AI motion design)</span>
+            </div>
+            <div class="new-item">
+              <span class="new-date">Feb 3</span>
+              <span class="new-name">ACE-Step Music Gen</span>
+              <span class="new-desc">/ace-step — Local open-source music generation (alternative to Suno)</span>
+            </div>
+            <div class="new-item">
+              <span class="new-date">Feb 2</span>
+              <span class="new-name">LTX-2 Video Generator</span>
+              <span class="new-desc">/ltx2-video — Local video generation on Mac M3 (80GB models)</span>
+            </div>
+            <div class="new-item">
+              <span class="new-date">Feb 2</span>
+              <span class="new-name">Transcript Router</span>
+              <span class="new-desc">Auto-select skill for transcript processing based on context analysis</span>
+            </div>
+            <div class="new-item">
+              <span class="new-date">Feb 2</span>
+              <span class="new-name">Workshop Planner</span>
+              <span class="new-desc">/l-s-workshop — Goal-driven workshop structure planning</span>
+            </div>
+          </div>
+
+          <div class="new-week">
+            <div class="new-week-header">Week of Jan 27 - Feb 1</div>
+            <div class="new-item">
+              <span class="new-date">Feb 1</span>
+              <span class="new-name">Autonomous Researcher</span>
+              <span class="new-desc">AI researcher: splits task into experiments, runs agents autonomously</span>
+            </div>
+            <div class="new-item">
+              <span class="new-date">Feb 1</span>
+              <span class="new-name">Book Carousel Generator</span>
+              <span class="new-desc">Generate marketplace carousels for book publishing (Ridero integration)</span>
+            </div>
+          </div>
+        </div>
+      </details>
+    </div>
 
     <div class="filters">
       <!-- Facet 1: Type (super-groups) -->
